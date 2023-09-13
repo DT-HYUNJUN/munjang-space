@@ -4,7 +4,27 @@
 
 ## 팀 소개
 
-|박현준|한선진| 
-|:-:|:-:|
-|[![박현준](https://github.com/DT-HYUNJUN.png)](https://github.com/DT-HYUNJUN)|[![박현준](https://github.com/badajinsee.png)](https://github.com/badajinsee)|ㅁㄴㅇ|
-|[@DT-HYUNJUN](https://github.com/DT-HYUNJUN)|[@badajinsee](https://github.com/badajinsee)|
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <span>박현준</span>
+      </td>
+      <td align="center">
+        <span>한선진</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/DT-HYUNJUN">
+          <img src="https://github.com/DT-HYUNJUN.png" width="100px;" alt=""/>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/badajinsee">
+          <img src="https://github.com/badajinsee.png" width="100px;" alt=""/>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
