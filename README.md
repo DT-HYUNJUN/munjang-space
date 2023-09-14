@@ -8,20 +8,20 @@
   <tbody>
     <tr>
       <td align="center">
-        <b>박현준</b>
+        <b>박현준(FE)</b>
       </td>
       <td align="center">
-        <b>한선진</b>
+        <b>한선진(FE)</b>
       </td>
     </tr>
     <tr>
       <td align="center">
-        <a href="https://github.com/DT-HYUNJUN" target="_blank">
+        <a href="https://github.com/DT-HYUNJUN" target="_blank" rel="noreferrer">
           <img src="https://github.com/DT-HYUNJUN.png" width="100px;" alt=""/>
         </a>
       </td>
       <td align="center">
-        <a href="https://github.com/badajinsee" target="_blank">
+        <a href="https://github.com/badajinsee" target="_blank" rel="noreferrer">
           <img src="https://github.com/badajinsee.png" width="100px;" alt=""/>
         </a>
       </td>

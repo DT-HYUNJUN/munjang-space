@@ -1,38 +1,127 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+body {
+  background-color: #f6f6f6;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
 }
 
-.App-link {
-  color: #61dafb;
+@media (min-width: 1210px) {
+  .App {
+    width: 1200px;
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* 650px 이하일 때 */
+@media (max-width: 1210px) {
+  .App {
+    width: 90vw;
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+
+#root {
+  background-color: white;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.App {
+  min-height: 100vh;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Font */
+@font-face {
+  font-family: "UhBeeJJIBBABBA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeJJIBBABBA.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "KyoboHandwriting2021sjy";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KyoboHandwriting2021sjy.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Header */
+.Header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Logo {
+  display: flex;
+  align-items: center;
+}
+
+.Logo > h2 {
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 50px;
+}
+
+.Logo > img {
+  width: 15%;
+  height: 15%;
+}
+
+.NavBar {
+  font-size: 25px;
+  font-family: "UhBeeJJIBBABBA";
+  font-weight: bolder;
+
+  padding-right: 20px;
+
+  display: flex;
+  gap: 10px;
+}
+
+.NavBar Link {
+  text-decoration-line: none;
+}
+
+/* Footer */
+.Footer {
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Footer a {
+  color: black;
+  text-decoration: none;
+}
+
+.Footer .copyright {
+  color: gray;
+}
+
+.Footer .content_wrapper {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+}
+
+.Footer .content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.Footer .head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.Footer img {
+  width: 30px;
+  height: 30px;
 }
