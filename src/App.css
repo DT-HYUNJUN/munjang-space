@@ -34,16 +34,14 @@ body {
 /* Font */
 @font-face {
   font-family: "UhBeeJJIBBABBA";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeJJIBBABBA.woff")
-    format("woff");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeJJIBBABBA.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "KyoboHandwriting2021sjy";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KyoboHandwriting2021sjy.woff2")
-    format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KyoboHandwriting2021sjy.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }
@@ -126,11 +124,12 @@ body {
 .Footer .right {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 5px;
 }
 
 .Footer .right .name {
-  font-family: "UhBeeJJIBBABBA";
+  font-family: "KyoboHandwriting2021sjy";
 }
 
 .Footer .right .text {
