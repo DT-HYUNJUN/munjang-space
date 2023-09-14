@@ -106,7 +106,8 @@ body {
   background-color: #f2f2f2;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  padding: 35px 100px;
 }
 
 .Footer a {
@@ -118,11 +119,25 @@ body {
   color: gray;
 }
 
-.Footer .content_wrapper {
+.Footer .copyright .project_title {
+  font-family: "UhBeeJJIBBABBA";
+}
+
+.Footer .right {
   display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.Footer .right .name {
+  font-family: "UhBeeJJIBBABBA";
+}
+
+.Footer .right .text {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-family: "KyoboHandwriting2021sjy";
 }
 
 .Footer .content {
@@ -134,12 +149,36 @@ body {
 
 .Footer .head {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
+}
+
+.Footer .head span {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: "UhBeeJJIBBABBA";
 }
 
 .Footer img {
   width: 30px;
   height: 30px;
+}
+
+.Footer .link {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.Footer .left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.Footer .left .description {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-family: "KyoboHandwriting2021sjy";
 }
