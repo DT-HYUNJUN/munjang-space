@@ -34,14 +34,16 @@ body {
 /* Font */
 @font-face {
   font-family: "UhBeeJJIBBABBA";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeJJIBBABBA.woff") format("woff");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeJJIBBABBA.woff")
+    format("woff");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "KyoboHandwriting2021sjy";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KyoboHandwriting2021sjy.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KyoboHandwriting2021sjy.woff2")
+    format("woff2");
   font-weight: normal;
   font-style: normal;
 }
@@ -53,6 +55,10 @@ body {
   justify-content: space-between;
 }
 
+.LeftHeader a {
+  text-decoration: none;
+}
+
 .Logo {
   display: flex;
   align-items: center;
@@ -61,15 +67,16 @@ body {
 .Logo > h2 {
   font-family: "UhBeeJJIBBABBA";
   font-size: 50px;
+  color: black;
 }
 
-.Logo > img {
-  width: 15%;
-  height: 15%;
+.Logo img {
+  width: 100.82px;
+  height: 126.88px;
 }
 
 .NavBar {
-  font-size: 25px;
+  font-size: 20px;
   font-family: "UhBeeJJIBBABBA";
   font-weight: bolder;
 
@@ -79,8 +86,19 @@ body {
   gap: 10px;
 }
 
-.NavBar Link {
-  text-decoration-line: none;
+.NavBar a {
+  text-decoration: none;
+  color: black;
+}
+
+.NavBar a.active {
+  color: #4db8ff;
+  border-bottom: 2px solid;
+}
+
+.NavBar :hover {
+  color: #4db8ff;
+  border-bottom: 2px solid;
 }
 
 /* Footer */
