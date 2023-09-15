@@ -6,11 +6,7 @@ const MyHeader = () => {
       <div className="LeftHeader">
         <NavLink to="/">
           <div className="Logo">
-            <img
-              className="logoImg"
-              src={process.env.PUBLIC_URL + "images/dog.png"}
-              alt="logoImg"
-            />
+            <img className="logoImg" src={process.env.PUBLIC_URL + "images/dog.png"} alt="logoImg" />
             <h2>문장의 공간</h2>
           </div>
         </NavLink>
