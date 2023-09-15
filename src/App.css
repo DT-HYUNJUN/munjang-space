@@ -181,3 +181,45 @@ body {
   font-size: 16px;
   font-family: "KyoboHandwriting2021sjy";
 }
+
+/* MyButton */
+
+.MyButton {
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+
+  white-space: nowrap;
+  font-family: "UhBeeJJIBBABBA";
+  padding: 10px 15px;
+}
+
+.MyButton_default {
+  background-color: #ececec;
+  color: black;
+}
+
+.MyButton_default:hover {
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.MyButton_positive {
+  background-color: #a7d7e8;
+  color: white;
+}
+
+.MyButton_negative {
+  background-color: #fd565f;
+  color: white;
+}
+
+.MyButton_positive:hover {
+  background-color: #79cbe9;
+  color: white;
+}
+
+.MyButton_negative:hover {
+  background-color: #ff2833;
+  color: white;
+}
