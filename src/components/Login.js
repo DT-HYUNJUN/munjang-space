@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 import styled from "styled-components";
@@ -49,6 +49,8 @@ const Logininput = styled.input`
   padding-left: 10px;
 
   font-family: "KyoboHandwriting2021sjy";
+
+  cursor: pointer;
 `;
 
 const Login_1 = styled.div`
@@ -71,17 +73,34 @@ const Login_img = styled.img`
 
 const Kakao_login = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 
   margin-top: 10px;
+
+  font-family: "UhBeeJJIBBABBA";
+  color:gray;
+
+  border-bottom:1px solid gray;
+  
+  margin-top:15px;
 `;
 //
 
+
 const Login = () => {
+  
+  const REST_API_KEY = "d54df59401e33ca5fea835ed1e3862a1"
+  const REDIRECT_URI = "http://localhost:3000/auth/kakao"
+  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+
   const inputRef = useRef();
   // const [email, setEmail] = useState("");
   // const [isRememver, setIsRemember] = useState(false);
   // const [cookies, setCookie, removeCookie] = useCookies(["rememberEmail"]);
+
+  const loginHandler = () => {
+    window.location.href = link;
+  }
 
   useEffect(() => {
     inputRef.current.focus();
@@ -119,14 +138,15 @@ const Login = () => {
         </SaveId>
 
         <MyButton text={"로그인"} type={"positive"} onClick={onclick} />
-      </LoginForm>
 
-      <Kakao_login>
+        <Kakao_login>
         <p>카카오톡으로 시작하기</p>
-        <a href="">
+        <a href="" onclick={loginHandler}>
           <img src={process.env.PUBLIC_URL + "images/kakao_start.png"} alt="" />
         </a>
       </Kakao_login>
+
+      </LoginForm>
 
       <Login_img
         src={process.env.PUBLIC_URL + "images/login_4.jpeg"}
@@ -137,3 +157,4 @@ const Login = () => {
 };
 
 export default Login;
+
