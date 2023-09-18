@@ -39,11 +39,11 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
 
-          <Route path="/book" element={<Book />} />
+          <Route path="/auth" element={<Auth />} />
 
+          <Route path="/book" element={<Book />} />
           <Route path="/list" element={<List />} />
           <Route path="/report" element={<Report />} />
           <Route path="/new" element={<New />} />
