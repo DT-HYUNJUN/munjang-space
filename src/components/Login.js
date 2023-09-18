@@ -56,17 +56,8 @@ const Login = () => {
 
       <LoginForm>
         <Login_1>
-          <Logininput
-            type="text"
-            textarea
-            name="userName"
-            placeholder="Email"
-          />
-          <Logininput
-            type="password"
-            name="userPassword"
-            placeholder="Password"
-          />
+          <Logininput type="text" textarea name="userName" placeholder="Email" />
+          <Logininput type="password" name="userPassword" placeholder="Password" />
         </Login_1>
 
         <label htmlFor="remember-check">
