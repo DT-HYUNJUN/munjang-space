@@ -15,9 +15,9 @@ const MyHeader = () => {
 
       <div className="NavBar">
         <NavLink to="/">Home</NavLink>
-        <NavLink to="/List">나의 서재</NavLink>
-        <NavLink to="/Statistics">나의 통계</NavLink>
-        <NavLink to="/Profile">나의 정보</NavLink>
+        <NavLink to="/list">나의 서재</NavLink>
+        <NavLink to="/statistics">나의 통계</NavLink>
+        <NavLink to="/profile">나의 정보</NavLink>
       </div>
     </div>
   );
