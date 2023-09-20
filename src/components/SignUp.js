@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const StyledInput = styled.input`
+  font-size: 22px;
   border: 0px;
   border-radius: 3px;
   background-color: #ececec;
@@ -94,11 +95,17 @@ const getDefaultProfileImage = async () => {
   return defaultURL;
 };
 
+/**
+ * TODO:
+ * [] 닉네임 길이 제한
+ * [] 프로필 사진 업로드 plus 고치기
+ */
+
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); // 길이 제한
   const [errorText, setErrorText] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
