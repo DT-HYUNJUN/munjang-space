@@ -5,6 +5,7 @@ import { useCookies } from "react-cookie";
 import styled from "styled-components";
 
 import MyButton from "./MyButton";
+import { getAuth, signInWithCustomToken, signInWithEmailAndPassword } from "firebase/auth";
 
 // Style
 const Title = styled.h2`
@@ -30,7 +31,7 @@ const Subtitle = styled.p`
   color: gray;
 `;
 
-const LoginForm = styled.div`
+const LoginForm = styled.form`
   display: grid;
   justify-content: center;
 `;
@@ -95,6 +96,7 @@ const Login = () => {
   const inputRef = useRef();
 
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isRemember, setIsRemember] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["rememberEmail"]);
 
@@ -123,6 +125,7 @@ const Login = () => {
   };
 
   const handleInput = (e) => setEmail(e.target.value);
+  const handlePassword = (e) => setPassword(e.target.value);
 
   // 비밀번호 보이기 테스트
   // const handleDisplay = (e) => {
@@ -134,6 +137,19 @@ const Login = () => {
   //   }
   // };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let data;
+    const auth = getAuth();
+    try {
+      data = await signInWithEmailAndPassword(auth, email, password);
+      signInWithCustomToken();
+    } catch (error) {
+      console.log(typeof error.code);
+    }
+    console.log(data);
+  };
+
   return (
     <div>
       <div>
@@ -141,18 +157,10 @@ const Login = () => {
         <Subtitle>문장의 공간과 함께 하세요.</Subtitle>
       </div>
 
-      <LoginForm>
+      <LoginForm onSubmit={handleSubmit}>
         <Login_1>
           <Label htmlFor="id_login">이메일*</Label>
-          <Logininput
-            ref={inputRef}
-            type="text"
-            name="userName"
-            placeholder="Email"
-            id="id_login"
-            onChange={handleInput}
-            value={email}
-          />
+          <Logininput ref={inputRef} type="text" name="userName" placeholder="Email" id="id_login" onChange={handleInput} value={email} />
           <Label htmlFor="pw_login">비밀번호*</Label>
           <Logininput
             // type={passwordDisplay}
@@ -160,16 +168,12 @@ const Login = () => {
             name="userPassword"
             placeholder="Password"
             id="pw_login"
+            value={password}
+            onChange={handlePassword}
           />
         </Login_1>
         <SaveId htmlFor="remember-check">
-          <input
-            type="checkbox"
-            id="remember-check"
-            onChange={handleOnChange}
-            checked={isRemember}
-            defaultValue={email}
-          />
+          <input type="checkbox" id="remember-check" onChange={handleOnChange} checked={isRemember} defaultValue={email} />
           아이디 저장하기
         </SaveId>
 
@@ -188,18 +192,12 @@ const Login = () => {
         <Kakao_login>
           <p>카카오톡으로 시작하기</p>
           <a href={link}>
-            <img
-              src={process.env.PUBLIC_URL + "images/kakao_start.png"}
-              alt="카카오톡 회원가입"
-            />
+            <img src={process.env.PUBLIC_URL + "images/kakao_start.png"} alt="카카오톡 회원가입" />
           </a>
         </Kakao_login>
       </LoginForm>
 
-      <Login_img
-        src={process.env.PUBLIC_URL + "images/login_4.jpeg"}
-        alt="login_img"
-      />
+      <Login_img src={process.env.PUBLIC_URL + "images/login_4.jpeg"} alt="login_img" />
     </div>
   );
 };
