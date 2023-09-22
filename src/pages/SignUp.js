@@ -8,8 +8,16 @@ import styled from "styled-components";
 import MyButton from "../components/MyButton";
 import { useNavigate } from "react-router-dom";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../fbase";
 
 const StyledInput = styled.input`
   font-size: 22px;
@@ -57,22 +65,25 @@ const StyledInputFile = styled.input`
 `;
 
 const ImagePreview = styled.img`
+  border: 1px solid gray;
+  cursor: pointer;
   margin: auto;
   display: block;
   width: 100px;
   height: 100px;
+  border-radius: 75px;
+  &:hover {
+    filter: brightness(70%);
+  }
 `;
 
 const ImageInputWrapper = styled.div`
-  position: relative;
+  display: flex;
+  justify-content: center;
 `;
 
 const InputLabel = styled.label`
   cursor: pointer;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const Label = styled.label`
@@ -104,8 +115,9 @@ const getDefaultProfileImage = async () => {
 
 /**
  * TODO:
- * [] 닉네임 길이 제한
- * [] 프로필 사진 업로드 plus 고치기
+ * [O] 닉네임 길이 제한
+ * [] 닉네임 중복 제한
+ * [O] 프로필 사진 업로드 plus 고치기
  */
 
 const SignUp = () => {
@@ -116,6 +128,7 @@ const SignUp = () => {
   const [errorText, setErrorText] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [test, setTest] = useState([]);
 
   useEffect(() => {
     emailInput.current.focus();
@@ -154,10 +167,24 @@ const SignUp = () => {
     }
   };
 
+  const handle = async () => {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    console.log(querySnapshot);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (password === passwordCheck) {
+      let currentUsernames = [];
+
+      if (currentUsernames.length > 0) {
+        setErrorText("닉네임 중복");
+      } else if (password !== passwordCheck) {
+        setErrorText("비밀번호가 다릅니다.");
+      } else if (username.length > 5) {
+        setErrorText("닉네임 길이 초과");
+      } else {
         let data;
         const auth = getAuth();
         data = await createUserWithEmailAndPassword(auth, email, password);
@@ -171,36 +198,24 @@ const SignUp = () => {
         } else {
           await updateProfile(data.user, { displayName: username });
         }
+        await setDoc(doc(db, "users", email), { username });
         navigate("/");
-      } else {
-        setErrorText("비밀번호가 다릅니다.");
       }
     } catch (error) {
       setErrorText(error.message);
     }
   };
 
-  const REST_API_KEY = "d54df59401e33ca5fea835ed1e3862a1";
-  const REDIRECT_URI = "http://localhost:3000/auth/kakao";
-  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
-  const loginHandler = () => {
-    window.location.href = link;
-  };
-
   return (
     <div>
-      <button type="button" onClick={loginHandler}>
-        로그인 하기
-      </button>
+      <button onClick={handle}>asd</button>
       <FormContainer onSubmit={handleSubmit}>
         <Title>회원가입</Title>
         <Subtitle>문장의 공간과 함께 하세요.</Subtitle>
         <ImageInputWrapper>
           <InputLabel htmlFor="profileImage">
-            <FontAwesomeIcon icon={faPlus} />
+            <ImagePreview src={profileImagePreview} alt="" />
           </InputLabel>
-          <ImagePreview src={profileImagePreview} alt="" />
         </ImageInputWrapper>
         <StyledInputFile
           ref={imageInput}

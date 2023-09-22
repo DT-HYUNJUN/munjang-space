@@ -1,23 +1,16 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-
 import { authService } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const MyHeader = () => {
-  const [IsLogin, setIsLogin] = useState(false);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLogin(true);
-      } else {
-        setIsLogin(false);
-      }
+      user ? setIsLoggedIn(true) : setIsLoggedIn(false);
     });
   }, []);
-
   return (
     <div className="Header">
       <div className="LeftHeader">
@@ -37,10 +30,12 @@ const MyHeader = () => {
         <NavLink to="/">Home</NavLink>
         <NavLink to="/list">나의 서재</NavLink>
         <NavLink to="/statistics">나의 통계</NavLink>
-        <NavLink to={IsLogin ? "/profile" : "/login"}>
-          {IsLogin ? "나의정보" : "로그인"}
-        </NavLink>
-        <NavLink to="/signup">{IsLogin ? " " : "회원가입"}</NavLink>
+        <NavLink to="/profile">{isLoggedIn ? "나의 정보" : "로그인"}</NavLink>
+        {isLoggedIn ? (
+          <NavLink to="/profile">나의 정보</NavLink>
+        ) : (
+          <NavLink to="/auth">로그인</NavLink>
+        )}
       </div>
     </div>
   );

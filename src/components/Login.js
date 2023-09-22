@@ -5,6 +5,11 @@ import { useCookies } from "react-cookie";
 import styled from "styled-components";
 
 import MyButton from "./MyButton";
+import {
+  getAuth,
+  signInWithCustomToken,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -111,7 +116,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 이메일 쿠키
   const [isRemember, setIsRemember] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["rememberEmail"]);
 
@@ -143,10 +147,12 @@ const Login = () => {
     }
   };
 
-  // 버튼 눌렀을때 동작 이벤트
   const onPasswordHandler = (e) => {
     setPassword(e.currentTarget.value);
   };
+
+  const handleInput = (e) => setEmail(e.target.value);
+  const handlePassword = (e) => setPassword(e.target.value);
 
   // 비밀번호 보이기
   const handleDisplay = (e) => {
@@ -185,7 +191,7 @@ const Login = () => {
       </div>
 
       <LoginForm onSubmit={handleSubmit}>
-        <LoginWrapper>
+        <Login_1>
           <Label htmlFor="id_login">이메일*</Label>
           <Logininput
             ref={inputRef}
@@ -193,7 +199,7 @@ const Login = () => {
             name="userName"
             placeholder="Email"
             id="id_login"
-            onChange={onEmailHandle}
+            onChange={handleInput}
             value={email}
           />
           <Label htmlFor="pw_login">비밀번호*</Label>
@@ -202,10 +208,20 @@ const Login = () => {
             name="userPassword"
             placeholder="Password"
             id="pw_login"
-            onChange={onPasswordHandler}
             value={password}
+            onChange={handlePassword}
           />
-        </LoginWrapper>
+        </Login_1>
+        <SaveId htmlFor="remember-check">
+          <input
+            type="checkbox"
+            id="remember-check"
+            onChange={handleOnChange}
+            checked={isRemember}
+            defaultValue={email}
+          />
+          아이디 저장하기
+        </SaveId>
 
         <CheckBoxStyle>
           <SaveId htmlFor="remember-check">
@@ -243,7 +259,7 @@ const Login = () => {
         </KakaoLogin>
       </LoginForm>
 
-      <LoginImg
+      <Login_img
         src={process.env.PUBLIC_URL + "images/login_4.jpeg"}
         alt="login_img"
       />

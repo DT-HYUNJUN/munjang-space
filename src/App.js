@@ -18,8 +18,6 @@ import MyFooter from "./components/MyFooter";
 import SignUp from "./pages/SignUp";
 
 function App() {
-  // 로그인 판별 여부
-
   return (
     <BrowserRouter>
       <MyHeader />
