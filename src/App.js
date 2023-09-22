@@ -1,4 +1,6 @@
 import "./App.css";
+
+// import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -13,9 +15,7 @@ import Statistics from "./pages/Statistics";
 
 import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
-import { useEffect, useState } from "react";
-import { authService } from "./fbase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import SignUp from "./pages/SignUp";
 
 function App() {
   return (
@@ -26,7 +26,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
 
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/signup" element={<SignUp />} />
 
           <Route path="/book" element={<Book />} />
           <Route path="/list" element={<List />} />

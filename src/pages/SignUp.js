@@ -1,10 +1,22 @@
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import MyButton from "./MyButton";
+import MyButton from "../components/MyButton";
 import { useNavigate } from "react-router-dom";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../fbase";
 
 const StyledInput = styled.input`
@@ -82,7 +94,10 @@ const Label = styled.label`
 const uploadProfileImage = async (userId, file) => {
   const storage = getStorage();
 
-  const storageRef = ref(storage, `profile_images/${userId}/${file.name ? file.name : "profile.jpeg"}`);
+  const storageRef = ref(
+    storage,
+    `profile_images/${userId}/${file.name ? file.name : "profile.jpeg"}`
+  );
   await uploadBytes(storageRef, file);
 
   const downloadURL = await getDownloadURL(storageRef);
@@ -175,7 +190,10 @@ const SignUp = () => {
         data = await createUserWithEmailAndPassword(auth, email, password);
 
         if (profileImage) {
-          const photoURL = await uploadProfileImage(data.user.uid, profileImage);
+          const photoURL = await uploadProfileImage(
+            data.user.uid,
+            profileImage
+          );
           await updateProfile(data.user, { displayName: username, photoURL });
         } else {
           await updateProfile(data.user, { displayName: username });
@@ -199,15 +217,51 @@ const SignUp = () => {
             <ImagePreview src={profileImagePreview} alt="" />
           </InputLabel>
         </ImageInputWrapper>
-        <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
+        <StyledInputFile
+          ref={imageInput}
+          id="profileImage"
+          name="profileImage"
+          type="file"
+          accept="image/*"
+          onChange={handleInput}
+        />
         <Label htmlFor="email">이메일 *</Label>
-        <StyledInput id="email" ref={emailInput} onChange={handleInput} name="email" value={email} type="email" required />
+        <StyledInput
+          id="email"
+          ref={emailInput}
+          onChange={handleInput}
+          name="email"
+          value={email}
+          type="email"
+          required
+        />
         <Label htmlFor="password">비밀번호 *</Label>
-        <StyledInput id="password" onChange={handleInput} name="password" value={password} type="password" required />
+        <StyledInput
+          id="password"
+          onChange={handleInput}
+          name="password"
+          value={password}
+          type="password"
+          required
+        />
         <Label htmlFor="passwordCheck">비밀번호 확인 *</Label>
-        <StyledInput id="passwordCheck" onChange={handleInput} name="passwordCheck" value={passwordCheck} type="password" required />
+        <StyledInput
+          id="passwordCheck"
+          onChange={handleInput}
+          name="passwordCheck"
+          value={passwordCheck}
+          type="password"
+          required
+        />
         <Label htmlFor="username">닉네임 *</Label>
-        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" maxLength="10" required />
+        <StyledInput
+          id="username"
+          onChange={handleInput}
+          name="username"
+          value={username}
+          type="text"
+          required
+        />
         <MyButton text={"회원가입"} type={"positive"} />
         {errorText && <p>{errorText}</p>}
       </FormContainer>
