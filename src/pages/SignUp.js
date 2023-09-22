@@ -4,7 +4,7 @@ import styled from "styled-components";
 import MyButton from "../components/MyButton";
 import { useNavigate } from "react-router-dom";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
 
 const StyledInput = styled.input`
@@ -101,8 +101,9 @@ const getDefaultProfileImage = async () => {
 /**
  * TODO:
  * [O] 닉네임 길이 제한
- * [] 닉네임 중복 제한
  * [O] 프로필 사진 업로드 plus 고치기
+ * [O] 닉네임 중복 제한
+ * [O] localStorage 활용
  */
 
 const SignUp = () => {
@@ -113,7 +114,6 @@ const SignUp = () => {
   const [errorText, setErrorText] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
-  const [test, setTest] = useState([]);
 
   useEffect(() => {
     emailInput.current.focus();
@@ -152,18 +152,12 @@ const SignUp = () => {
     }
   };
 
-  const handle = async () => {
-    const q = query(collection(db, "users"), where("username", "==", username));
-    const querySnapshot = await getDocs(q);
-    console.log(querySnapshot);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let currentUsernames = [];
-
-      if (currentUsernames.length > 0) {
+      const q = query(collection(db, "users"), where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
         setErrorText("닉네임 중복");
       } else if (password !== passwordCheck) {
         setErrorText("비밀번호가 다릅니다.");
@@ -181,7 +175,7 @@ const SignUp = () => {
           await updateProfile(data.user, { displayName: username });
         }
         await setDoc(doc(db, "users", email), { username });
-        navigate("/");
+        navigate("/", { replace: true });
       }
     } catch (error) {
       setErrorText(error.message);
@@ -190,7 +184,6 @@ const SignUp = () => {
 
   return (
     <div>
-      <button onClick={handle}>asd</button>
       <FormContainer onSubmit={handleSubmit}>
         <Title>회원가입</Title>
         <Subtitle>문장의 공간과 함께 하세요.</Subtitle>
