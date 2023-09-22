@@ -4,11 +4,16 @@ import { authService } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const MyHeader = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [IsLogin, setIsLogin] = useState(false);
+
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      user ? setIsLoggedIn(true) : setIsLoggedIn(false);
+      if (user) {
+        setIsLogin(true);
+      } else {
+        setIsLogin(false);
+      }
     });
   }, []);
   return (
@@ -16,11 +21,7 @@ const MyHeader = () => {
       <div className="LeftHeader">
         <NavLink to="/">
           <div className="Logo">
-            <img
-              className="logoImg"
-              src={process.env.PUBLIC_URL + "images/dog.png"}
-              alt="logoImg"
-            />
+            <img className="logoImg" src={process.env.PUBLIC_URL + "images/dog.png"} alt="logoImg" />
             <h2>문장의 공간</h2>
           </div>
         </NavLink>
@@ -30,12 +31,8 @@ const MyHeader = () => {
         <NavLink to="/">Home</NavLink>
         <NavLink to="/list">나의 서재</NavLink>
         <NavLink to="/statistics">나의 통계</NavLink>
-        <NavLink to="/profile">{isLoggedIn ? "나의 정보" : "로그인"}</NavLink>
-        {isLoggedIn ? (
-          <NavLink to="/profile">나의 정보</NavLink>
-        ) : (
-          <NavLink to="/auth">로그인</NavLink>
-        )}
+        <NavLink to={IsLogin ? "/profile" : "/login"}>{IsLogin ? "나의 정보" : "로그인"}</NavLink>
+        <NavLink to="/signup">{IsLogin ? " " : "회원가입"}</NavLink>
       </div>
     </div>
   );
