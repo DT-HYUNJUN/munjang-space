@@ -15,6 +15,57 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 import SignUp from "./pages/SignUp";
 
+const dummyData = [
+  {
+    id: 0,
+    bookname: "해리포터",
+    title: "0",
+    content: "0",
+    date: 1695463111141,
+    gonggae: false,
+  },
+  {
+    id: 1,
+    bookname: "해리포터1",
+    title: "1",
+    content: "1",
+    date: 1695463111141,
+    gonggae: false,
+  },
+  {
+    id: 2,
+    bookname: "해리포터2",
+    title: "2",
+    content: "2",
+    date: 1695463111141,
+    gonggae: false,
+  },
+  {
+    id: 3,
+    bookname: "해리포터3",
+    title: "3",
+    content: "3",
+    date: 1695463111141,
+    gonggae: false,
+  },
+  {
+    id: 4,
+    bookname: "해리포터4",
+    title: "4",
+    content: "4",
+    date: 1695463111141,
+    gonggae: true,
+  },
+  {
+    id: 5,
+    bookname: "해리포터5",
+    title: "5",
+    content: "5",
+    date: 1695463111141,
+    gonggae: true,
+  },
+];
+
 function App() {
   return (
     <BrowserRouter>
