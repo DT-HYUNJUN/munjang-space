@@ -25,6 +25,7 @@ const dummyData = [
     date: 1695463111141,
     private: false,
     star: 1,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 1,
@@ -34,6 +35,7 @@ const dummyData = [
     date: 1695463111142,
     private: false,
     star: 2,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 2,
@@ -43,6 +45,7 @@ const dummyData = [
     date: 1695463111143,
     private: false,
     star: 3,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 3,
@@ -52,6 +55,7 @@ const dummyData = [
     date: 1695463111144,
     private: false,
     star: 4,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 4,
@@ -61,6 +65,7 @@ const dummyData = [
     date: 1695463111145,
     private: true,
     star: 5,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 5,
@@ -70,6 +75,7 @@ const dummyData = [
     date: 1695463111146,
     private: true,
     star: 5,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
   {
     id: 6,
@@ -79,6 +85,7 @@ const dummyData = [
     date: 1695463111147,
     private: true,
     star: 1,
+    imageUrl: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
   },
 ];
 
