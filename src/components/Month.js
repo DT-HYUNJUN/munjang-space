@@ -43,7 +43,7 @@ const MyHeader = ({ headText, leftChild, rightChild }) => {
   );
 };
 
-const Month = () => {
+const Month = ({ dummyData }) => {
   const [curDate, setCurDate] = useState(new Date());
 
   const headText = `${curDate.getFullYear()}년 ${curDate.getMonth() + 1}월`;
