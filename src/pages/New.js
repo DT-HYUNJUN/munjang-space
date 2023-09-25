@@ -42,6 +42,16 @@ const EditorWrapper = styled.div`
   height: 450px;
 `;
 
+const TitleInput = styled.input`
+  border: 0px;
+  border-radius: 5px;
+  background-color: #ececec;
+  width: 50%;
+  height: 30px;
+  font-family: "KyoboHandwriting2021sjy";
+  font-size: 22px;
+`;
+
 const modules = {
   toolbar: {
     container: [
@@ -99,18 +109,13 @@ const modules = {
   },
 };
 
-const New = () => {
-  const [data, setData] = useState([]);
+const New = ({ onCreate }) => {
   const [book, setBook] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
   const id = useRef(0);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -135,7 +140,7 @@ const New = () => {
       date: new Date().getTime(),
       isPrivate,
     };
-    setData([newItem, ...data]);
+    onCreate(newItem);
   };
 
   return (
@@ -146,11 +151,10 @@ const New = () => {
           <Book onClick={handleBook}>해리포터</Book>에 관련된 독후감입니다.
         </BookInfoSpan>
       </BookWrapper>
+      <TitleInput name="title" type="text" value={title} onChange={handleInput} />
       <div>
-        <input name="title" type="text" value={title} onChange={handleInput} />
-      </div>
-      <div>
-        <input type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+        <label htmlFor="isPrivate">공개 여부</label>
+        <input id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
       </div>
       <EditorWrapper>
         <ReactQuill style={{ height: "400px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
