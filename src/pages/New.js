@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useMemo, useRef, useState } from "react";
 import MyButton from "../components/MyButton";
-import ReactQuill from "react-quill";
+import styled from "styled-components";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { ImageResize } from "quill-image-resize-module-react";
+import ReactStars from "react-stars";
 
 const FormContainer = styled.form`
   display: flex;
@@ -52,70 +55,15 @@ const TitleInput = styled.input`
   font-size: 22px;
 `;
 
-const modules = {
-  toolbar: {
-    container: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ font: [] }],
-      [{ align: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }, "link"],
-      [
-        {
-          color: [
-            "#000000",
-            "#e60000",
-            "#ff9900",
-            "#ffff00",
-            "#008a00",
-            "#0066cc",
-            "#9933ff",
-            "#ffffff",
-            "#facccc",
-            "#ffebcc",
-            "#ffffcc",
-            "#cce8cc",
-            "#cce0f5",
-            "#ebd6ff",
-            "#bbbbbb",
-            "#f06666",
-            "#ffc266",
-            "#ffff66",
-            "#66b966",
-            "#66a3e0",
-            "#c285ff",
-            "#888888",
-            "#a10000",
-            "#b26b00",
-            "#b2b200",
-            "#006100",
-            "#0047b2",
-            "#6b24b2",
-            "#444444",
-            "#5c0000",
-            "#663d00",
-            "#666600",
-            "#003700",
-            "#002966",
-            "#3d1466",
-            "custom-color",
-          ],
-        },
-        { background: [] },
-      ],
-      ["image", "video"],
-      ["clean"],
-    ],
-  },
-};
-
 const New = ({ onCreate }) => {
   const [book, setBook] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [star, setStar] = useState(3);
 
   const id = useRef(0);
+  const quillRef = useRef(null);
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -123,6 +71,8 @@ const New = ({ onCreate }) => {
       setIsPrivate(e.target.checked);
     } else if (name === "title") {
       setTitle(e.target.value);
+    } else if (name === "star") {
+      setStar(e.target.value);
     }
   };
 
@@ -143,8 +93,61 @@ const New = ({ onCreate }) => {
     onCreate(newItem);
   };
 
+  const imageHandler = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+    input.addEventListener("change", async () => {
+      const editor = quillRef.current.getEditor();
+      const file = input.files[0];
+      const range = editor.getSelection(true);
+      try {
+        const storage = getStorage();
+        // 파일명을 "image/Date.now()"로 저장
+        const storageRef = ref(storage, `image/${Date.now()}`);
+        // Firebase Method : uploadBytes, getDownloadURL
+        await uploadBytes(storageRef, file).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            // 이미지 URL 에디터에 삽입
+            editor.insertEmbed(range.index, "image", url);
+            // URL 삽입 후 커서를 이미지 뒷 칸으로 이동
+            editor.setSelection(range.index + 1);
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ color: [] }, { background: [] }],
+          [{ align: [] }, "link", "image"],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+        // imageResize: {
+        //   // https://www.npmjs.com/package/quill-image-resize-module-react 참고
+        //   parchment: Quill.import("parchment"),
+        //   modules: ["Resize", "DisplaySize", "Toolbar"],
+        // },
+      },
+    };
+  }, []);
+  // Quill.register("modules/imageResize", ImageResize);
+
   return (
     <FormContainer onSubmit={handleSubmit}>
+      <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
       <BookWrapper>
         <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
         <BookInfoSpan>
@@ -157,7 +160,7 @@ const New = ({ onCreate }) => {
         <input id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
       </div>
       <EditorWrapper>
-        <ReactQuill style={{ height: "400px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+        <ReactQuill ref={quillRef} style={{ height: "400px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
       </EditorWrapper>
       <ButtonWrapper>
         <MyButton text="저장" type="positive" />
