@@ -14,6 +14,7 @@ import Statistics from "./pages/Statistics";
 import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 import SignUp from "./pages/SignUp";
+import { useEffect, useState } from "react";
 
 const dummyData = [
   {
@@ -67,6 +68,13 @@ const dummyData = [
 ];
 
 function App() {
+  const [reportList, setReportList] = useState(dummyData);
+  const onCreate = (report) => {
+    setReportList([report, ...reportList]);
+  };
+  useEffect(() => {
+    console.log(reportList);
+  }, [reportList]);
   return (
     <BrowserRouter>
       <MyHeader />
@@ -81,7 +89,7 @@ function App() {
           <Route path="/book" element={<Book />} />
           <Route path="/list" element={<List />} />
           <Route path="/report" element={<Report />} />
-          <Route path="/new" element={<New />} />
+          <Route path="/new" element={<New onCreate={onCreate} />} />
           <Route path="/edit" element={<Edit />} />
 
           <Route path="/statistics" element={<Statistics />} />
