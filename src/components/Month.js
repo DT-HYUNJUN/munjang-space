@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import styled from "styled-components";
 
@@ -43,7 +43,8 @@ const MyHeader = ({ headText, leftChild, rightChild }) => {
   );
 };
 
-const Month = ({ dummyData }) => {
+const Month = ({ reportList }) => {
+  const [data, setData] = useState([]);
   const [curDate, setCurDate] = useState(new Date());
 
   const headText = `${curDate.getFullYear()}년 ${curDate.getMonth() + 1}월`;
@@ -60,6 +61,24 @@ const Month = ({ dummyData }) => {
     );
   };
 
+  useEffect(() => {
+    const firstDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth(),
+      1
+    ).getTime();
+
+    const lastDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth() + 1,
+      0
+    ).getTime();
+
+    setData(
+      reportList.filter((it) => firstDay <= it.date && it.date <= lastDay)
+    );
+  }, [reportList, curDate]);
+
   return (
     <div>
       <MyHeader
@@ -67,6 +86,18 @@ const Month = ({ dummyData }) => {
         leftChild={<Mybutton text={"<"} onClick={decreaseMonth} />}
         rightChild={<Mybutton text={">"} onClick={increaseMonth} />}
       />
+
+      {data.map((item) => (
+        <div key={item.id}>
+          <p>bookname: {item.bookname}</p>
+          <p>title: {item.title}</p>
+          <p>content: {item.content}</p>
+          <p>date: {item.date}</p>
+          <p>private: {item.private ? "참" : "거짓"}</p>
+          <p>star : {item.star}</p>
+          <span>--</span>
+        </div>
+      ))}
     </div>
   );
 };
