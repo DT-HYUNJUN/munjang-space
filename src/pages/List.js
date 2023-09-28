@@ -7,46 +7,6 @@ import All from "../components/All";
 import Month from "../components/Month";
 import MyButton from "../components/MyButton";
 
-const SwitchButton = styled.div``;
-
-const AllButton = styled.button`
-  margin-right: 15px;
-
-  border: 0;
-  border-radius: 30px;
-  cursor: pointer;
-
-  white-space: nowrap;
-  font-family: "UhBeeJJIBBABBA";
-  font-size: 20px;
-  padding: 10px 15px;
-
-  color: white;
-  background-color: #9ad8dc;
-
-  &:hover {
-    background-color: #4db8ff;
-  }
-`;
-
-const MonthButton = styled.button`
-  border: 0;
-  border-radius: 30px;
-  cursor: pointer;
-
-  white-space: nowrap;
-  font-family: "UhBeeJJIBBABBA";
-  font-size: 20px;
-  padding: 10px 15px;
-
-  color: white;
-  background-color: #9ad8dc;
-
-  &:hover {
-    background-color: #4db8ff;
-  }
-`;
-
 const sortOptionList = [
   { value: "latest", name: "최신순" },
   { value: "oldest", name: "오래된 순" },
@@ -61,15 +21,20 @@ const sortStarOptionList = [
   { value: 5, name: "5" },
 ];
 
+const sortPrivateOptionList = [
+  { value: "true", name: "공개" },
+  { value: "false", name: "비공개" },
+];
+
 const ControlMenu = ({ value, onChange, optionList }) => {
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)}>
+    <FilterSelect value={value} onChange={(e) => onChange(e.target.value)}>
       {optionList.map((it, idx) => (
         <option key={idx} value={it.value}>
           {it.name}
         </option>
       ))}
-    </select>
+    </FilterSelect>
   );
 };
 
@@ -83,6 +48,8 @@ const List = ({ reportList }) => {
   const [sortType, setSortType] = useState("latest");
 
   const [filterStar, setFilterStar] = useState("allStar");
+
+  const [filterPrivate, setFilterPrivate] = useState("true");
 
   const getProcessReportList = () => {
     const compare = (a, b) => {
@@ -102,35 +69,49 @@ const List = ({ reportList }) => {
 
     const sortedList = filterdStarList.sort(compare);
 
-    return sortedList;
+    const filterPrivateList =
+      filterPrivate === "true"
+        ? sortedList.filter((it) => it.private === true)
+        : sortedList.filter((it) => it.private === false);
+
+    return filterPrivateList;
   };
 
   return (
     <div>
-      <SwitchButton>
+      <div>
         <AllButton onClick={onAllHandler}>전체</AllButton>
         <MonthButton onClick={onMonthHandler}>월별</MonthButton>
-      </SwitchButton>
+      </div>
 
       <div>
-        <ControlMenu
-          value={sortType}
-          onChange={setSortType}
-          optionList={sortOptionList}
-        />
+        <ControlHeader>
+          <ControlFilter>
+            <ControlMenu
+              value={sortType}
+              onChange={setSortType}
+              optionList={sortOptionList}
+            />
 
-        <ControlMenu
-          value={filterStar}
-          onChange={setFilterStar}
-          optionList={sortStarOptionList}
-        />
+            <ControlMenu
+              value={filterStar}
+              onChange={setFilterStar}
+              optionList={sortStarOptionList}
+            />
 
-        <MyButton
-          type={"positive"}
-          text={"새 독후감 작성하기"}
-          onClick={() => navigate("/new")}
-        />
+            <ControlMenu
+              value={filterPrivate}
+              onChange={setFilterPrivate}
+              optionList={sortPrivateOptionList}
+            />
+          </ControlFilter>
 
+          <MyButton
+            type={"positive"}
+            text={"새 독후감 작성하기"}
+            onClick={() => navigate("/new")}
+          />
+        </ControlHeader>
         {all ? (
           <All reportList={getProcessReportList()} />
         ) : (
@@ -142,3 +123,70 @@ const List = ({ reportList }) => {
 };
 
 export default List;
+
+const AllButton = styled.button`
+  margin-right: 15px;
+
+  border: 0;
+  border-radius: 30px;
+  cursor: pointer;
+
+  white-space: nowrap;
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 18px;
+  padding: 10px;
+
+  color: white;
+  background-color: #9ad8dc;
+
+  &:hover {
+    background-color: #4db8ff;
+  }
+`;
+
+const MonthButton = styled.button`
+  border: 0;
+  border-radius: 30px;
+  cursor: pointer;
+
+  white-space: nowrap;
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 18px;
+  padding: 10px;
+
+  color: white;
+  background-color: #9ad8dc;
+
+  &:hover {
+    background-color: #4db8ff;
+  }
+`;
+
+const FilterSelect = styled.select`
+  border: none;
+  border-radius: 5px;
+  background-color: #ececec;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  cursor: pointer;
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 18px;
+
+  width: 30%;
+
+  margin-right: 5px;
+`;
+
+const ControlHeader = styled.div`
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+`;
+
+const ControlFilter = styled.div`
+  width: 50%;
+`;

@@ -3,6 +3,67 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import Mybutton from "../components/MyButton";
+import ReportContentList from "./ReportContentList";
+
+const MyHeader = ({ headText, leftChild, rightChild }) => {
+  return (
+    <MonthHeader>
+      <LeftButton>{leftChild}</LeftButton>
+      <HeadText>{headText}</HeadText>
+      <RightButton>{rightChild}</RightButton>
+    </MonthHeader>
+  );
+};
+
+const Month = ({ reportList }) => {
+  const [data, setData] = useState([]);
+  const [curDate, setCurDate] = useState(new Date());
+
+  const headText = `${curDate.getFullYear()}년 ${curDate.getMonth() + 1}월`;
+
+  const increaseMonth = () => {
+    setCurDate(
+      new Date(curDate.getFullYear(), curDate.getMonth() + 1, curDate.getDate())
+    );
+  };
+
+  const decreaseMonth = () => {
+    setCurDate(
+      new Date(curDate.getFullYear(), curDate.getMonth() - 1, curDate.getDate())
+    );
+  };
+
+  useEffect(() => {
+    const firstDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth(),
+      1
+    ).getTime();
+
+    const lastDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth() + 1,
+      0
+    ).getTime();
+
+    setData(
+      reportList.filter((it) => firstDay <= it.date && it.date <= lastDay)
+    );
+  }, [reportList, curDate]);
+
+  return (
+    <div>
+      <MyHeader
+        headText={headText}
+        leftChild={<Mybutton text={"<"} onClick={decreaseMonth} />}
+        rightChild={<Mybutton text={">"} onClick={increaseMonth} />}
+      />
+      <ReportContentList reportList={data} />
+    </div>
+  );
+};
+
+export default Month;
 
 const MonthHeader = styled.div`
   padding-top: 20px;
@@ -32,57 +93,3 @@ const RightButton = styled.div`
   justify-content: right;
   text-align: right;
 `;
-
-const MyHeader = ({ headText, leftChild, rightChild }) => {
-  return (
-    <MonthHeader>
-      <LeftButton>{leftChild}</LeftButton>
-      <HeadText>{headText}</HeadText>
-      <RightButton>{rightChild}</RightButton>
-    </MonthHeader>
-  );
-};
-
-const Month = ({ reportList }) => {
-  const [data, setData] = useState([]);
-  const [curDate, setCurDate] = useState(new Date());
-
-  const headText = `${curDate.getFullYear()}년 ${curDate.getMonth() + 1}월`;
-
-  const increaseMonth = () => {
-    setCurDate(new Date(curDate.getFullYear(), curDate.getMonth() + 1, curDate.getDate()));
-  };
-
-  const decreaseMonth = () => {
-    setCurDate(new Date(curDate.getFullYear(), curDate.getMonth() - 1, curDate.getDate()));
-  };
-
-  useEffect(() => {
-    const firstDay = new Date(curDate.getFullYear(), curDate.getMonth(), 1).getTime();
-
-    const lastDay = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0).getTime();
-
-    setData(reportList.filter((it) => firstDay <= it.date && it.date <= lastDay));
-  }, [reportList, curDate]);
-
-  return (
-    <div>
-      <MyHeader headText={headText} leftChild={<Mybutton text={"<"} onClick={decreaseMonth} />} rightChild={<Mybutton text={">"} onClick={increaseMonth} />} />
-
-      {data.map((item) => (
-        <div key={item.id}>
-          <img style={{ width: "100px" }} src={item.imageUrl} alt="book" />
-          <p>bookname: {item.bookname}</p>
-          <p>title: {item.title}</p>
-          <p>content: {item.content}</p>
-          <p>date: {item.date}</p>
-          <p>private: {item.private ? "참" : "거짓"}</p>
-          <p>star : {item.star}</p>
-          <p>--</p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-export default Month;
