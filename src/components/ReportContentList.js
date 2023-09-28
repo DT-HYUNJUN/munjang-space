@@ -58,7 +58,7 @@ const ReportContentList = ({ reportList }) => {
         <Pagination
           activePage={page}
           itemsCountPerPage={5}
-          totalItemsCount={100}
+          totalItemsCount={reportList.length}
           pageRangeDisplayed={5}
           prevPageText={"<"}
           nextPageText={">"}
