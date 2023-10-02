@@ -2,8 +2,10 @@ import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/au
 import { useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
-const ChangePassword = ({ email, setIsChangePW }) => {
+const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -52,6 +54,9 @@ const ChangePassword = ({ email, setIsChangePW }) => {
 
   return (
     <Container>
+      <BackWrapper>
+        <FontAwesomeIcon onClick={handleChangePW} icon={faChevronLeft} />
+      </BackWrapper>
       {isCorrect ? (
         <PasswordForm onSubmit={handleChangePassword}>
           <label htmlFor="newPassword">새 비밀번호</label>
@@ -93,4 +98,11 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const BackWrapper = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
 `;

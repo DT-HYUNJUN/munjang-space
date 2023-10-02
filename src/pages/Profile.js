@@ -34,15 +34,10 @@ const Profile = () => {
     init && (
       <Container>
         {isChangePW ? (
-          <BackButton>
-            <FontAwesomeIcon onClick={handleChangePW} icon={faChevronLeft} />
-          </BackButton>
+          <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
         ) : (
-          <EditButton>
-            <FontAwesomeIcon onClick={handleChangePW} icon={faEdit} />
-          </EditButton>
+          <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} />
         )}
-        {isChangePW ? <ChangePassword email={email} setIsChangePW={setIsChangePW} /> : <MyProfile email={email} username={username} photoURL={photoURL} />}
       </Container>
     )
   );

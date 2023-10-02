@@ -14,12 +14,12 @@ import Modal from "../components/Modal";
 // }
 
 const New = ({ onCreate }) => {
+  const [modal, setModal] = useState(false);
   const [book, setBook] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [star, setStar] = useState(3);
-  const [modal, setModal] = useState(false);
 
   const id = useRef(0);
   const quillRef = useRef(null);
@@ -36,7 +36,7 @@ const New = ({ onCreate }) => {
   };
 
   const handleBook = () => {
-    setBook("해리포터");
+    setModal(true);
   };
 
   const handleSubmit = (e) => {
@@ -112,34 +112,35 @@ const New = ({ onCreate }) => {
   }, []);
 
   return (
-    <FormContainer onSubmit={handleSubmit}>
-      <button onClick={() => setModal(true)}>미리보기</button>
-      <HeaderWrapper>
-        <BookWrapper>
-          <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
-          <BookInfoSpan>
-            <Book onClick={handleBook}>해리포터</Book>에 관련된 독후감입니다.
-          </BookInfoSpan>
-        </BookWrapper>
-        <StarWrapper>
-          <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
-        </StarWrapper>
-      </HeaderWrapper>
-      <HeaderWrapper>
-        <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
-        <LabelWrapper htmlFor="isPrivate">
-          <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
-          <PrivateSpan>비공개</PrivateSpan>
-        </LabelWrapper>
-      </HeaderWrapper>
-      <EditorWrapper>
-        <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
-      </EditorWrapper>
-      <ButtonWrapper>
-        <MyButton text="저장" type="positive" />
-      </ButtonWrapper>
-      {modal && <Modal content={content} setModal={setModal} />}
-    </FormContainer>
+    <div>
+      <FormContainer onSubmit={handleSubmit}>
+        <HeaderWrapper>
+          <BookWrapper>
+            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
+            <BookInfoSpan>
+              <Book onClick={handleBook}>해리포터</Book>에 관련된 독후감입니다.
+            </BookInfoSpan>
+          </BookWrapper>
+          <StarWrapper>
+            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
+          </StarWrapper>
+        </HeaderWrapper>
+        <HeaderWrapper>
+          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
+          <LabelWrapper htmlFor="isPrivate">
+            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+            <PrivateSpan>비공개</PrivateSpan>
+          </LabelWrapper>
+        </HeaderWrapper>
+        <EditorWrapper>
+          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+        </EditorWrapper>
+        <ButtonWrapper>
+          <MyButton text="저장" type="positive" />
+        </ButtonWrapper>
+      </FormContainer>
+      {modal && <Modal setModal={setModal} />}
+    </div>
   );
 };
 
