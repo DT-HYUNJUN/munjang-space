@@ -185,10 +185,10 @@ function App() {
   const [reportList, setReportList] = useState(dummyData);
 
   const onCreate = async (report) => {
-    // setReportList([report, ...reportList]);
-    await setDoc(doc(db, "reports", report.book), {
-      ...report,
-    });
+    setReportList([report, ...reportList]);
+    // await setDoc(doc(db, "reports", report.book), {
+    //   ...report,
+    // });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { getAuth, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
@@ -17,11 +17,12 @@ const uploadProfileImage = async (userEmail, file) => {
   return downloadURL;
 };
 
-const MyProfile = ({ email, username, photoURL }) => {
+const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   const [init, setInit] = useState(false);
   const [currentUsername, setCurrentUsername] = useState(username);
   const [profileImage, setProfileImage] = useState(photoURL);
   const [profileImagePreview, setProfileImagePreview] = useState(photoURL);
+  const [changed, setChanged] = useState(false);
   const auth = getAuth();
   const imageInput = useRef();
   const handleInput = (e) => {
@@ -31,6 +32,7 @@ const MyProfile = ({ email, username, photoURL }) => {
     } else if (name === "profileImage") {
       const file = imageInput.current.files[0];
       setProfileImage(file);
+      setChanged(true);
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -47,15 +49,22 @@ const MyProfile = ({ email, username, photoURL }) => {
     if (!querySnapshot.empty) {
       alert("닉네임 중복");
     } else {
-      const photoURL = await uploadProfileImage(email, profileImage);
       await setDoc(doc(db, "users", email), { currentUsername });
-      await updateProfile(auth.currentUser, { displayName: currentUsername, photoURL });
+      if (changed) {
+        const photoURL = await uploadProfileImage(email, profileImage);
+        await updateProfile(auth.currentUser, { displayName: currentUsername, photoURL });
+      } else {
+        await updateProfile(auth.currentUser, { displayName: currentUsername });
+      }
       alert("내 정보 업데이트 완료");
     }
   };
 
   useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => console.log(user));
     if (email && username && photoURL) {
+      console.log(photoURL);
       setInit(true);
     }
   }, [email, username, photoURL]);
@@ -79,6 +88,10 @@ const MyProfile = ({ email, username, photoURL }) => {
               <InfoText>이메일 :</InfoText>
               <InfoText>{email}</InfoText>
             </div>
+            <Center>
+              <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
+              <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
+            </Center>
           </InfoWrapper>
           <BottomWrapper>
             <MyButton text={"수정 완료"} type={"positive"} onClick={handleEdit} />
@@ -121,11 +134,6 @@ const BottomWrapper = styled.div`
   justify-content: center;
 `;
 
-const Status = styled.p`
-  color: #4db8ff;
-  font-size: 20px;
-`;
-
 const ImagePreview = styled.img`
   border: 1px solid gray;
   cursor: pointer;
@@ -150,4 +158,17 @@ const InputLabel = styled.label`
 
 const StyledInputFile = styled.input`
   display: none;
+`;
+
+const Center = styled.div`
+  display: flex;
+  /* text-align: center; */
+  justify-content: center;
+  gap: 10px;
+`;
+
+const ChangePasswordLink = styled.span`
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
 `;
