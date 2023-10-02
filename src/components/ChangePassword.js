@@ -1,12 +1,10 @@
 import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MyButton from "./MyButton";
 
 const ChangePassword = ({ email, setIsChangePW }) => {
   const [isCorrect, setIsCorrect] = useState(false);
-  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordCheck, setNewPasswordCheck] = useState("");
@@ -30,10 +28,9 @@ const ChangePassword = ({ email, setIsChangePW }) => {
       data = await signInWithEmailAndPassword(auth, email, password);
       if (data) {
         setIsCorrect(true);
-        setError("");
       }
     } catch (error) {
-      setError(error.message);
+      alert(error.message);
     }
   };
 
@@ -49,40 +46,34 @@ const ChangePassword = ({ email, setIsChangePW }) => {
     } else {
       setNewPassword("");
       setNewPasswordCheck("");
-      setError("비밀번호가 다릅니다");
+      alert("비밀번호를 확인해주세요.");
     }
   };
 
   return (
-    <div>
+    <Container>
       {isCorrect ? (
         <PasswordForm onSubmit={handleChangePassword}>
-          <InputWrapper>
-            <label htmlFor="newPassword">새 비밀번호</label>
-            <Input id="newPassword" name="newPassword" type="password" value={newPassword} onChange={handleInput} placeholder="새 비밀번호" />
-          </InputWrapper>
-          <div>
-            <label htmlFor="newPasswordCheck">새 비밀번호 확인</label>
-            <Input id="newPasswordCheck" name="newPasswordCheck" type="password" value={newPasswordCheck} onChange={handleInput} placeholder="새 비밀번호 확인" />
-          </div>
+          <label htmlFor="newPassword">새 비밀번호</label>
+          <Input id="newPassword" name="newPassword" type="password" value={newPassword} onChange={handleInput} placeholder="새 비밀번호" />
+          <label htmlFor="newPasswordCheck">새 비밀번호 확인</label>
+          <Input id="newPasswordCheck" name="newPasswordCheck" type="password" value={newPasswordCheck} onChange={handleInput} placeholder="새 비밀번호 확인" />
           <MyButton text={"비밀번호 변경"} type={"positive"} />
-          <p>{error}</p>
         </PasswordForm>
       ) : (
-        <form onSubmit={handleSubmit}>
-          <Input name="password" type="password" value={password} onChange={handleInput} />
-          <input type="submit" value="확인" />
-          <p>{error}</p>
-        </form>
+        <PasswordForm onSubmit={handleSubmit}>
+          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="현재 비밀번호" />
+          <MyButton text={"비밀번호 확인"} type={"positive"} />
+        </PasswordForm>
       )}
-    </div>
+    </Container>
   );
 };
 
 export default ChangePassword;
 
 const Input = styled.input`
-  /* width: 300px; */
+  width: 300px;
   font-size: 24px;
   font-family: "KyoboHandwriting2021sjy";
   padding: 10px;
@@ -94,9 +85,12 @@ const Input = styled.input`
 const PasswordForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
+  font-family: "KyoboHandwriting2021sjy";
 `;
 
-const InputWrapper = styled.div`
-  width: 300px;
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

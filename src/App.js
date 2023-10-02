@@ -15,6 +15,8 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 import SignUp from "./pages/SignUp";
 import { useEffect, useReducer, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "./fbase";
 
 const dummyData = [
   {
@@ -182,8 +184,11 @@ const dummyData = [
 function App() {
   const [reportList, setReportList] = useState(dummyData);
 
-  const onCreate = (report) => {
-    setReportList([report, ...reportList]);
+  const onCreate = async (report) => {
+    // setReportList([report, ...reportList]);
+    await setDoc(doc(db, "reports", report.book), {
+      ...report,
+    });
   };
 
   return (

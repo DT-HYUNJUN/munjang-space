@@ -48,6 +48,7 @@ const New = ({ onCreate }) => {
       content,
       date: new Date().getTime(),
       isPrivate,
+      like: 0,
     };
     onCreate(newItem);
   };
