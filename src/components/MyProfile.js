@@ -2,7 +2,14 @@ import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../fbase";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
@@ -23,6 +30,7 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   const [profileImage, setProfileImage] = useState(photoURL);
   const [profileImagePreview, setProfileImagePreview] = useState(photoURL);
   const [changed, setChanged] = useState(false);
+
   const auth = getAuth();
   const imageInput = useRef();
   const handleInput = (e) => {
@@ -44,7 +52,10 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   const handleEdit = async () => {
-    const q = query(collection(db, "users"), where("username", "==", currentUsername));
+    const q = query(
+      collection(db, "users"),
+      where("username", "==", currentUsername)
+    );
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       alert("닉네임 중복");
@@ -52,7 +63,10 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
       await setDoc(doc(db, "users", email), { currentUsername });
       if (changed) {
         const photoURL = await uploadProfileImage(email, profileImage);
-        await updateProfile(auth.currentUser, { displayName: currentUsername, photoURL });
+        await updateProfile(auth.currentUser, {
+          displayName: currentUsername,
+          photoURL,
+        });
       } else {
         await updateProfile(auth.currentUser, { displayName: currentUsername });
       }
@@ -78,23 +92,43 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
               <ImagePreview src={profileImagePreview} alt="" />
             </InputLabel>
           </ImageInputWrapper>
-          <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
+          <StyledInputFile
+            ref={imageInput}
+            id="profileImage"
+            name="profileImage"
+            type="file"
+            accept="image/*"
+            onChange={handleInput}
+          />
           <InfoWrapper>
             <div>
               <InfoText>닉네임 :</InfoText>
-              <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />
+              <UsernameInput
+                name="username"
+                type="text"
+                value={currentUsername}
+                onChange={handleInput}
+              />
             </div>
             <div>
               <InfoText>이메일 :</InfoText>
               <InfoText>{email}</InfoText>
             </div>
             <Center>
-              <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
-              <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
+              <ChangePasswordLink onClick={handleChangePW}>
+                비밀번호 변경
+              </ChangePasswordLink>
+              <ChangePasswordLink onClick={handleChangePW}>
+                비밀번호 찾기
+              </ChangePasswordLink>
             </Center>
           </InfoWrapper>
           <BottomWrapper>
-            <MyButton text={"수정 완료"} type={"positive"} onClick={handleEdit} />
+            <MyButton
+              text={"수정 완료"}
+              type={"positive"}
+              onClick={handleEdit}
+            />
           </BottomWrapper>
         </div>
       )}

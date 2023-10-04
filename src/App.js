@@ -15,8 +15,15 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 import SignUp from "./pages/SignUp";
 import { useEffect, useReducer, useState } from "react";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "./fbase";
+import { getAuth } from "firebase/auth";
 
 const dummyData = [
   {
@@ -183,13 +190,21 @@ const dummyData = [
 
 function App() {
   const [reportList, setReportList] = useState(dummyData);
+  const auth = getAuth();
 
   const onCreate = async (report) => {
-    setReportList([report, ...reportList]);
-    // await setDoc(doc(db, "reports", report.book), {
-    //   ...report,
-    // });
+    // setReportList([report, ...reportList]);
+    await addDoc(collection(db, "reports"), report);
   };
+
+  useEffect(() => {
+    // const data = onSnapshot(
+    //   doc(db, "reports", auth.currentUser.email),
+    //   (doc) => {
+    //     console.log(doc.data());
+    //   }
+    // );
+  }, []);
 
   return (
     <BrowserRouter>
