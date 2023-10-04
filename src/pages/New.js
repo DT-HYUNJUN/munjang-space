@@ -54,7 +54,6 @@ const New = ({ onCreate }) => {
       author: auth.currentUser.email,
     };
     onCreate(newItem);
-    alert("작성 완료");
   };
 
   const imageHandler = () => {

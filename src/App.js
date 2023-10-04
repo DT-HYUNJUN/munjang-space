@@ -193,8 +193,16 @@ function App() {
   const auth = getAuth();
 
   const onCreate = async (report) => {
-    // setReportList([report, ...reportList]);
-    await addDoc(collection(db, "reports"), report);
+    try {
+      const docRef = doc(
+        collection(db, "reports", report.author, report.book),
+        `${report.id}`
+      );
+      await setDoc(docRef, report);
+      alert("작성 완료");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
