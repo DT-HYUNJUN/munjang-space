@@ -11,7 +11,6 @@ const ReportContentList = ({ reportList }) => {
 
   const handlePageChage = (page) => {
     setPage(page);
-    console.log(page);
   };
 
   const startIndex = (page - 1) * itemsPerPage;
@@ -21,7 +20,7 @@ const ReportContentList = ({ reportList }) => {
   const navigate = useNavigate();
 
   const goDetail = (id) => {
-    navigate(`/Report/${id}`);
+    navigate(`/report/${id}`);
   };
 
   return (
@@ -49,7 +48,7 @@ const ReportContentList = ({ reportList }) => {
               <MyButton
                 text={"수정하기"}
                 type={"negative"}
-                onClick={() => navigate("/Edit")}
+                onClick={() => navigate("/edit")}
               />
             </EditButton>
           </ReportContent>

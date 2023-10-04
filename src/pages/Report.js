@@ -1,5 +1,9 @@
+import styled from "styled-components";
+
 const Report = () => {
-  return <div></div>;
+  return <Container>리포트</Container>;
 };
 
 export default Report;
+
+const Container = styled.div``;
