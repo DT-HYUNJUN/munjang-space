@@ -3,28 +3,10 @@ import { useNavigate } from "react-router-dom";
 import MyButton from "../components/MyButton";
 import styled from "styled-components";
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
-
-const uploadProfileImage = async (userEmail, file) => {
-  const storage = getStorage();
-  const storageRef = ref(storage, `profile_images/${userEmail}/${file.name}`);
-
-  await uploadBytes(storageRef, file);
-
-  const downloadURL = await getDownloadURL(storageRef);
-
-  return downloadURL;
-};
-
-const getDefaultProfileImage = async () => {
-  const storage = getStorage();
-  const storageRef = ref(storage, `profile_images/default/profile.jpeg`);
-  const defaultURL = await getDownloadURL(storageRef);
-
-  return defaultURL;
-};
+import uploadProfileImage from "../utils/uploadProfileImage";
+import getDefaultProfileImage from "../utils/getDefaultProfileImage";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -34,6 +16,7 @@ const SignUp = () => {
   const [errorText, setErrorText] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [defaultImage, setDefaultImage] = useState(true);
 
   useEffect(() => {
     emailInput.current.focus();
@@ -62,6 +45,7 @@ const SignUp = () => {
     } else if (inputName === "profileImage") {
       const file = imageInput.current.files[0];
       setProfileImage(file);
+      setDefaultImage(false);
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -88,13 +72,14 @@ const SignUp = () => {
         const auth = getAuth();
         data = await createUserWithEmailAndPassword(auth, email, password);
 
-        if (profileImage) {
+        if (defaultImage) {
+          await updateProfile(data.user, { displayName: username });
+        } else {
           const photoURL = await uploadProfileImage(data.user.email, profileImage);
           await updateProfile(data.user, { displayName: username, photoURL });
-        } else {
-          await updateProfile(data.user, { displayName: username });
         }
         await setDoc(doc(db, "users", email), { username });
+        alert("회원가입 완료");
         navigate("/", { replace: true });
       }
     } catch (error) {

@@ -16,7 +16,13 @@ import { getAuth } from "firebase/auth";
 
 const New = ({ onCreate }) => {
   const [modal, setModal] = useState(false);
-  const [book, setBook] = useState("");
+  const [book, setBook] = useState({
+    title: "",
+    cover: "",
+    author: "",
+    description: "",
+    isbn13: "",
+  });
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -45,13 +51,15 @@ const New = ({ onCreate }) => {
     e.preventDefault();
     const newItem = {
       id: id.current,
-      book,
+      // id: 1,
       title,
       content,
       date: new Date().getTime(),
       isPrivate,
       like: 0,
       author: auth.currentUser.email,
+      star,
+      book,
     };
     onCreate(newItem);
   };
@@ -119,15 +127,11 @@ const New = ({ onCreate }) => {
       <FormContainer onSubmit={handleSubmit}>
         <HeaderWrapper>
           <BookWrapper>
-            <BookImage
-              src={process.env.PUBLIC_URL + "/images/book.png"}
-              alt=""
-            />
+            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
             <BookInfoSpan>
-              {book ? (
+              {book.title ? (
                 <>
-                  <Book onClick={handleBook}>{book}</Book>에 관련된
-                  독후감입니다.
+                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
                 </>
               ) : (
                 <Book onClick={handleBook}>책을 선택해주세요</Book>
@@ -135,43 +139,18 @@ const New = ({ onCreate }) => {
             </BookInfoSpan>
           </BookWrapper>
           <StarWrapper>
-            <ReactStars
-              count={5}
-              value={star}
-              size={26}
-              half={false}
-              onChange={setStar}
-            />
+            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
           </StarWrapper>
         </HeaderWrapper>
         <HeaderWrapper>
-          <TitleInput
-            name="title"
-            type="text"
-            value={title}
-            onChange={handleInput}
-            placeholder="독후감 제목"
-          />
+          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
           <LabelWrapper htmlFor="isPrivate">
-            <PrivateLabel
-              id="isPrivate"
-              type="checkbox"
-              name="isPrivate"
-              checked={isPrivate}
-              onChange={handleInput}
-            />
+            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
             <PrivateSpan>비공개</PrivateSpan>
           </LabelWrapper>
         </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill
-            ref={quillRef}
-            style={{ height: "800px", width: "1000px" }}
-            modules={modules}
-            theme="snow"
-            onChange={setContent}
-            value={content}
-          />
+          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="저장" type="positive" />
