@@ -2,27 +2,10 @@ import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-
-const uploadProfileImage = async (userEmail, file) => {
-  const storage = getStorage();
-  const storageRef = ref(storage, `profile_images/${userEmail}/${file.name}`);
-
-  await uploadBytes(storageRef, file);
-
-  const downloadURL = await getDownloadURL(storageRef);
-
-  return downloadURL;
-};
+import uploadProfileImage from "../utils/uploadProfileImage";
+import getDefaultProfileImage from "../utils/getDefaultProfileImage";
 
 const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   const [init, setInit] = useState(false);
@@ -52,10 +35,7 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   const handleEdit = async () => {
-    const q = query(
-      collection(db, "users"),
-      where("username", "==", currentUsername)
-    );
+    const q = query(collection(db, "users"), where("username", "==", currentUsername));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       alert("닉네임 중복");
@@ -77,11 +57,13 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => console.log(user));
-    if (email && username && photoURL) {
-      console.log(photoURL);
+    if (email && username) {
       setInit(true);
     }
-  }, [email, username, photoURL]);
+    if (!photoURL) {
+      getDefaultProfileImage().then((res) => setProfileImagePreview(res));
+    }
+  }, []);
 
   return (
     <div>
@@ -92,43 +74,23 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
               <ImagePreview src={profileImagePreview} alt="" />
             </InputLabel>
           </ImageInputWrapper>
-          <StyledInputFile
-            ref={imageInput}
-            id="profileImage"
-            name="profileImage"
-            type="file"
-            accept="image/*"
-            onChange={handleInput}
-          />
+          <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
           <InfoWrapper>
             <div>
               <InfoText>닉네임 :</InfoText>
-              <UsernameInput
-                name="username"
-                type="text"
-                value={currentUsername}
-                onChange={handleInput}
-              />
+              <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />
             </div>
             <div>
               <InfoText>이메일 :</InfoText>
               <InfoText>{email}</InfoText>
             </div>
             <Center>
-              <ChangePasswordLink onClick={handleChangePW}>
-                비밀번호 변경
-              </ChangePasswordLink>
-              <ChangePasswordLink onClick={handleChangePW}>
-                비밀번호 찾기
-              </ChangePasswordLink>
+              <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
+              <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
             </Center>
           </InfoWrapper>
           <BottomWrapper>
-            <MyButton
-              text={"수정 완료"}
-              type={"positive"}
-              onClick={handleEdit}
-            />
+            <MyButton text={"수정 완료"} type={"positive"} onClick={handleEdit} />
           </BottomWrapper>
         </div>
       )}
@@ -157,7 +119,7 @@ const UsernameInput = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #ececec;
+  /* background-color: #ececec; */
 `;
 
 const BottomWrapper = styled.div`
@@ -175,7 +137,7 @@ const ImagePreview = styled.img`
   display: block;
   width: 200px;
   height: 200px;
-  border-radius: 150px;
+  border-radius: 50%;
   &:hover {
     filter: brightness(70%);
   }

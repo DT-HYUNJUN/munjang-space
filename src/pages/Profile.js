@@ -3,9 +3,6 @@ import styled from "styled-components";
 import ChangePassword from "../components/ChangePassword";
 import MyProfile from "../components/MyProfile";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-regular-svg-icons";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Profile = () => {
   const [init, setInit] = useState(false);
@@ -52,24 +49,12 @@ const Container = styled.div`
   margin-left: auto;
   width: 400px;
   height: 600px;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   border-radius: 15px;
-  margin-top: 100px;
+  margin-top: 50px;
   display: flex;
   align-items: center;
   flex-direction: column;
-`;
-
-const EditButton = styled.div`
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-`;
-
-const BackButton = styled.div`
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  left: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  background-color: #ececec;
 `;

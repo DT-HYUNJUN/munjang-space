@@ -1,17 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faExclamationCircle,
-  faSearch,
-  faSpinner,
-  faX,
-} from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle, faSearch, faSpinner, faX } from "@fortawesome/free-solid-svg-icons";
 import getBooks from "../utils/getBooks";
 import Pagination from "react-js-pagination";
 
-const Modal = ({ setModal, setBook }) => {
+const Modal = ({ setModal, setBook, setBookCover }) => {
   const [loading, setLoading] = useState(false);
   const [bookData, setBookData] = useState([]); // api로 받아온 책 리스트
   const [inputTitle, setInputTitle] = useState(""); // 검색할 책
@@ -39,7 +33,7 @@ const Modal = ({ setModal, setBook }) => {
   };
 
   // 검색창 엔터 눌렀을 때
-  const hueji = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(false);
     try {
@@ -55,24 +49,24 @@ const Modal = ({ setModal, setBook }) => {
   };
 
   // 검색한 책 클릭 이벤트
-  const handleClickBook = (title) => {
-    setBook(title);
+  const handleClickBook = (title, cover, description, author, isbn13) => {
+    setBook({
+      title,
+      cover,
+      description,
+      author,
+      isbn13,
+    });
     setModal(false);
   };
 
   return (
     <Container>
       <CloseButton onClick={closeModal}>
-        <FontAwesomeIcon icon={faX} />
+        <FontAwesomeIcon icon={faX} size="xl" />
       </CloseButton>
-      <FormWrapper onSubmit={hueji}>
-        <TitleInput
-          type="text"
-          id="searchTitle"
-          onChange={handleInput}
-          placeholder="책 이름 검색"
-          required
-        />
+      <FormWrapper onSubmit={handleSubmit}>
+        <TitleInput type="text" id="searchTitle" onChange={handleInput} placeholder="책 이름 검색" required />
         <TitleInputButton type="submit">
           <FontAwesomeIcon icon={faSearch} size="xl" />
         </TitleInputButton>
@@ -94,8 +88,8 @@ const Modal = ({ setModal, setBook }) => {
               ) : (
                 currentPageData.map((it) => (
                   <BookContainer key={it.isbn}>
-                    <BookList onClick={() => handleClickBook(it.title)}>
-                      <img src={it.cover} alt={it.title} />
+                    <BookList onClick={() => handleClickBook(it.title, it.cover, it.description, it.author, it.isbn13)}>
+                      <BookCover src={it.cover} alt={it.title} />
                       <BookDetail>
                         <BookTitle>{it.title}</BookTitle>
                         <BookAuthor>{it.author}</BookAuthor>
@@ -107,15 +101,7 @@ const Modal = ({ setModal, setBook }) => {
               )}
             </BookEntire>
             {currentPageData.length !== 0 && (
-              <Pagination
-                activePage={page}
-                itemsCountPerPage={5}
-                totalItemsCount={bookData.length}
-                pageRangeDisplayed={5}
-                prevPageText={"<"}
-                nextPageText={">"}
-                onChange={handlePageChange}
-              />
+              <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={bookData.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChange} />
             )}
           </div>
         )}
@@ -143,7 +129,8 @@ const Container = styled.div`
   border-radius: 8px;
 
   background-color: #ececec;
-  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.35);
+  /* box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.35); */
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 `;
 
 const CloseButton = styled.button`
@@ -198,9 +185,11 @@ const LoadingWrapper = styled.div`
 
 const BookList = styled.div`
   display: flex;
-
   margin-left: 10px;
   padding: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const BookDetail = styled.div`
@@ -212,9 +201,6 @@ const BookDetail = styled.div`
 const BookTitle = styled.p`
   font-weight: bold;
   font-size: 25px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const BookAuthor = styled.p`
@@ -242,4 +228,8 @@ const BookContainer = styled.div`
   &:hover {
     filter: brightness(90%);
   }
+`;
+
+const BookCover = styled.img`
+  width: 85px;
 `;
