@@ -277,7 +277,7 @@ function App() {
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/book" element={<Book />} />
+          <Route path="/book/:isbn13" element={<Book />} />
           <Route path="/list" element={<List reportList={reportList} />} />
           <Route path="/report/:id" element={<Report reportList={reportList} />} />
           <Route path="/new" element={<New onCreate={onCreate} />} />
