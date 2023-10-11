@@ -267,13 +267,17 @@ function App() {
 
   const onCreate = async (report) => {
     try {
-      const docRef = doc(collection(db, "reports", report.author, "books"), `${report.id}`);
+      const docRef = doc(
+        collection(db, "reports", report.author, "books"),
+        `${report.id}`
+      );
       await setDoc(docRef, report);
       alert("작성 완료");
     } catch (error) {
       console.log(error);
     }
   };
+
 
   // const loadData = async (author) => {
   //   try {
@@ -288,6 +292,7 @@ function App() {
   //   } catch (error) {}
   // };
 
+
   return (
     <BrowserRouter>
       <MyHeader IsLogin={IsLogin} />
@@ -301,8 +306,10 @@ function App() {
 
           <Route path="/book/:isbn13" element={<Book />} />
           <Route path="/list" element={<List reportList={testData} />} />
+
           <Route path="/report/:id" element={<Report reportList={testData} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} />} />
+
           <Route path="/edit" element={<Edit />} />
 
           <Route path="/statistics" element={<Statistics />} />
