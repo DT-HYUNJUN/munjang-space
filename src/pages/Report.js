@@ -6,16 +6,23 @@ import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
+import { collection, doc, getDoc } from "firebase/firestore";
+import { db } from "../fbase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const Report = ({ reportList, userInfo }) => {
+const Report = ({ reportList, onLike, userInfo }) => {
   const [report, setReport] = useState({});
   const [like, setLike] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
+  const auth = getAuth();
 
   useEffect(() => {
     if (reportList.length > 0) {
-      const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
+      const targetReport = reportList.find(
+        (it) => parseInt(it.id) === parseInt(id)
+      );
       if (targetReport) {
         setReport(targetReport);
       }
@@ -30,9 +37,33 @@ const Report = ({ reportList, userInfo }) => {
     navigate(`/book/${isbn13}`);
   };
 
-  const handleClickLike = () => {
+  const handleClickLike = (author, id) => {
     setLike((prev) => !prev);
+    onLike(author, id);
   };
+
+  // const loadLike = async (email) => {
+  //   console.log(email);
+  //   const documentRef = doc(
+  //     db,
+  //     "reports",
+  //     report.author,
+  //     "books",
+  //     id,
+  //     "likeList",
+  //     email
+  //   );
+  //   console.log(documentRef);
+  //   const document = await getDoc(documentRef);
+  //   document.data() ? setLike(true) : setLike(false);
+  // };
+
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     setUserEmail(user.email);
+  //     loadLike(userEmail);
+  //   });
+  // }, []);
 
   if (!report.book) {
     return <Container>loading</Container>;
@@ -46,13 +77,22 @@ const Report = ({ reportList, userInfo }) => {
               <ProfileImage src={userInfo.photoURL} alt={report.author} />
               <span>{report.author}</span>
               <span>·</span>
-              <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
-              {report.isPrivate ? null : <span>비공개</span>}
+              <span>
+                {new Date(parseInt(report.date)).toLocaleDateString()}
+              </span>
+              {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
-            <MyButton text={"수정하기"} type={"positive"} onClick={handleClickEdit} />
+            <MyButton
+              text={"수정하기"}
+              type={"positive"}
+              onClick={handleClickEdit}
+            />
           </SubTitle>
           <BookWrapper style={{ position: "relative" }}>
-            <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
+            <BookBackground
+              backgroundimage={report.book.cover}
+              onClick={() => handleClickBook(report.book.isbn13)}
+            ></BookBackground>
             <BookInfo>
               <BookTitle>{report.book.title}</BookTitle>
               <BookDescription>{report.book.description}</BookDescription>
@@ -66,7 +106,7 @@ const Report = ({ reportList, userInfo }) => {
             __html: DOMPurify.sanitize(report.content),
           }}
         ></Content>
-        <Like onClick={handleClickLike}>
+        <Like onClick={() => handleClickLike(report.author, report.id)}>
           <FontAwesomeIcon icon={like ? faHeartFill : faHeart} color="red" />
           {like ? report.like : "좋아요"}
         </Like>
@@ -128,19 +168,21 @@ const BookBackground = styled.div`
   background-position: center center;
   width: 100%;
   height: 100%;
-  opacity: 0.3;
+  opacity: 0.2;
   filter: blur(32px);
   z-index: 2;
   overflow: hidden;
 `;
 
 const BookInfo = styled.div`
+  font-family: "KyoboHandwriting2021sjy";
   background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 40px;
+  gap: 10px;
   /* backdrop-filter: blur(100px) brightness(150%); */
 `;
 
@@ -158,7 +200,7 @@ const UserAndDate = styled.div`
   color: gray;
   font-style: italic;
   display: flex;
-  gap: 5px;
+  gap: 15px;
 `;
 
 const ProfileImage = styled.img`
@@ -168,18 +210,19 @@ const ProfileImage = styled.img`
   border-radius: 50%;
 `;
 
-const BookDescription = styled.p`
+const BookDescription = styled.span`
   color: #6f6f6f;
-  font-size: 12px;
+  font-size: 16px;
+  line-height: 1.5;
 `;
 
-const BookTitle = styled.p`
+const BookTitle = styled.span`
   font-weight: bolder;
-  font-size: 18px;
+  font-size: 24px;
 `;
 
-const BookAuthor = styled.p`
-  font-size: 12px;
+const BookAuthor = styled.span`
+  font-size: 16px;
 `;
 
 const SubTitle = styled.div`

@@ -9,6 +9,7 @@ import { ImageResize } from "quill-image-resize-module-react";
 import ReactStars from "react-stars";
 import Modal from "../components/Modal";
 import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 // if (typeof Quill === "object") {
 //   Quill.register("modules/ImageResize", ImageResize);
@@ -30,6 +31,8 @@ const New = ({ onCreate, reportCount }) => {
   const auth = getAuth();
 
   const quillRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -60,6 +63,8 @@ const New = ({ onCreate, reportCount }) => {
       book,
     };
     onCreate(newItem);
+    alert("작성 완료");
+    navigate(`/report/${reportCount}`, { replace: true });
   };
 
   const imageHandler = () => {

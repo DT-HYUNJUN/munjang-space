@@ -79,6 +79,7 @@ const SignUp = () => {
           await updateProfile(data.user, { displayName: username, photoURL });
         }
         await setDoc(doc(db, "users", email), { username });
+        await setDoc(doc(db, "reports", email), { username });
         alert("회원가입 완료");
         navigate("/", { replace: true });
       }

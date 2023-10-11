@@ -10,18 +10,6 @@ const MyHeader = ({ IsLogin }) => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setIsLogin(true);
-  //       localStorage.setItem("isLogin", true);
-  //     } else {
-  //       setIsLogin(false);
-  //       localStorage.setItem("isLogin", false);
-  //     }
-  //   });
-  // }, []);
-
   const onLogOutClick = () => {
     signOut(auth);
     navigate("/");
@@ -32,7 +20,7 @@ const MyHeader = ({ IsLogin }) => {
       <div className="LeftHeader">
         <NavLink to="/">
           <div className="Logo">
-            <img className="logoImg" src={process.env.PUBLIC_URL + "images/dog.png"} alt="logoImg" />
+            <img className="logoImg" src={process.env.PUBLIC_URL + "/images/dog.png"} alt="logoImg" />
             <h2>문장의 공간</h2>
           </div>
         </NavLink>
