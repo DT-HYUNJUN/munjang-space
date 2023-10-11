@@ -244,7 +244,10 @@ function App() {
 
   const onCreate = async (report) => {
     try {
-      const docRef = doc(collection(db, "reports", report.author, "books"), `${report.id}`);
+      const docRef = doc(
+        collection(db, "reports", report.author, "books"),
+        `${report.id}`
+      );
       await setDoc(docRef, report);
       alert("작성 완료");
     } catch (error) {
@@ -254,7 +257,9 @@ function App() {
 
   const loadData = async (author) => {
     try {
-      const querySnapShot = await getDocs(collection(db, "reports", author, "books"));
+      const querySnapShot = await getDocs(
+        collection(db, "reports", author, "books")
+      );
       const reports = [];
       querySnapShot.forEach((doc) => {
         if (doc.exists()) {
@@ -278,8 +283,11 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/book/:isbn13" element={<Book />} />
-          <Route path="/list" element={<List reportList={reportList} />} />
-          <Route path="/report/:id" element={<Report reportList={reportList} />} />
+          <Route path="/list" element={<List reportList={testData} />} />
+          <Route
+            path="/report/:id"
+            element={<Report reportList={testData} />}
+          />
           <Route path="/new" element={<New onCreate={onCreate} />} />
           <Route path="/edit" element={<Edit />} />
 
