@@ -14,7 +14,7 @@ import { getAuth } from "firebase/auth";
 //   Quill.register("modules/ImageResize", ImageResize);
 // }
 
-const New = ({ onCreate }) => {
+const New = ({ onCreate, reportCount }) => {
   const [modal, setModal] = useState(false);
   const [book, setBook] = useState({
     title: "",
@@ -29,7 +29,6 @@ const New = ({ onCreate }) => {
   const [star, setStar] = useState(3);
   const auth = getAuth();
 
-  const id = useRef(0);
   const quillRef = useRef(null);
 
   const handleInput = (e) => {
@@ -50,8 +49,7 @@ const New = ({ onCreate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newItem = {
-      id: id.current,
-      // id: 1,
+      id: reportCount,
       title,
       content,
       date: new Date().getTime(),

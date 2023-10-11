@@ -17,8 +17,9 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 
 import { db } from "./fbase";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import getDefaultProfileImage from "./utils/getDefaultProfileImage";
 
 const dummyData = [
   {
@@ -221,25 +222,47 @@ function App() {
   const [userInfo, setUserInfo] = useState({});
   const [reportList, setReportList] = useState(dummyData);
   const [testData, setTestData] = useState([]);
+  const [reportCount, setReportCount] = useState(0);
   const auth = getAuth();
 
   useEffect(() => {
+    let unSubscribe;
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log(user);
         setIsLogin(true);
-        loadData(user.email);
-        setUserInfo({
-          email: user.email,
-          photoURL: user.photoURL,
-          nickname: user.displayName,
+        // loadData(user.email);
+        unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
+          const data = [];
+          querySnapShot.forEach((doc) => {
+            data.push(doc.data());
+          });
+          setTestData(data);
+          setReportCount(data.length);
         });
+        if (user.photoURL) {
+          setUserInfo({
+            email: user.email,
+            photoURL: user.photoURL,
+            nickname: user.displayName,
+          });
+        } else {
+          getDefaultProfileImage().then((res) =>
+            setUserInfo({
+              email: user.email,
+              photoURL: res,
+              nickname: user.displayName,
+            })
+          );
+        }
+
         localStorage.setItem("isLogin", true);
       } else {
         setIsLogin(false);
         localStorage.setItem("isLogin", false);
       }
     });
+    return () => unSubscribe();
   }, []);
 
   const onCreate = async (report) => {
@@ -255,21 +278,20 @@ function App() {
     }
   };
 
-  const loadData = async (author) => {
-    try {
-      const querySnapShot = await getDocs(
-        collection(db, "reports", author, "books")
-      );
-      const reports = [];
-      querySnapShot.forEach((doc) => {
-        if (doc.exists()) {
-          reports.push(doc.data());
-        }
-      });
-      console.log(reports);
-      setTestData([...reports]);
-    } catch (error) {}
-  };
+
+  // const loadData = async (author) => {
+  //   try {
+  //     const querySnapShot = await getDocs(collection(db, "reports", author, "books"));
+  //     const reports = [];
+  //     querySnapShot.forEach((doc) => {
+  //       if (doc.exists()) {
+  //         reports.push(doc.data());
+  //       }
+  //     });
+  //     setTestData([...reports]);
+  //   } catch (error) {}
+  // };
+
 
   return (
     <BrowserRouter>
@@ -284,11 +306,10 @@ function App() {
 
           <Route path="/book/:isbn13" element={<Book />} />
           <Route path="/list" element={<List reportList={testData} />} />
-          <Route
-            path="/report/:id"
-            element={<Report reportList={testData} />}
-          />
-          <Route path="/new" element={<New onCreate={onCreate} />} />
+
+          <Route path="/report/:id" element={<Report reportList={testData} userInfo={userInfo} />} />
+          <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} />} />
+
           <Route path="/edit" element={<Edit />} />
 
           <Route path="/statistics" element={<Statistics />} />
