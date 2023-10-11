@@ -99,13 +99,13 @@ const SignUp = () => {
         </ImageInputWrapper>
         <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
         <Label htmlFor="email">이메일 *</Label>
-        <StyledInput id="email" ref={emailInput} onChange={handleInput} name="email" value={email} type="email" required />
+        <StyledInput id="email" ref={emailInput} onChange={handleInput} name="email" value={email} type="email" required placeholder="Email" />
         <Label htmlFor="password">비밀번호 *</Label>
-        <StyledInput id="password" onChange={handleInput} name="password" value={password} type="password" required />
+        <StyledInput id="password" onChange={handleInput} name="password" value={password} type="password" required placeholder="Password" />
         <Label htmlFor="passwordCheck">비밀번호 확인 *</Label>
-        <StyledInput id="passwordCheck" onChange={handleInput} name="passwordCheck" value={passwordCheck} type="password" required />
+        <StyledInput id="passwordCheck" onChange={handleInput} name="passwordCheck" value={passwordCheck} type="password" required placeholder="Password Check" />
         <Label htmlFor="username">닉네임 *</Label>
-        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" required />
+        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" required placeholder="Nickname" />
         <MyButton text={"회원가입"} type={"positive"} />
         {errorText && <p>{errorText}</p>}
       </FormContainer>

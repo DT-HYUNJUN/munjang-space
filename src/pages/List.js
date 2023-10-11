@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
@@ -66,7 +66,7 @@ const List = ({ reportList }) => {
 
     const sortedList = filterdStarList.sort(compare);
 
-    const filterPrivateList = filterPrivate === "true" ? sortedList.filter((it) => it.isPrivate === true) : sortedList.filter((it) => it.isPrivate === false);
+    const filterPrivateList = filterPrivate === "true" ? sortedList.filter((it) => it.isPrivate === false) : sortedList.filter((it) => it.isPrivate === true);
 
     return filterPrivateList;
   };

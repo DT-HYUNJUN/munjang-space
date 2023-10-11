@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
@@ -55,8 +55,8 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => console.log(user));
+    // const auth = getAuth();
+    // onAuthStateChanged(auth, (user) => console.log(user));
     if (email && username) {
       setInit(true);
     }
