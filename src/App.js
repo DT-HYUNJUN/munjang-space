@@ -17,7 +17,13 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 
 import { db } from "./fbase";
-import { collection, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import getDefaultProfileImage from "./utils/getDefaultProfileImage";
 
@@ -229,17 +235,20 @@ function App() {
     let unSubscribe;
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
+        // console.log(user);
         setIsLogin(true);
         // loadData(user.email);
-        unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
-          const data = [];
-          querySnapShot.forEach((doc) => {
-            data.push(doc.data());
-          });
-          setTestData(data);
-          setReportCount(data.length);
-        });
+        unSubscribe = onSnapshot(
+          collection(db, "reports", user.email, "books"),
+          (querySnapShot) => {
+            const data = [];
+            querySnapShot.forEach((doc) => {
+              data.push(doc.data());
+            });
+            setTestData(data);
+            setReportCount(data.length);
+          }
+        );
         if (user.photoURL) {
           setUserInfo({
             email: user.email,
@@ -278,7 +287,6 @@ function App() {
     }
   };
 
-
   // const loadData = async (author) => {
   //   try {
   //     const querySnapShot = await getDocs(collection(db, "reports", author, "books"));
@@ -291,7 +299,6 @@ function App() {
   //     setTestData([...reports]);
   //   } catch (error) {}
   // };
-
 
   return (
     <BrowserRouter>
@@ -307,8 +314,14 @@ function App() {
           <Route path="/book/:isbn13" element={<Book />} />
           <Route path="/list" element={<List reportList={testData} />} />
 
-          <Route path="/report/:id" element={<Report reportList={testData} userInfo={userInfo} />} />
-          <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} />} />
+          <Route
+            path="/report/:id"
+            element={<Report reportList={testData} userInfo={userInfo} />}
+          />
+          <Route
+            path="/new"
+            element={<New onCreate={onCreate} reportCount={reportCount} />}
+          />
 
           <Route path="/edit" element={<Edit />} />
 
