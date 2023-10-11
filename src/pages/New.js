@@ -9,7 +9,7 @@ import { ImageResize } from "quill-image-resize-module-react";
 import ReactStars from "react-stars";
 import Modal from "../components/Modal";
 import { getAuth } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // if (typeof Quill === "object") {
 //   Quill.register("modules/ImageResize", ImageResize);
@@ -125,16 +125,27 @@ const New = ({ onCreate, reportCount }) => {
     };
   }, []);
 
+  const { state } = useLocation();
+  useEffect(() => {
+    if (state) {
+      setBook(state);
+    }
+  }, [state]);
+
   return (
     <div>
       <FormContainer onSubmit={handleSubmit}>
         <HeaderWrapper>
           <BookWrapper>
-            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
+            <BookImage
+              src={process.env.PUBLIC_URL + "/images/book.png"}
+              alt=""
+            />
             <BookInfoSpan>
               {book.title ? (
                 <>
-                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
+                  <Book onClick={handleBook}>{book.title}</Book>에 관련된
+                  독후감입니다.
                 </>
               ) : (
                 <Book onClick={handleBook}>책을 선택해주세요</Book>
@@ -142,18 +153,43 @@ const New = ({ onCreate, reportCount }) => {
             </BookInfoSpan>
           </BookWrapper>
           <StarWrapper>
-            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
+            <ReactStars
+              count={5}
+              value={star}
+              size={26}
+              half={false}
+              onChange={setStar}
+            />
           </StarWrapper>
         </HeaderWrapper>
         <HeaderWrapper>
-          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
+          <TitleInput
+            name="title"
+            type="text"
+            value={title}
+            onChange={handleInput}
+            placeholder="독후감 제목"
+          />
           <LabelWrapper htmlFor="isPrivate">
-            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+            <PrivateLabel
+              id="isPrivate"
+              type="checkbox"
+              name="isPrivate"
+              checked={isPrivate}
+              onChange={handleInput}
+            />
             <PrivateSpan>비공개</PrivateSpan>
           </LabelWrapper>
         </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+          <ReactQuill
+            ref={quillRef}
+            style={{ height: "800px", width: "1000px" }}
+            modules={modules}
+            theme="snow"
+            onChange={setContent}
+            value={content}
+          />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="저장" type="positive" />

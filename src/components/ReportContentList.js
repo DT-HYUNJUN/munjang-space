@@ -35,9 +35,10 @@ const ReportContentList = ({ reportList }) => {
                 <ReportTitle>독후감 제목: {item.title}</ReportTitle>
                 <ReportRemain>
                   <p>책 제목: {item.book.title}</p>
-                  <p>공개 여부: {item.isPrivate ? "참" : "거짓"}</p>
+                  <p>공개 여부: {item.isPrivate ? "비공개" : "공개"}</p>
                   <ReportRating>
-                    별점 : <ReactStars value={item.star} edit={false} size={24} />
+                    별점 :{" "}
+                    <ReactStars value={item.star} edit={false} size={24} />
                   </ReportRating>
                   <p>
                     작성 날:
@@ -48,12 +49,24 @@ const ReportContentList = ({ reportList }) => {
             </ImageContent>
 
             <EditButton>
-              <MyButton text={"수정하기"} type={"negative"} onClick={() => navigate("/edit")} />
+              <MyButton
+                text={"수정하기"}
+                type={"negative"}
+                onClick={() => navigate("/edit")}
+              />
             </EditButton>
           </ReportContent>
         ))}
         {currentPageData.length !== 0 && (
-          <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={reportList.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChage} />
+          <Pagination
+            activePage={page}
+            itemsCountPerPage={5}
+            totalItemsCount={reportList.length}
+            pageRangeDisplayed={5}
+            prevPageText={"<"}
+            nextPageText={">"}
+            onChange={handlePageChage}
+          />
         )}
       </div>
     </div>

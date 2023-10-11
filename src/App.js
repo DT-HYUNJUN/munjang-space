@@ -371,7 +371,6 @@ function App() {
     const isbn13 = "9791192908236";
     getBookReports(isbn13);
   }, []);
-
   return (
     <BrowserRouter>
       <MyHeader IsLogin={IsLogin} />
@@ -395,6 +394,7 @@ function App() {
                 userInfo={userInfo}
               />
             }
+
           />
           <Route
             path="/new"
