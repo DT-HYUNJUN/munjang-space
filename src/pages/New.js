@@ -9,7 +9,7 @@ import { ImageResize } from "quill-image-resize-module-react";
 import ReactStars from "react-stars";
 import Modal from "../components/Modal";
 import { getAuth } from "firebase/auth";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // if (typeof Quill === "object") {
 //   Quill.register("modules/ImageResize", ImageResize);
