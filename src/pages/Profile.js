@@ -31,9 +31,18 @@ const Profile = () => {
     init && (
       <Container>
         {isChangePW ? (
-          <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
+          <ChangePassword
+            email={email}
+            setIsChangePW={setIsChangePW}
+            handleChangePW={handleChangePW}
+          />
         ) : (
-          <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} />
+          <MyProfile
+            email={email}
+            username={username}
+            photoURL={photoURL}
+            handleChangePW={handleChangePW}
+          />
         )}
       </Container>
     )
@@ -55,6 +64,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  // box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: #ececec;
 `;
