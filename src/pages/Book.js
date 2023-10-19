@@ -27,12 +27,6 @@ const Book = () => {
   // 데이터에 값이 있으면 -> 렌더링
   // 데이터에 값이 없으면 -> loading
 
-  // const handleBookClick = () => {
-  //   const updateTitle = data.title;
-  //   setBookTitle(updateTitle);
-  //   console.log(updateTitle);
-  // };
-
   const handleBookClick = (title, cover, author, description, isbn13) => {
     setBookTitle(title);
     navigate("/new", {
