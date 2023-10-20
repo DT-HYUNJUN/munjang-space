@@ -291,12 +291,10 @@ function App() {
     }
   };
 
-  const onEdit = async (id, likeCount) => {
+  const onEdit = async (id, report) => {
     try {
       const targetReportRef = doc(db, "reports", userInfo.email, "books", id);
-      await updateDoc(targetReportRef, {
-        like: likeCount,
-      });
+      await setDoc(targetReportRef, report);
     } catch (error) {
       console.log(error);
     }
@@ -394,14 +392,13 @@ function App() {
                 userInfo={userInfo}
               />
             }
-
           />
           <Route
             path="/new"
             element={<New onCreate={onCreate} reportCount={reportCount} />}
           />
 
-          <Route path="/edit" element={<Edit />} />
+          <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
           <Route path="/statistics" element={<Statistics />} />
         </Routes>
