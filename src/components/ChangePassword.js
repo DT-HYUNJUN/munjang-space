@@ -1,4 +1,8 @@
-import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  updatePassword,
+} from "firebase/auth";
 import { useState } from "react";
 import styled from "styled-components";
 import MyButton from "./MyButton";
@@ -6,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(true);
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordCheck, setNewPasswordCheck] = useState("");
@@ -60,14 +64,34 @@ const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
       {isCorrect ? (
         <PasswordForm onSubmit={handleChangePassword}>
           <label htmlFor="newPassword">새 비밀번호</label>
-          <Input id="newPassword" name="newPassword" type="password" value={newPassword} onChange={handleInput} placeholder="새 비밀번호" />
+          <Input
+            id="newPassword"
+            name="newPassword"
+            type="password"
+            value={newPassword}
+            onChange={handleInput}
+            placeholder="새 비밀번호"
+          />
           <label htmlFor="newPasswordCheck">새 비밀번호 확인</label>
-          <Input id="newPasswordCheck" name="newPasswordCheck" type="password" value={newPasswordCheck} onChange={handleInput} placeholder="새 비밀번호 확인" />
+          <Input
+            id="newPasswordCheck"
+            name="newPasswordCheck"
+            type="password"
+            value={newPasswordCheck}
+            onChange={handleInput}
+            placeholder="새 비밀번호 확인"
+          />
           <MyButton text={"비밀번호 변경"} type={"positive"} />
         </PasswordForm>
       ) : (
         <PasswordForm onSubmit={handleSubmit}>
-          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="현재 비밀번호" />
+          <Input
+            name="password"
+            type="password"
+            value={password}
+            onChange={handleInput}
+            placeholder="현재 비밀번호"
+          />
           <MyButton text={"비밀번호 확인"} type={"positive"} />
         </PasswordForm>
       )}

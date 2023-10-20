@@ -20,9 +20,7 @@ const Report = ({ reportList, onLike, userInfo }) => {
 
   useEffect(() => {
     if (reportList.length > 0) {
-      const targetReport = reportList.find(
-        (it) => parseInt(it.id) === parseInt(id)
-      );
+      const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
       if (targetReport) {
         setReport(targetReport);
       }
@@ -75,24 +73,18 @@ const Report = ({ reportList, onLike, userInfo }) => {
           <SubTitle>
             <UserAndDate>
               <ProfileImage src={userInfo.photoURL} alt={report.author} />
-              <span>{report.author}</span>
+              <Author>
+                <span>{report.username}</span>
+                <span>({report.author})</span>
+              </Author>
               <span>·</span>
-              <span>
-                {new Date(parseInt(report.date)).toLocaleDateString()}
-              </span>
+              <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
-            <MyButton
-              text={"수정하기"}
-              type={"positive"}
-              onClick={handleClickEdit}
-            />
+            <MyButton text={"수정하기"} type={"negative"} onClick={handleClickEdit} />
           </SubTitle>
           <BookWrapper style={{ position: "relative" }}>
-            <BookBackground
-              backgroundimage={report.book.cover}
-              onClick={() => handleClickBook(report.book.isbn13)}
-            ></BookBackground>
+            <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
             <BookInfo>
               <BookTitle>{report.book.title}</BookTitle>
               <BookDescription>{report.book.description}</BookDescription>
@@ -246,4 +238,10 @@ const Like = styled.div`
   cursor: pointer;
   gap: 5px;
   user-select: none;
+`;
+
+const Author = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
 `;
