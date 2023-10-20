@@ -24,6 +24,10 @@ const ReportContentList = ({ reportList }) => {
     navigate(`/report/${id}`);
   };
 
+  const goEdit = (id) => {
+    navigate(`/edit/${id}`);
+  };
+
   return (
     <div>
       <div>
@@ -52,7 +56,7 @@ const ReportContentList = ({ reportList }) => {
               <MyButton
                 text={"수정하기"}
                 type={"negative"}
-                onClick={() => navigate("/edit")}
+                onClick={() => goEdit(item.id)}
               />
             </EditButton>
           </ReportContent>
