@@ -5,12 +5,25 @@ import { useParams, useNavigate } from "react-router-dom";
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
+import {
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "../fbase";
+
 const Book = () => {
   const { isbn13 } = useParams();
 
   const [data, setData] = useState({});
 
   const [bookTitle, setBookTitle] = useState("");
+
+  const [bookReports, setBookReports] = useState([]);
 
   const navigate = useNavigate();
 
@@ -40,6 +53,40 @@ const Book = () => {
     });
   };
 
+  useEffect(() => {
+    getBookReports(isbn13);
+  }, []);
+
+  const getBookReports = async (isbn13) => {
+    const reportsCollectionRef = collection(db, "reports");
+    const allReports = [];
+
+    // 모든 계정을 탐색하기 위한 코드
+    onSnapshot(reportsCollectionRef, (snapshot) => {
+      // 각 계정을 탐색
+      snapshot.docChanges().forEach(async (change) => {
+        // 각 계정에서 변화가 일어날 때 작동하기 위한 조건문
+        if (change.type === "added" || change.type === "modified") {
+          const doc = change.doc;
+
+          // 접근한 계정이 작성한 독후감 경로
+          const booksCollectionRef = collection(doc.ref, "books");
+          const q = query(
+            booksCollectionRef,
+            where("book.isbn13", "==", isbn13)
+          );
+          const booksQuerySnapshot = await getDocs(q);
+
+          booksQuerySnapshot.forEach((bookData) => {
+            allReports.push(bookData.data());
+            console.log(bookData.data());
+          });
+        }
+      });
+    });
+    setBookReports(allReports);
+  };
+
   if (data) {
     return (
       <BookDetailEntire>
@@ -48,6 +95,7 @@ const Book = () => {
           <div>
             <BookTitle>{data.title}</BookTitle>
             <BookAuthor>{data.author}</BookAuthor>
+            <BookCategory>{data.categoryName}</BookCategory>
             <div>
               <MyButton
                 type={"positive"}
@@ -81,15 +129,16 @@ const Book = () => {
 
         <div>
           <ThisReport>이 책의 독후감</ThisReport>
-
-          <BookReport>
-            <p>독후감 제목</p>
-            <p>독후감 내용</p>
-            <div>
-              <hr />
-              <p>작성자</p>
-            </div>
-          </BookReport>
+          {bookReports.map((report) => (
+            <BookReport key={report.id}>
+              <p>{report.title}</p>
+              <p>{report.content}</p>
+              <div>
+                <hr />
+                <p>{report.author}</p>
+              </div>
+            </BookReport>
+          ))}
         </div>
       </BookDetailEntire>
     );
@@ -111,6 +160,7 @@ const BookContent = styled.div`
 
 const BookTitle = styled.p`
   font-size: 35px;
+  font-weight: bold;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -121,13 +171,18 @@ const BookAuthor = styled.p`
   color: gray;
 `;
 
+const BookCategory = styled.p`
+  font-size: 15px;
+  color: gray;
+`;
+
 const BookCover = styled.img`
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   margin-left: 30px;
 `;
 
 const BookIntroduction = styled.h1`
-  border-bottom: 1px solid #e2e2e2;
+  /* border-bottom: 1px solid #e2e2e2; */
 
   margin-bottom: 20px;
   margin-top: 50px;
@@ -139,7 +194,7 @@ const BookIntroductionContent = styled.p`
 `;
 
 const ThisReport = styled.h1`
-  border-bottom: 1px solid #e2e2e2;
+  /* border-bottom: 1px solid #e2e2e2; */
 
   margin-bottom: 20px;
   margin-top: 50px;
