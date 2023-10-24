@@ -1,16 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle, faSearch, faSpinner, faX } from "@fortawesome/free-solid-svg-icons";
-import getBooks from "../utils/getBooks";
+
 import Pagination from "react-js-pagination";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExclamationCircle,
+  faSearch,
+  faSpinner,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
+
+import getBooks from "../utils/getBooks";
+import styled from "styled-components";
 
 const Modal = ({ setModal, setBook, setBookCover }) => {
   const [loading, setLoading] = useState(false);
+
   const [bookData, setBookData] = useState([]); // api로 받아온 책 리스트
+
   const [inputTitle, setInputTitle] = useState(""); // 검색할 책
+
   const [searchComplete, setSearchComplete] = useState(false);
-  // const [chooseBook, setChooseBook] = useState(""); // 고른 책
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -66,7 +76,13 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
         <FontAwesomeIcon icon={faX} size="xl" />
       </CloseButton>
       <FormWrapper onSubmit={handleSubmit}>
-        <TitleInput type="text" id="searchTitle" onChange={handleInput} placeholder="책 이름 검색" required />
+        <TitleInput
+          type="text"
+          id="searchTitle"
+          onChange={handleInput}
+          placeholder="책 이름 검색"
+          required
+        />
         <TitleInputButton type="submit">
           <FontAwesomeIcon icon={faSearch} size="xl" />
         </TitleInputButton>
@@ -88,7 +104,17 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
               ) : (
                 currentPageData.map((it) => (
                   <BookContainer key={it.isbn}>
-                    <BookList onClick={() => handleClickBook(it.title, it.cover, it.description, it.author, it.isbn13)}>
+                    <BookList
+                      onClick={() =>
+                        handleClickBook(
+                          it.title,
+                          it.cover,
+                          it.description,
+                          it.author,
+                          it.isbn13
+                        )
+                      }
+                    >
                       <BookCover src={it.cover} alt={it.title} />
                       <BookDetail>
                         <BookTitle>{it.title}</BookTitle>
@@ -101,7 +127,15 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
               )}
             </BookEntire>
             {currentPageData.length !== 0 && (
-              <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={bookData.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChange} />
+              <Pagination
+                activePage={page}
+                itemsCountPerPage={5}
+                totalItemsCount={bookData.length}
+                pageRangeDisplayed={5}
+                prevPageText={"<"}
+                nextPageText={">"}
+                onChange={handlePageChange}
+              />
             )}
           </div>
         )}

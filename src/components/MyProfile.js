@@ -1,21 +1,57 @@
-import { getAuth, updateProfile } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import MyButton from "./MyButton";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
+import { getAuth, updateProfile, deleteUser } from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../fbase";
+
+import styled from "styled-components";
+
+import MyButton from "./MyButton";
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
 
 const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   const [init, setInit] = useState(false);
+
   const [currentUsername, setCurrentUsername] = useState(username);
+
   const [profileImage, setProfileImage] = useState(photoURL);
   const [profileImagePreview, setProfileImagePreview] = useState(photoURL);
+
   const [changed, setChanged] = useState(false);
 
+  const navigate = useNavigate();
+
   const auth = getAuth();
+
+  // 회원탈퇴 기능
+
+  const handleDeleteUser = () => {
+    const user = auth.currentUser;
+
+    if (user) {
+      user
+        .delete()
+        .then(() => {
+          navigate("/", { replace: true });
+          console.log("회원 탈퇴가 완료됨");
+        })
+        .catch((error) => {
+          console.log("오류가 발생했습니다.");
+        });
+    }
+  };
+
   const imageInput = useRef();
+
   const handleInput = (e) => {
     const name = e.target.name;
     if (name === "username") {
@@ -35,7 +71,10 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   const handleEdit = async () => {
-    const q = query(collection(db, "users"), where("username", "==", currentUsername));
+    const q = query(
+      collection(db, "users"),
+      where("username", "==", currentUsername)
+    );
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       alert("닉네임 중복");
@@ -55,8 +94,6 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   useEffect(() => {
-    // const auth = getAuth();
-    // onAuthStateChanged(auth, (user) => console.log(user));
     if (email && username) {
       setInit(true);
     }
@@ -66,35 +103,59 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   }, []);
 
   return (
-    <div>
-      {init && (
-        <div>
-          <ImageInputWrapper>
-            <InputLabel htmlFor="profileImage">
-              <ImagePreview src={profileImagePreview} alt="" />
-            </InputLabel>
-          </ImageInputWrapper>
-          <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
-          <InfoWrapper>
-            <div>
-              <InfoText>닉네임 :</InfoText>
-              <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />
-            </div>
-            <div>
-              <InfoText>이메일 :</InfoText>
-              <InfoText>{email}</InfoText>
-            </div>
-            <Center>
-              <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
-              <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
-            </Center>
-          </InfoWrapper>
-          <BottomWrapper>
-            <MyButton text={"수정 완료"} type={"positive"} onClick={handleEdit} />
-          </BottomWrapper>
-        </div>
-      )}
-    </div>
+    <>
+      {" "}
+      <div>
+        {init && (
+          <div>
+            <ImageInputWrapper>
+              <InputLabel htmlFor="profileImage">
+                <ImagePreview src={profileImagePreview} alt="" />
+              </InputLabel>
+            </ImageInputWrapper>
+            <StyledInputFile
+              ref={imageInput}
+              id="profileImage"
+              name="profileImage"
+              type="file"
+              accept="image/*"
+              onChange={handleInput}
+            />
+            <InfoWrapper>
+              <div>
+                <InfoText>닉네임 :</InfoText>
+                <UsernameInput
+                  name="username"
+                  type="text"
+                  value={currentUsername}
+                  onChange={handleInput}
+                />
+              </div>
+              <div>
+                <InfoText>이메일 :</InfoText>
+                <InfoText>{email}</InfoText>
+              </div>
+              <Center>
+                <ChangePasswordLink onClick={handleChangePW}>
+                  비밀번호 변경
+                </ChangePasswordLink>
+                <ChangePasswordLink onClick={handleChangePW}>
+                  비밀번호 찾기
+                </ChangePasswordLink>
+              </Center>
+            </InfoWrapper>
+            <BottomWrapper>
+              <MyButton
+                text={"수정 완료"}
+                type={"positive"}
+                onClick={handleEdit}
+              />
+            </BottomWrapper>
+          </div>
+        )}
+      </div>
+      <button onClick={handleDeleteUser}>회원탈퇴</button>
+    </>
   );
 };
 
