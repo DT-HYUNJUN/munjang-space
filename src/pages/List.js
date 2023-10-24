@@ -39,7 +39,7 @@ const ControlMenu = ({ value, onChange, optionList }) => {
   );
 };
 
-const List = ({ reportList }) => {
+const List = ({ reportList, onDelete }) => {
   const navigate = useNavigate();
   const [all, setAll] = useState(false);
 
@@ -116,9 +116,9 @@ const List = ({ reportList }) => {
           />
         </ControlHeader>
         {all ? (
-          <All reportList={getProcessReportList()} />
+          <All reportList={getProcessReportList()} onDelete={onDelete} />
         ) : (
-          <Month reportList={getProcessReportList()} />
+          <Month reportList={getProcessReportList()} onDelete={onDelete} />
         )}
       </div>
     </div>

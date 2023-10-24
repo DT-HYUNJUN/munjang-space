@@ -6,11 +6,11 @@ import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const Report = ({ reportList, onLike, userInfo }) => {
+const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   const [report, setReport] = useState({});
   const [like, setLike] = useState(false);
   const [userEmail, setUserEmail] = useState("");
@@ -23,6 +23,9 @@ const Report = ({ reportList, onLike, userInfo }) => {
       const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
       if (targetReport) {
         setReport(targetReport);
+        onAuthStateChanged(auth, (user) => {
+          loadLike(targetReport.author, user.email);
+        });
       }
     }
   }, [reportList, id]);
@@ -40,28 +43,20 @@ const Report = ({ reportList, onLike, userInfo }) => {
     onLike(author, id);
   };
 
-  // const loadLike = async (email) => {
-  //   console.log(email);
-  //   const documentRef = doc(
-  //     db,
-  //     "reports",
-  //     report.author,
-  //     "books",
-  //     id,
-  //     "likeList",
-  //     email
-  //   );
-  //   console.log(documentRef);
-  //   const document = await getDoc(documentRef);
-  //   document.data() ? setLike(true) : setLike(false);
-  // };
+  const handleClickDelete = (id) => {
+    onDelete(id);
+    navigate("/list", { replace: true });
+  };
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     setUserEmail(user.email);
-  //     loadLike(userEmail);
-  //   });
-  // }, []);
+  const loadLike = async (reportAuthor, email) => {
+    const isLikeRef = doc(db, "reports", reportAuthor, "books", id, "likeList", email);
+    const isLikeDoc = await getDoc(isLikeRef);
+    if (isLikeDoc.data()) {
+      const isLike = isLikeDoc.data().isLike;
+      console.log(isLike);
+      isLike ? setLike(true) : setLike(false);
+    }
+  };
 
   if (!report.book) {
     return <Container>loading</Container>;
@@ -81,7 +76,10 @@ const Report = ({ reportList, onLike, userInfo }) => {
               <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
-            <MyButton text={"수정하기"} type={"negative"} onClick={handleClickEdit} />
+            <ButtonWrapper>
+              <MyButton text={"수정하기"} type={"positive"} onClick={handleClickEdit} />
+              <MyButton text={"삭제하기"} type={"negative"} onClick={() => handleClickDelete(report.id)} />
+            </ButtonWrapper>
           </SubTitle>
           <BookWrapper style={{ position: "relative" }}>
             <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
@@ -244,4 +242,10 @@ const Author = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;

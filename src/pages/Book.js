@@ -5,15 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
-import {
-  doc,
-  getDoc,
-  collection,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { doc, getDoc, collection, onSnapshot, query, where, getDocs } from "firebase/firestore";
 import { db } from "../fbase";
 
 const Book = () => {
@@ -29,6 +21,7 @@ const Book = () => {
 
   useEffect(() => {
     try {
+      getBookReports(isbn13);
       getBooks(isbn13).then((res) => {
         setData(res[0]);
       });
@@ -53,10 +46,6 @@ const Book = () => {
     });
   };
 
-  useEffect(() => {
-    getBookReports(isbn13);
-  }, []);
-
   const getBookReports = async (isbn13) => {
     const reportsCollectionRef = collection(db, "reports");
     const allReports = [];
@@ -71,15 +60,11 @@ const Book = () => {
 
           // 접근한 계정이 작성한 독후감 경로
           const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(
-            booksCollectionRef,
-            where("book.isbn13", "==", isbn13)
-          );
+          const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13));
           const booksQuerySnapshot = await getDocs(q);
 
           booksQuerySnapshot.forEach((bookData) => {
             allReports.push(bookData.data());
-            console.log(bookData.data());
           });
         }
       });
@@ -104,19 +89,7 @@ const Book = () => {
                   window.location.href = data.link;
                 }}
               />
-              <WriteButton
-                onClick={() =>
-                  handleBookClick(
-                    data.title,
-                    data.cover,
-                    data.author,
-                    data.description,
-                    data.isbn13
-                  )
-                }
-              >
-                독후감 작성하기
-              </WriteButton>
+              <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
             </div>
           </div>
         </BookContent>
@@ -132,7 +105,7 @@ const Book = () => {
           {bookReports.map((report) => (
             <BookReport key={report.id}>
               <p>{report.title}</p>
-              <p>{report.content}</p>
+              <p>{report.content.replace(/(<([^>]+)>)/gi, "")}</p>
               <div>
                 <hr />
                 <p>{report.author}</p>
