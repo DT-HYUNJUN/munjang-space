@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -6,7 +7,11 @@ import ChangePassword from "../components/ChangePassword";
 import MyProfile from "../components/MyProfile";
 import MyButton from "../components/MyButton";
 
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const Profile = () => {
   const [init, setInit] = useState(false);
@@ -22,6 +27,8 @@ const Profile = () => {
   const [password, setPassword] = useState("");
 
   const auth = getAuth();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -57,16 +64,53 @@ const Profile = () => {
 
   const handleChangePW = () => setIsChangePW((prev) => !prev);
 
+  // 회원탈퇴 기능
+  const handleDeleteUser = () => {
+    const user = auth.currentUser;
+
+    if (window.confirm("정말 탈퇴 하시겠습니까?")) {
+      if (user) {
+        user
+          .delete()
+          .then(() => {
+            window.alert("회원 탈퇴가 되었습니다.");
+            navigate("/", { replace: true });
+          })
+          .catch((error) => {
+            console.log("오류가 발생했습니다.");
+          });
+      }
+    } else {
+      window.alert("취소 되었습니다.");
+    }
+  };
+
   return (
     init &&
     (isCorrect ? (
-      <Container>
-        {isChangePW ? (
-          <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
-        ) : (
-          <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} />
-        )}
-      </Container>
+      <div>
+        <Container>
+          {isChangePW ? (
+            <ChangePassword
+              email={email}
+              setIsChangePW={setIsChangePW}
+              handleChangePW={handleChangePW}
+            />
+          ) : (
+            <MyProfile
+              email={email}
+              username={username}
+              photoURL={photoURL}
+              handleChangePW={handleChangePW}
+            />
+          )}
+        </Container>
+        <DeleteButton>
+          <DeleteUserButton onClick={handleDeleteUser}>
+            회원탈퇴
+          </DeleteUserButton>
+        </DeleteButton>
+      </div>
     ) : (
       <PasswordCheckContainer>
         <Title>비밀번호 확인</Title>
@@ -75,10 +119,19 @@ const Profile = () => {
             안전한 개인정보 변경을 위해
             <br /> 비밀번호를 다시 입력해주세요.
           </Info>
-          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="비밀번호 입력" />
+          <Input
+            name="password"
+            type="password"
+            value={password}
+            onChange={handleInput}
+            placeholder="비밀번호 입력"
+          />
           <MyButton text={"확인"} type={"positive"} />
         </PasswordForm>
-        <PasswordImage src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"} alt="image" />
+        <PasswordImage
+          src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"}
+          alt="image"
+        />
       </PasswordCheckContainer>
     ))
   );
@@ -93,7 +146,7 @@ const Container = styled.div`
   margin-left: auto;
   width: 400px;
   height: 600px;
-  /* border: 1px solid #ccc; */
+
   border-radius: 15px;
   margin-top: 50px;
   display: flex;
@@ -117,7 +170,6 @@ const Input = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  /* background-color: #ececec; */
 `;
 
 const PasswordCheckContainer = styled.div`
@@ -139,7 +191,7 @@ const Title = styled.div`
 
 const Info = styled.div`
   text-align: center;
-  font-family: "";
+
   color: #8b8b8b;
   font-size: 14px;
   margin-bottom: 20px;
@@ -147,4 +199,32 @@ const Info = styled.div`
 
 const PasswordImage = styled.img`
   width: 600px;
+`;
+
+// 삭제 버튼
+
+const DeleteButton = styled.div`
+  display: grid;
+  place-items: center;
+`;
+
+const DeleteUserButton = styled.button`
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 16px;
+  color: white;
+
+  margin-top: 30px;
+  padding: 10px 15px;
+
+  background-color: #fd565f;
+
+  border: 0;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ff2833;
+    color: white;
+  }
 `;

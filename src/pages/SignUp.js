@@ -2,8 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyButton from "../components/MyButton";
 import styled from "styled-components";
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../fbase";
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
@@ -59,7 +70,10 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const q = query(collection(db, "users"), where("username", "==", username));
+      const q = query(
+        collection(db, "users"),
+        where("username", "==", username)
+      );
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         setErrorText("닉네임 중복");
@@ -75,7 +89,10 @@ const SignUp = () => {
         if (defaultImage) {
           await updateProfile(data.user, { displayName: username });
         } else {
-          const photoURL = await uploadProfileImage(data.user.email, profileImage);
+          const photoURL = await uploadProfileImage(
+            data.user.email,
+            profileImage
+          );
           await updateProfile(data.user, { displayName: username, photoURL });
         }
         await setDoc(doc(db, "users", email), { username });
@@ -98,15 +115,55 @@ const SignUp = () => {
             <ImagePreview src={profileImagePreview} alt="" />
           </InputLabel>
         </ImageInputWrapper>
-        <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
+        <StyledInputFile
+          ref={imageInput}
+          id="profileImage"
+          name="profileImage"
+          type="file"
+          accept="image/*"
+          onChange={handleInput}
+        />
         <Label htmlFor="email">이메일 *</Label>
-        <StyledInput id="email" ref={emailInput} onChange={handleInput} name="email" value={email} type="email" required placeholder="Email" />
+        <StyledInput
+          id="email"
+          ref={emailInput}
+          onChange={handleInput}
+          name="email"
+          value={email}
+          type="email"
+          required
+          placeholder="Email"
+        />
         <Label htmlFor="password">비밀번호 *</Label>
-        <StyledInput id="password" onChange={handleInput} name="password" value={password} type="password" required placeholder="Password" />
+        <StyledInput
+          id="password"
+          onChange={handleInput}
+          name="password"
+          value={password}
+          type="password"
+          required
+          placeholder="Password"
+        />
         <Label htmlFor="passwordCheck">비밀번호 확인 *</Label>
-        <StyledInput id="passwordCheck" onChange={handleInput} name="passwordCheck" value={passwordCheck} type="password" required placeholder="Password Check" />
+        <StyledInput
+          id="passwordCheck"
+          onChange={handleInput}
+          name="passwordCheck"
+          value={passwordCheck}
+          type="password"
+          required
+          placeholder="Password Check"
+        />
         <Label htmlFor="username">닉네임 *</Label>
-        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" required placeholder="Nickname" />
+        <StyledInput
+          id="username"
+          onChange={handleInput}
+          name="username"
+          value={username}
+          type="text"
+          required
+          placeholder="Nickname(5글자)"
+        />
         <MyButton text={"회원가입"} type={"positive"} />
         {errorText && <p>{errorText}</p>}
       </FormContainer>

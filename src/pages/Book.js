@@ -211,7 +211,7 @@ const BookReport = styled.div`
   width: 230px;
   height: 230px;
 
-  // margin-right: 20px;
+  margin-right: 20px;
 
   text-align: center;
 
@@ -240,7 +240,7 @@ const WriteButton = styled.button`
 
 const ThisBookReport = styled.div`
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 `;
 
 const ReportTitle = styled.div`
