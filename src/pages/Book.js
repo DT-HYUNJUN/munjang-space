@@ -5,7 +5,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
-import { doc, getDoc, collection, onSnapshot, query, where, getDocs } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../fbase";
 
 const Book = () => {
@@ -60,16 +68,19 @@ const Book = () => {
 
           // 접근한 계정이 작성한 독후감 경로
           const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13));
+          const q = query(
+            booksCollectionRef,
+            where("book.isbn13", "==", isbn13)
+          );
           const booksQuerySnapshot = await getDocs(q);
 
           booksQuerySnapshot.forEach((bookData) => {
             const bookInfo = bookData.data();
-            const titleOutTags = bookInfo.title.replace(/(<([^>]+)>)/gi, "");
+            const titleOutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
 
             allReports.push({
               id: bookData.id,
-              title: titleOutTags,
+              title: bookInfo.title,
               content: titleOutTags,
               author: bookInfo.author,
             });
@@ -98,7 +109,19 @@ const Book = () => {
                   window.location.href = data.link;
                 }}
               />
-              <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
+              <WriteButton
+                onClick={() =>
+                  handleBookClick(
+                    data.title,
+                    data.cover,
+                    data.author,
+                    data.description,
+                    data.isbn13
+                  )
+                }
+              >
+                독후감 작성하기
+              </WriteButton>
             </div>
           </div>
         </BookContent>
@@ -111,12 +134,12 @@ const Book = () => {
 
         <ThisReport>이 책의 독후감</ThisReport>
         <ThisBookReport>
-          {bookReports.map((report) => (
-            <BookReport key={report.id}>
+          {bookReports.slice(0, 5).map((report, idx) => (
+            <BookReport key={idx}>
               <ReportTitle>{report.title}</ReportTitle>
               <ReportContent>{report.content}</ReportContent>
               <ReportFooter>
-                <img src="" alt="" />
+                <ReportAuthorProfileImage src="" alt="" />
                 <ReportAuthor>{report.author}</ReportAuthor>
               </ReportFooter>
             </BookReport>
@@ -185,10 +208,10 @@ const BookReport = styled.div`
   border: 1px solid yellow;
   border-radius: 15%;
 
-  width: 200px;
-  height: 200px;
+  width: 230px;
+  height: 230px;
 
-  margin-right: 20px;
+  // margin-right: 20px;
 
   text-align: center;
 
@@ -217,20 +240,49 @@ const WriteButton = styled.button`
 
 const ThisBookReport = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
-const ReportTitle = styled.p`
+const ReportTitle = styled.div`
   font-weight: bold;
   font-size: 20px;
+  height: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 10px 14px 0px 14px;
 `;
 
-const ReportContent = styled.p``;
+const ReportContent = styled.div`
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+
+  padding: 10px;
+
+  height: 132px;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+`;
 
 const ReportFooter = styled.div`
-  position: sticky;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  padding-top: 5px;
 `;
 
-const ReportAuthor = styled.p`
+const ReportAuthor = styled.span`
   text-align: center;
   bottom: 0;
+`;
+
+const ReportAuthorProfileImage = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 75px;
 `;

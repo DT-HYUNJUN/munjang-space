@@ -1,19 +1,26 @@
+import { useState } from "react";
+
 import {
   getAuth,
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
-import { useState } from "react";
-import styled from "styled-components";
-import MyButton from "./MyButton";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
+import MyButton from "./MyButton";
+
+import styled from "styled-components";
+
 const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
   const [isCorrect, setIsCorrect] = useState(true);
+
   const [password, setPassword] = useState("");
+
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordCheck, setNewPasswordCheck] = useState("");
+
   const auth = getAuth();
 
   const handleInput = (e) => {

@@ -128,6 +128,7 @@ const List = ({ reportList, onDelete }) => {
 export default List;
 
 const AllButton = styled.button`
+  width: 51.8px;
   margin-right: 15px;
 
   border: 0;
