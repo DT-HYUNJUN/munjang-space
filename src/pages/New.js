@@ -28,6 +28,9 @@ const New = ({ onCreate, reportCount, userInfo }) => {
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [star, setStar] = useState(3);
+
+  const [titleLength, setTitleLength] = useState(0);
+
   const auth = getAuth();
 
   const quillRef = useRef(null);
@@ -40,6 +43,7 @@ const New = ({ onCreate, reportCount, userInfo }) => {
       setIsPrivate(e.target.checked);
     } else if (name === "title") {
       setTitle(e.target.value);
+      setTitleLength(e.target.value.length);
     } else if (name === "star") {
       setStar(e.target.value);
     }
@@ -59,13 +63,14 @@ const New = ({ onCreate, reportCount, userInfo }) => {
       isPrivate,
       like: 0,
       author: auth.currentUser.email,
+      profileImage: userInfo.photoURL,
       username: userInfo.username,
       star,
       book,
     };
     onCreate(newItem);
     alert("작성 완료");
-    navigate(`/report/${reportCount}`, { replace: true });
+    navigate(`/report/${auth.currentUser.email}/${reportCount}`, { replace: true });
   };
 
   const imageHandler = () => {
@@ -154,7 +159,10 @@ const New = ({ onCreate, reportCount, userInfo }) => {
           </StarWrapper>
         </HeaderWrapper>
         <HeaderWrapper>
-          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
+          <TitleInputWrapper>
+            <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
+            <TitleLength>{titleLength}/40</TitleLength>
+          </TitleInputWrapper>
           <LabelWrapper htmlFor="isPrivate">
             <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
             <PrivateSpan>비공개</PrivateSpan>
@@ -221,17 +229,27 @@ const EditorWrapper = styled.div`
   height: 850px;
 `;
 
+const TitleInputWrapper = styled.div`
+  display: flex;
+  border-radius: 5px;
+  align-items: center;
+  background-color: #ececec;
+  padding-right: 5px;
+  flex-grow: 1;
+`;
+
 const TitleInput = styled.input`
-  /* border: 1px solid #ccc; */
   border: 0;
   border-radius: 5px;
   background-color: #ececec;
-  width: 50%;
   height: 38px;
   font-family: "KyoboHandwriting2021sjy";
   font-size: 22px;
   flex-grow: 1;
   padding-left: 8px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const LabelWrapper = styled.label`
@@ -286,3 +304,5 @@ const StarWrapper = styled.div`
   padding-left: 3px;
   padding-right: 3px;
 `;
+
+const TitleLength = styled.span``;
