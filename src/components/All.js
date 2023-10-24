@@ -1,9 +1,9 @@
 import ReportContentList from "./ReportContentList";
 
-const All = ({ reportList }) => {
+const All = ({ reportList, onDelete }) => {
   return (
     <div>
-      <ReportContentList reportList={reportList} />
+      <ReportContentList reportList={reportList} onDelete={onDelete} />
     </div>
   );
 };

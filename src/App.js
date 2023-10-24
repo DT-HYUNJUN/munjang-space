@@ -17,210 +17,13 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 
 import { db } from "./fbase";
-import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import getDefaultProfileImage from "./utils/getDefaultProfileImage";
-
-const dummyData = [
-  {
-    id: 0,
-    title: "0",
-    content: "0",
-    date: 1695463111141,
-    isPrivate: false,
-    star: 1,
-    book: {
-      title: "해리포터",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 1,
-    title: "1",
-    content: "1",
-    date: 1695463111142,
-    isPrivate: false,
-    star: 2,
-    book: {
-      title: "해리포터1",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 2,
-    title: "2",
-    content: "2",
-    date: 1695463111143,
-    isPrivate: false,
-    star: 3,
-    book: {
-      title: "해리포터2",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 3,
-    title: "3",
-    content: "3",
-    date: 1695463111144,
-    isPrivate: false,
-    star: 4,
-    book: {
-      title: "해리포터3",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 4,
-    title: "4",
-    content: "4",
-    date: 1695463111145,
-    isPrivate: true,
-    star: 5,
-    book: {
-      title: "해리포터4",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 5,
-    title: "5",
-    content: "5",
-    date: 1695463111146,
-    isPrivate: true,
-    star: 5,
-    book: {
-      title: "해리포터5",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 6,
-    title: "6",
-    content: "6",
-    date: 1695463111147,
-    isPrivate: true,
-    star: 1,
-    book: {
-      title: "해리포터6",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 7,
-    title: "7",
-    content: "7",
-    date: 1695463111148,
-    isPrivate: false,
-    star: 2,
-    book: {
-      title: "해리포터7",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 8,
-    title: "8",
-    content: "8",
-    date: 1695463111149,
-    isPrivate: true,
-    star: 3,
-    book: {
-      title: "해리포터8",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 9,
-    title: "9",
-    content: "9",
-    date: 1695463111150,
-    isPrivate: false,
-    star: 4,
-    book: {
-      title: "해리포터9",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 10,
-    title: "10",
-    content: "10",
-    date: 1695463111151,
-    isPrivate: true,
-    star: 5,
-    book: {
-      title: "해리포터10",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 11,
-    title: "11",
-    content: "11",
-    date: 1695463111152,
-    isPrivate: false,
-    star: 1,
-    book: {
-      title: "해리포터11",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 12,
-    title: "12",
-    content: "12",
-    date: 1695463111153,
-    isPrivate: true,
-    star: 2,
-    book: {
-      title: "해리포터12",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 13,
-    title: "13",
-    content: "13",
-    date: 1695463111154,
-    isPrivate: false,
-    star: 3,
-    book: {
-      title: "해리포터13",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 14,
-    author: "testUser",
-    title: "14",
-    content: "14",
-    date: 1695463111155,
-    isPrivate: true,
-    star: 4,
-    book: {
-      title: "해리포터14",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-  {
-    id: 15,
-    title: "15",
-    content: "15",
-    date: 1695463111156,
-    isPrivate: false,
-    star: 5,
-    book: {
-      title: "해리포터15",
-      cover: `${process.env.PUBLIC_URL}/images/예시책.jpeg`,
-    },
-  },
-];
 
 function App() {
   const [IsLogin, setIsLogin] = useState(localStorage.getItem("isLogin"));
   const [userInfo, setUserInfo] = useState({});
-  const [reportList, setReportList] = useState(dummyData);
   const [testData, setTestData] = useState([]);
   const [reportCount, setReportCount] = useState(0);
   const auth = getAuth();
@@ -277,8 +80,18 @@ function App() {
 
   const onEdit = async (id, report) => {
     try {
-      const targetReportRef = doc(db, "reports", userInfo.email, "books", id);
-      await setDoc(targetReportRef, report);
+      const editReportRef = doc(db, "reports", userInfo.email, "books", id);
+      await setDoc(editReportRef, report);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onDelete = async (id) => {
+    try {
+      const deleteReportRef = doc(db, "reports", userInfo.email, "books", `${id}`);
+      console.log(deleteReportRef);
+      await deleteDoc(deleteReportRef);
     } catch (error) {
       console.log(error);
     }
@@ -336,10 +149,11 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    const isbn13 = "9791192908236";
-    getBookReports(isbn13);
-  }, []);
+  // useEffect(() => {
+  //   const isbn13 = "9791192908236";
+  //   getBookReports(isbn13);
+  // }, []);
+
   return (
     <BrowserRouter>
       <MyHeader IsLogin={IsLogin} />
@@ -352,9 +166,9 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/book/:isbn13" element={<Book />} />
-          <Route path="/list" element={<List reportList={testData} />} />
+          <Route path="/list" element={<List reportList={testData} onDelete={onDelete} />} />
 
-          <Route path="/report/:id" element={<Report reportList={testData} onLike={onLike} userInfo={userInfo} />} />
+          <Route path="/report/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} />} />
 
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />

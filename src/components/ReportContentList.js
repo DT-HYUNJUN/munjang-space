@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import MyButton from "./MyButton";
 import ReactStars from "react-stars";
 
-const ReportContentList = ({ reportList }) => {
+const ReportContentList = ({ reportList, onDelete }) => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -55,8 +55,13 @@ const ReportContentList = ({ reportList }) => {
             <EditButton>
               <MyButton
                 text={"수정하기"}
-                type={"negative"}
+                type={"positive"}
                 onClick={() => goEdit(item.id)}
+              />
+              <MyButton
+                text={"삭제하기"}
+                type={"negative"}
+                onClick={() => onDelete(item.id)}
               />
             </EditButton>
           </ReportContent>
@@ -124,6 +129,9 @@ const ReportRemain = styled.div`
 
 const EditButton = styled.div`
   margin-top: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   cursor: pointer;
 `;
 
