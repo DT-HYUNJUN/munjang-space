@@ -28,6 +28,9 @@ const Login = () => {
   const [passwordDisplay, setPasswordDisplay] = useState("password");
   const [isPassword, setIsPassword] = useState(false);
 
+  // caps lock 기능
+  const [capsLockFlag, setCapsLockFlag] = useState(false);
+
   useEffect(() => {
     inputRef.current.focus();
   }, []);
@@ -85,6 +88,13 @@ const Login = () => {
     }
   };
 
+  // capsLock
+
+  const checkCapsLock = (e) => {
+    let capsLock = e.getModifierState("CapsLock");
+    setCapsLockFlag(capsLock);
+  };
+
   return (
     <div>
       <div>
@@ -101,6 +111,7 @@ const Login = () => {
             name="userName"
             placeholder="Email"
             id="id_login"
+            onKeyDown={(e) => checkCapsLock(e)}
             onChange={onEmailHandler}
             value={email}
           />
@@ -110,6 +121,7 @@ const Login = () => {
             name="userPassword"
             placeholder="Password"
             id="pw_login"
+            onKeyDown={(e) => checkCapsLock(e)}
             onChange={onPasswordHandler}
             value={password}
           />
@@ -136,6 +148,16 @@ const Login = () => {
             />
             비밀번호 보이기
           </PwSee>
+
+          <CapsLockSpan
+            className={capsLockFlag ? "caps-lock caps-lock-on" : "caps-lock"}
+          >
+            {capsLockFlag ? (
+              <CapsOn>Caps Lock ON</CapsOn>
+            ) : (
+              <CapsOff>Caps Lock Off</CapsOff>
+            )}
+          </CapsLockSpan>
         </CheckBoxStyle>
 
         <MyButton text={"로그인"} type={"positive"} />
@@ -221,9 +243,12 @@ const PwSee = styled.label`
   font-family: "KyoboHandwriting2021sjy";
 
   margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const CheckBoxStyle = styled.div`
+  display: flex;
+  gap: 5px;
   margin-bottom: 10px;
 `;
 
@@ -250,4 +275,26 @@ const KakaoLogin = styled.div`
   margin-top: 15px;
 `;
 
-//
+const CapsLockSpan = styled.span`
+  display: inline-block;
+  vertical-align: baseline;
+
+  font-size: 12px;
+  font-weight: 800;
+  font-family: "UhBeeJJIBBABBA";
+
+  color: white;
+  border-radius: 0.5rem;
+`;
+
+const CapsOn = styled.span`
+  background-color: red;
+  padding-left: 3px;
+  padding-right: 3px;
+`;
+
+const CapsOff = styled.span`
+  background-color: green;
+  padding-left: 3px;
+  padding-right: 3px;
+`;

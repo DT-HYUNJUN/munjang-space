@@ -64,12 +64,21 @@ const Book = () => {
           const booksQuerySnapshot = await getDocs(q);
 
           booksQuerySnapshot.forEach((bookData) => {
-            allReports.push(bookData.data());
+            const bookInfo = bookData.data();
+            const titleOutTags = bookInfo.title.replace(/(<([^>]+)>)/gi, "");
+
+            allReports.push({
+              id: bookData.id,
+              title: titleOutTags,
+              content: titleOutTags,
+              author: bookInfo.author,
+            });
           });
+
+          setBookReports(allReports);
         }
       });
     });
-    setBookReports(allReports);
   };
 
   if (data) {
@@ -100,19 +109,19 @@ const Book = () => {
           <BookIntroductionContent>{data.description}</BookIntroductionContent>
         </div>
 
-        <div>
-          <ThisReport>이 책의 독후감</ThisReport>
+        <ThisReport>이 책의 독후감</ThisReport>
+        <ThisBookReport>
           {bookReports.map((report) => (
             <BookReport key={report.id}>
-              <p>{report.title}</p>
-              <p>{report.content.replace(/(<([^>]+)>)/gi, "")}</p>
-              <div>
-                <hr />
-                <p>{report.author}</p>
-              </div>
+              <ReportTitle>{report.title}</ReportTitle>
+              <ReportContent>{report.content}</ReportContent>
+              <ReportFooter>
+                <img src="" alt="" />
+                <ReportAuthor>{report.author}</ReportAuthor>
+              </ReportFooter>
             </BookReport>
           ))}
-        </div>
+        </ThisBookReport>
       </BookDetailEntire>
     );
   } else {
@@ -174,12 +183,17 @@ const ThisReport = styled.h1`
 `;
 const BookReport = styled.div`
   border: 1px solid yellow;
+  border-radius: 15%;
+
   width: 200px;
   height: 200px;
 
+  margin-right: 20px;
+
   text-align: center;
 
-  background-color: #ffdd3c;
+  background-color: #fffb99;
+  box-shadow: 12px 0px 11px -3px rgba(0, 0, 0, 0.1);
 `;
 
 const WriteButton = styled.button`
@@ -199,4 +213,24 @@ const WriteButton = styled.button`
   &:hover {
     background-color: #f7f25e;
   }
+`;
+
+const ThisBookReport = styled.div`
+  display: flex;
+`;
+
+const ReportTitle = styled.p`
+  font-weight: bold;
+  font-size: 20px;
+`;
+
+const ReportContent = styled.p``;
+
+const ReportFooter = styled.div`
+  position: sticky;
+`;
+
+const ReportAuthor = styled.p`
+  text-align: center;
+  bottom: 0;
 `;
