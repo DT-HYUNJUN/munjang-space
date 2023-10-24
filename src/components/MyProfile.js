@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { getAuth, updateProfile, deleteUser } from "firebase/auth";
 import {
@@ -28,27 +27,7 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
 
   const [changed, setChanged] = useState(false);
 
-  const navigate = useNavigate();
-
   const auth = getAuth();
-
-  // 회원탈퇴 기능
-
-  const handleDeleteUser = () => {
-    const user = auth.currentUser;
-
-    if (user) {
-      user
-        .delete()
-        .then(() => {
-          navigate("/", { replace: true });
-          console.log("회원 탈퇴가 완료됨");
-        })
-        .catch((error) => {
-          console.log("오류가 발생했습니다.");
-        });
-    }
-  };
 
   const imageInput = useRef();
 
@@ -104,7 +83,6 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
 
   return (
     <>
-      {" "}
       <div>
         {init && (
           <div>
@@ -154,7 +132,6 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
           </div>
         )}
       </div>
-      <button onClick={handleDeleteUser}>회원탈퇴</button>
     </>
   );
 };
@@ -219,7 +196,6 @@ const StyledInputFile = styled.input`
 
 const Center = styled.div`
   display: flex;
-  /* text-align: center; */
   justify-content: center;
   gap: 10px;
 `;
