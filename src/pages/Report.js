@@ -81,7 +81,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
           <ReportTitle>{report.title}</ReportTitle>
           <SubTitle>
             <UserAndDate>
-              <ProfileImage src={userInfo.photoURL} alt={report.author} />
+              <ProfileImage src={report.profileImage} alt={report.author} />
               <Author>
                 <span>{report.username}</span>
                 <span>({report.author})</span>
