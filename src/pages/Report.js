@@ -1,34 +1,51 @@
-import DOMPurify from "dompurify";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import styled from "styled-components";
+
 import MyButton from "../components/MyButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import { faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
-import { collection, deleteDoc, doc, getDoc } from "firebase/firestore";
+
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import { faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
+
+import DOMPurify from "dompurify";
 
 const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   const [report, setReport] = useState({});
   const [like, setLike] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const { id } = useParams();
-  const navigate = useNavigate();
   const auth = getAuth();
 
+  const navigate = useNavigate();
+
+  const { email, id } = useParams();
+
   useEffect(() => {
-    if (reportList.length > 0) {
-      const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
-      if (targetReport) {
-        setReport(targetReport);
-        onAuthStateChanged(auth, (user) => {
-          loadLike(targetReport.author, user.email);
-        });
+    onAuthStateChanged(auth, (user) => {
+      if (email === user.email) {
+        if (reportList.length > 0) {
+          const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
+          if (targetReport) {
+            setReport(targetReport);
+            loadLike(targetReport.author, user.email);
+          }
+        }
+      } else {
+        getReport();
+        loadLike(email, user.email);
       }
-    }
-  }, [reportList, id]);
+    });
+  }, []);
+
+  const getReport = async () => {
+    const targetReportRef = doc(db, "reports", email, "books", id);
+    const targetReport = await getDoc(targetReportRef);
+    setReport(targetReport.data());
+  };
 
   const handleClickEdit = () => {
     navigate(`/edit/${id}`);
@@ -53,14 +70,11 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
     const isLikeDoc = await getDoc(isLikeRef);
     if (isLikeDoc.data()) {
       const isLike = isLikeDoc.data().isLike;
-      console.log(isLike);
       isLike ? setLike(true) : setLike(false);
     }
   };
 
-  if (!report.book) {
-    return <Container>loading</Container>;
-  } else {
+  if (report && report.book) {
     return (
       <Container>
         <Header>
@@ -103,6 +117,8 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
         <Footer></Footer>
       </Container>
     );
+  } else {
+    return <Container>loading</Container>;
   }
 };
 
