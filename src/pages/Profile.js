@@ -9,14 +9,18 @@ import MyButton from "../components/MyButton";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
 const Profile = () => {
-  const [isCorrect, setIsCorrect] = useState(false);
   const [init, setInit] = useState(false);
+
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const [isChangePW, setIsChangePW] = useState(false);
+
   const [user, setUser] = useState();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const [isChangePW, setIsChangePW] = useState(false);
   const [password, setPassword] = useState("");
+
   const auth = getAuth();
 
   useEffect(() => {
@@ -44,7 +48,10 @@ const Profile = () => {
         setIsCorrect(true);
       }
     } catch (error) {
-      alert(error.message);
+      if (error.code === "auth/wrong-password") {
+        alert("비밀번호가 일치하지 않습니다.");
+        setPassword("");
+      }
     }
   };
 
@@ -62,13 +69,16 @@ const Profile = () => {
       </Container>
     ) : (
       <PasswordCheckContainer>
-        <Info>비밀번호 확인</Info>
+        <Title>비밀번호 확인</Title>
         <PasswordForm onSubmit={handleSubmit}>
-          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="현재 비밀번호" />
-          <ButtonWrapper>
-            <MyButton text={"비밀번호 확인"} type={"positive"} />
-          </ButtonWrapper>
+          <Info>
+            안전한 개인정보 변경을 위해
+            <br /> 비밀번호를 다시 입력해주세요.
+          </Info>
+          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="비밀번호 입력" />
+          <MyButton text={"확인"} type={"positive"} />
         </PasswordForm>
+        <PasswordImage src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"} alt="image" />
       </PasswordCheckContainer>
     ))
   );
@@ -101,17 +111,16 @@ const PasswordForm = styled.form`
 `;
 
 const Input = styled.input`
-  width: 300px;
+  width: 500px;
   font-size: 24px;
   font-family: "KyoboHandwriting2021sjy";
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #ececec;
+  /* background-color: #ececec; */
 `;
 
 const PasswordCheckContainer = styled.div`
-  background-color: #ececec;
   padding: 40px 0px;
   margin-top: 50px;
   margin-right: 100px;
@@ -119,17 +128,23 @@ const PasswordCheckContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 70px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  border-radius: 15px;
+  gap: 30px;
+`;
+
+const Title = styled.div`
+  font-family: "UhBeeJJIBBABBA";
+  letter-spacing: 4px;
+  font-size: 40px;
 `;
 
 const Info = styled.div`
-  font-weight: bold;
-  font-size: 28px;
+  text-align: center;
+  font-family: "";
+  color: #8b8b8b;
+  font-size: 14px;
+  margin-bottom: 20px;
 `;
 
-const ButtonWrapper = styled.div`
-  text-align: center;
-  width: 300px;
+const PasswordImage = styled.img`
+  width: 600px;
 `;

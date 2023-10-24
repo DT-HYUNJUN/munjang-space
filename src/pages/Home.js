@@ -19,6 +19,8 @@ const Home = () => {
 
   const [likeReports, setLikeReports] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     try {
       getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
@@ -28,8 +30,6 @@ const Home = () => {
       console.log(error);
     }
   }, []);
-
-  const navigate = useNavigate();
 
   const clickBestSellerBook = (isbn13) => {
     navigate(`/book/${isbn13}`);
@@ -45,6 +45,10 @@ const Home = () => {
 
   const handleClickLikeReports = () => {
     getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+  };
+
+  const handleClickReport = (email, id) => {
+    navigate(`/report/${email}/${id}`);
   };
 
   return (
@@ -67,7 +71,7 @@ const Home = () => {
       </BigTitle>
       <BestLikesReport>
         {likeReports.map((it, idx) => (
-          <LikeReport key={idx}>
+          <LikeReport key={idx} onClick={() => handleClickReport(it.author, it.id)}>
             <p>{it.title}</p>
             <p>{it.like}</p>
             <p>{it.content.replace(/(<([^>]+)>)/gi, "")}</p>

@@ -168,7 +168,7 @@ function App() {
           <Route path="/book/:isbn13" element={<Book />} />
           <Route path="/list" element={<List reportList={testData} onDelete={onDelete} />} />
 
-          <Route path="/report/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
+          <Route path="/report/:email/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} />} />
 
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
