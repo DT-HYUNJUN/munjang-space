@@ -26,7 +26,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if (email === user.email) {
+      if (user && email === user.email) {
         if (reportList.length > 0) {
           const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
           if (targetReport) {
@@ -36,10 +36,12 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
         }
       } else {
         getReport();
-        loadLike(email, user.email);
+        if (user) {
+          loadLike(email, user.email);
+        }
       }
     });
-  }, []);
+  }, [email, id, reportList]);
 
   const getReport = async () => {
     const targetReportRef = doc(db, "reports", email, "books", id);

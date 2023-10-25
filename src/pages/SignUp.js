@@ -1,33 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MyButton from "../components/MyButton";
-import styled from "styled-components";
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  updateProfile,
-} from "firebase/auth";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
-import { db } from "../fbase";
+
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
+
+import styled from "styled-components";
+
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { db } from "../fbase";
+
+import MyButton from "../components/MyButton";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [username, setUsername] = useState("");
-  const [errorText, setErrorText] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [defaultImage, setDefaultImage] = useState(true);
+
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordErrorCheck, setPasswordErrorCheck] = useState("");
 
   useEffect(() => {
     emailInput.current.focus();
@@ -70,17 +67,16 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const q = query(
-        collection(db, "users"),
-        where("username", "==", username)
-      );
+      const q = query(collection(db, "users"), where("username", "==", username));
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
-        setErrorText("닉네임 중복");
-      } else if (password !== passwordCheck) {
-        setErrorText("비밀번호가 다릅니다.");
-      } else if (username.length > 5) {
-        setErrorText("닉네임 길이 초과");
+        throw new Error("username-already-in-use");
+      }
+      if (password !== passwordCheck) {
+        throw new Error("password-incorrect");
+      }
+      if (username.length > 5) {
+        throw new Error("username-length");
       } else {
         let data;
         const auth = getAuth();
@@ -89,10 +85,7 @@ const SignUp = () => {
         if (defaultImage) {
           await updateProfile(data.user, { displayName: username });
         } else {
-          const photoURL = await uploadProfileImage(
-            data.user.email,
-            profileImage
-          );
+          const photoURL = await uploadProfileImage(data.user.email, profileImage);
           await updateProfile(data.user, { displayName: username, photoURL });
         }
         await setDoc(doc(db, "users", email), { username });
@@ -101,7 +94,22 @@ const SignUp = () => {
         navigate("/", { replace: true });
       }
     } catch (error) {
-      setErrorText(error.message);
+      if (error.code === "auth/email-already-in-use") {
+        setEmailError("이미 사용 중인 이메일입니다.");
+      }
+      if (error.code === "auth/weak-password") {
+        setPasswordError("");
+      }
+      if (error.message === "username-already-in-use") {
+        setUsernameError("이미 사용 중인 닉네임입니다.");
+      }
+      if (error.message === "password-incorrect") {
+        setPasswordErrorCheck("비밀번호가 일치하지 않습니다.");
+      }
+      if (error.message === "username-length") {
+        setUsernameError("닉네임은 5자까지 설정할 수 있습니다.");
+      }
+      console.log(error.message);
     }
   };
 
@@ -115,57 +123,24 @@ const SignUp = () => {
             <ImagePreview src={profileImagePreview} alt="" />
           </InputLabel>
         </ImageInputWrapper>
-        <StyledInputFile
-          ref={imageInput}
-          id="profileImage"
-          name="profileImage"
-          type="file"
-          accept="image/*"
-          onChange={handleInput}
-        />
-        <Label htmlFor="email">이메일 *</Label>
-        <StyledInput
-          id="email"
-          ref={emailInput}
-          onChange={handleInput}
-          name="email"
-          value={email}
-          type="email"
-          required
-          placeholder="Email"
-        />
-        <Label htmlFor="password">비밀번호 *</Label>
-        <StyledInput
-          id="password"
-          onChange={handleInput}
-          name="password"
-          value={password}
-          type="password"
-          required
-          placeholder="Password"
-        />
-        <Label htmlFor="passwordCheck">비밀번호 확인 *</Label>
-        <StyledInput
-          id="passwordCheck"
-          onChange={handleInput}
-          name="passwordCheck"
-          value={passwordCheck}
-          type="password"
-          required
-          placeholder="Password Check"
-        />
-        <Label htmlFor="username">닉네임 *</Label>
-        <StyledInput
-          id="username"
-          onChange={handleInput}
-          name="username"
-          value={username}
-          type="text"
-          required
-          placeholder="Nickname(5글자)"
-        />
+        <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />
+        <Label htmlFor="email">
+          이메일 *<ErrorText>{emailError}</ErrorText>
+        </Label>
+        <StyledInput id="email" ref={emailInput} onChange={handleInput} name="email" value={email} type="email" required placeholder="Email" />
+        <Label htmlFor="password">
+          비밀번호 *<ErrorText>{passwordError}</ErrorText>
+        </Label>
+        <StyledInput id="password" onChange={handleInput} name="password" value={password} type="password" required placeholder="Password (6글자 이상)" />
+        <Label htmlFor="passwordCheck">
+          비밀번호 확인 *<ErrorText>{passwordErrorCheck}</ErrorText>
+        </Label>
+        <StyledInput id="passwordCheck" onChange={handleInput} name="passwordCheck" value={passwordCheck} type="password" required placeholder="Password Check" />
+        <Label htmlFor="username">
+          닉네임 *<ErrorText>{usernameError}</ErrorText>
+        </Label>
+        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" required placeholder="Nickname (5글자)" />
         <MyButton text={"회원가입"} type={"positive"} />
-        {errorText && <p>{errorText}</p>}
       </FormContainer>
       <StyledImg src={process.env.PUBLIC_URL + "images/login_1.jpeg"} alt="" />
     </div>
@@ -244,4 +219,9 @@ const InputLabel = styled.label`
 const Label = styled.label`
   margin-bottom: 5px;
   font-family: "KyoboHandwriting2021sjy";
+`;
+
+const ErrorText = styled.span`
+  margin-left: 10px;
+  color: red;
 `;

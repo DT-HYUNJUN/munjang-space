@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import listBooks from "../utils/listBooks";
 import newSpecialBook from "../utils/newSpecialBook";
 import getLikeReports from "../utils/getLikeReports";
@@ -9,6 +10,7 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
@@ -70,11 +72,15 @@ const Home = () => {
         </RefreshButton>
       </BigTitle>
       <BestLikesReport>
-        {likeReports.map((it, idx) => (
+        {likeReports.slice(0, 5).map((it, idx) => (
           <LikeReport key={idx} onClick={() => handleClickReport(it.author, it.id)}>
-            <p>{it.title}</p>
-            <p>{it.like}</p>
-            <p>{it.content.replace(/(<([^>]+)>)/gi, "")}</p>
+            <ReportRank>BEST {idx + 1}</ReportRank>
+            <BookCover src={it.book.cover} alt={it.book.title} />
+            <ReportTitle>{it.title}</ReportTitle>
+            <ReportProfile>
+              <ReportAuthorImage src={it.profileImage} alt={it.author} />
+              <ReportAuthor>{it.username}</ReportAuthor>
+            </ReportProfile>
           </LikeReport>
         ))}
       </BestLikesReport>
@@ -134,7 +140,7 @@ const BigTitle = styled.h1`
 
 const BestLikesReport = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 
   margin-bottom: 30px;
@@ -142,7 +148,11 @@ const BestLikesReport = styled.div`
 `;
 
 const LikeReport = styled.div`
+  font-family: "KyoboHandwriting2021sjy";
+  text-align: center;
   border: 1px solid #ccc;
+  border-radius: 15px;
+  padding: 10px;
   cursor: pointer;
 `;
 
@@ -151,4 +161,42 @@ const RefreshButton = styled.span`
   font-size: 16px;
   color: gray;
   cursor: pointer;
+`;
+
+const BookCover = styled.img`
+  width: 150px;
+  border: 0.5px solid #ccc;
+`;
+
+const ReportRank = styled.div`
+  font-size: 24px;
+  font-weight: bold;
+`;
+
+const ReportProfile = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;
+
+const ReportAuthorImage = styled.img`
+  border: 1px solid #ccc;
+  border-radius: 75px;
+  width: 25px;
+  height: 25px;
+`;
+
+const ReportAuthor = styled.div`
+  font-size: 18px;
+`;
+
+const ReportTitle = styled.div`
+  width: 200px;
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
 `;

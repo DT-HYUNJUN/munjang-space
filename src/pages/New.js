@@ -107,6 +107,7 @@ const New = ({ onCreate, reportCount, userInfo }) => {
     return {
       toolbar: {
         container: [
+          [{ font: [] }],
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
           ["bold", "italic", "underline", "strike"],
           ["blockquote"],
@@ -169,7 +170,7 @@ const New = ({ onCreate, reportCount, userInfo }) => {
           </LabelWrapper>
         </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="저장" type="positive" />
