@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { doc, deleteDoc, deleteField, updateDoc } from "firebase/firestore";
+import { db } from "../fbase";
+
 import styled from "styled-components";
 
 import ChangePassword from "../components/ChangePassword";
@@ -65,6 +68,7 @@ const Profile = () => {
   const handleChangePW = () => setIsChangePW((prev) => !prev);
 
   // 회원탈퇴 기능
+
   const handleDeleteUser = () => {
     const user = auth.currentUser;
 
@@ -75,6 +79,7 @@ const Profile = () => {
           .then(() => {
             window.alert("회원 탈퇴가 되었습니다.");
             navigate("/", { replace: true });
+            deleteInformation();
           })
           .catch((error) => {
             console.log("오류가 발생했습니다.");
@@ -84,6 +89,17 @@ const Profile = () => {
       window.alert("취소 되었습니다.");
     }
   };
+
+  async function deleteInformation() {
+    console.log("deleteInformation");
+    const deleteUser = doc(db, "reports", email);
+
+    // reports 문서 삭제 (독후감)
+    await deleteDoc(deleteUser);
+
+    // users 문서 삭제 (닉네임)
+    await deleteDoc(doc(db, "users", email));
+  }
 
   return (
     init &&
