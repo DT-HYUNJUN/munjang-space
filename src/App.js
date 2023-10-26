@@ -230,7 +230,6 @@ function App() {
               />
             }
           />
-
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
           <Route path="/statistics" element={<Statistics />} />

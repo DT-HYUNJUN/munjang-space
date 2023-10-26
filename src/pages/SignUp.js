@@ -22,6 +22,8 @@ import {
 import { db } from "../fbase";
 
 import MyButton from "../components/MyButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -36,6 +38,8 @@ const SignUp = () => {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordErrorCheck, setPasswordErrorCheck] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     emailInput.current.focus();
@@ -77,6 +81,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(false);
     try {
       const q = query(
         collection(db, "users"),
@@ -92,6 +97,7 @@ const SignUp = () => {
       if (username.length > 6) {
         throw new Error("username-length");
       } else {
+        setLoading(true);
         let data;
         const auth = getAuth();
         data = await createUserWithEmailAndPassword(auth, email, password);
@@ -127,10 +133,16 @@ const SignUp = () => {
         setUsernameError("닉네임은 6자까지 설정할 수 있습니다.");
       }
       console.log(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
+  return loading ? (
+    <Loading>
+      <FontAwesomeIcon icon={faSpinner} spin size="4x" />
+    </Loading>
+  ) : (
     <div>
       <FormContainer onSubmit={handleSubmit}>
         <Title>회원가입</Title>
@@ -282,4 +294,11 @@ const Label = styled.label`
 const ErrorText = styled.span`
   margin-left: 10px;
   color: red;
+`;
+
+const Loading = styled.div`
+  display: flex;
+  margin-top: 150px;
+  justify-content: center;
+  align-items: center;
 `;

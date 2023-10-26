@@ -73,7 +73,8 @@ const Home = () => {
       </BigTitle>
       <BestLikesReport>
         {likeReports.slice(0, 5).map((it, idx) => (
-          <LikeReport key={idx} onClick={() => handleClickReport(it.author, it.id)}>
+          <LikeReport key={idx}>
+            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
             <ReportRank>BEST {idx + 1}</ReportRank>
             <BookCover src={it.book.cover} alt={it.book.title} />
             <ReportTitle>{it.title}</ReportTitle>
@@ -149,8 +150,11 @@ const BestLikesReport = styled.div`
 
 const LikeReport = styled.div`
   font-family: "KyoboHandwriting2021sjy";
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
+  box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.06), 2px 2px 10px rgba(0, 0, 0, 0.04);
   border-radius: 15px;
   padding: 10px;
   cursor: pointer;
@@ -199,4 +203,24 @@ const ReportTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 5px;
+`;
+
+const BookBackground = styled.div`
+  cursor: pointer;
+  position: absolute;
+  border-radius: 30px;
+  overflow: hidden;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  background-image: url(${(props) => props.backgroundimage});
+  background-size: cover;
+  background-position: center center;
+  width: 100%;
+  height: 100%;
+  opacity: 0.2;
+  filter: blur(32px);
+  z-index: 2;
+  overflow: hidden;
 `;

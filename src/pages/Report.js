@@ -97,7 +97,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
               <MyButton text={"삭제하기"} type={"negative"} onClick={() => handleClickDelete(report.id)} />
             </ButtonWrapper>
           </SubTitle>
-          <BookWrapper style={{ position: "relative" }}>
+          <BookWrapper>
             <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
             <BookInfo>
               <BookTitle>{report.book.title}</BookTitle>
@@ -157,6 +157,7 @@ const Content = styled.div`
 const Footer = styled.div``;
 
 const BookWrapper = styled.div`
+  position: relative;
   overflow: hidden;
   border-radius: 30px;
   border: 1px solid #ccc;
