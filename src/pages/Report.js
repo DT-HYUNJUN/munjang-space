@@ -116,7 +116,6 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
           <FontAwesomeIcon icon={like ? faHeartFill : faHeart} color="red" />
           {like ? report.like : "좋아요"}
         </Like>
-        <Footer></Footer>
       </Container>
     );
   } else {
@@ -245,6 +244,7 @@ const Like = styled.div`
   color: gray;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 40px;
   padding: 5px 10px;
   border: 1px solid #ccc;
   border-radius: 60px;
