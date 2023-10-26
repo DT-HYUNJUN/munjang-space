@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 //   Quill.register("modules/ImageResize", ImageResize);
 // }
 
-const New = ({ onCreate, reportCount, userInfo }) => {
+const New = ({ onCreate, reportList, reportCount, userInfo }) => {
   const [modal, setModal] = useState(false);
   const [book, setBook] = useState({
     title: "",
@@ -176,7 +176,7 @@ const New = ({ onCreate, reportCount, userInfo }) => {
           <MyButton text="저장" type="positive" />
         </ButtonWrapper>
       </FormContainer>
-      {modal && <Modal setModal={setModal} setBook={setBook} />}
+      {modal && <Modal setModal={setModal} setBook={setBook} reportList={reportList} />}
     </div>
   );
 };

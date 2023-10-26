@@ -3,17 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Pagination from "react-js-pagination";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faExclamationCircle,
-  faSearch,
-  faSpinner,
-  faX,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faExclamationCircle, faSearch, faSpinner, faX } from "@fortawesome/free-solid-svg-icons";
 
 import getBooks from "../utils/getBooks";
 import styled from "styled-components";
 
-const Modal = ({ setModal, setBook, setBookCover }) => {
+const Modal = ({ setModal, setBook, reportList }) => {
   const [loading, setLoading] = useState(false);
 
   const [bookData, setBookData] = useState([]); // api로 받아온 책 리스트
@@ -48,8 +43,8 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
     setLoading(false);
     try {
       setLoading(true);
-      const temp = await getBooks(inputTitle);
-      setBookData(temp);
+      const books = await getBooks(inputTitle);
+      setBookData(books);
       setSearchComplete(true);
     } catch (error) {
       console.log(error);
@@ -76,13 +71,7 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
         <FontAwesomeIcon icon={faX} size="xl" />
       </CloseButton>
       <FormWrapper onSubmit={handleSubmit}>
-        <TitleInput
-          type="text"
-          id="searchTitle"
-          onChange={handleInput}
-          placeholder="책 이름 검색"
-          required
-        />
+        <TitleInput type="text" id="searchTitle" onChange={handleInput} placeholder="책 이름 검색" required />
         <TitleInputButton type="submit">
           <FontAwesomeIcon icon={faSearch} size="xl" />
         </TitleInputButton>
@@ -104,38 +93,22 @@ const Modal = ({ setModal, setBook, setBookCover }) => {
               ) : (
                 currentPageData.map((it) => (
                   <BookContainer key={it.isbn}>
-                    <BookList
-                      onClick={() =>
-                        handleClickBook(
-                          it.title,
-                          it.cover,
-                          it.description,
-                          it.author,
-                          it.isbn13
-                        )
-                      }
-                    >
+                    <BookList onClick={() => handleClickBook(it.title, it.cover, it.description, it.author, it.isbn13)}>
                       <BookCover src={it.cover} alt={it.title} />
                       <BookDetail>
-                        <BookTitle>{it.title}</BookTitle>
+                        <BookTitleWrapper>
+                          <BookTitle>{it.title}</BookTitle>
+                          {reportList.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon icon={faCheckCircle} color="#337ab7" />}
+                        </BookTitleWrapper>
                         <BookAuthor>{it.author}</BookAuthor>
                       </BookDetail>
                     </BookList>
-                    {/* <hr></hr> */}
                   </BookContainer>
                 ))
               )}
             </BookEntire>
             {currentPageData.length !== 0 && (
-              <Pagination
-                activePage={page}
-                itemsCountPerPage={5}
-                totalItemsCount={bookData.length}
-                pageRangeDisplayed={5}
-                prevPageText={"<"}
-                nextPageText={">"}
-                onChange={handlePageChange}
-              />
+              <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={bookData.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChange} />
             )}
           </div>
         )}
@@ -221,23 +194,25 @@ const BookList = styled.div`
   display: flex;
   margin-left: 10px;
   padding: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const BookDetail = styled.div`
   margin-left: 50px;
   font-family: "KyoboHandwriting2021sjy";
   font-size: 20px;
+  flex-grow: 1;
 `;
 
 const BookTitle = styled.p`
   font-weight: bold;
   font-size: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 800px;
 `;
 
-const BookAuthor = styled.p`
+const BookAuthor = styled.span`
   color: gray;
 `;
 
@@ -266,4 +241,10 @@ const BookContainer = styled.div`
 
 const BookCover = styled.img`
   width: 85px;
+`;
+
+const BookTitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
