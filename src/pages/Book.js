@@ -5,7 +5,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
-import { doc, getDoc, collection, onSnapshot, query, where, getDocs } from "firebase/firestore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+
+import {
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../fbase";
 
 const Book = () => {
@@ -13,28 +25,35 @@ const Book = () => {
 
   const [data, setData] = useState({});
 
-  const [bookTitle, setBookTitle] = useState("");
-
   const [bookReports, setBookReports] = useState([]);
 
   const navigate = useNavigate();
 
+  const goToThisBookReport = () => {
+    navigate(`/thisbookreport/${isbn13}`);
+  };
+
+  const goToReport = (email, id) => {
+    navigate(`/report/${email}/${id}`);
+  };
+
   useEffect(() => {
     try {
-      getBookReports(isbn13);
+      getBookReports(isbn13).then((res) => {
+        setBookReports(res.sort((a, b) => parseInt(b.date) - parseInt(a.date)));
+      });
       getBooks(isbn13).then((res) => {
         setData(res[0]);
       });
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [isbn13]);
 
   // 데이터에 값이 있으면 -> 렌더링
   // 데이터에 값이 없으면 -> loading
 
   const handleBookClick = (title, cover, author, description, isbn13) => {
-    setBookTitle(title);
     navigate("/new", {
       state: {
         title: title,
@@ -47,37 +66,44 @@ const Book = () => {
   };
 
   const getBookReports = async (isbn13) => {
-    const reportsCollectionRef = collection(db, "reports");
-    const allReports = [];
+    return new Promise(async (resolve, reject) => {
+      const reportsCollectionRef = collection(db, "reports");
+      const allReports = [];
 
-    // 모든 계정을 탐색하기 위한 코드
-    onSnapshot(reportsCollectionRef, (snapshot) => {
-      // 각 계정을 탐색
-      snapshot.docChanges().forEach(async (change) => {
-        // 각 계정에서 변화가 일어날 때 작동하기 위한 조건문
-        if (change.type === "added" || change.type === "modified") {
-          const doc = change.doc;
+      onSnapshot(reportsCollectionRef, async (snapshot) => {
+        const promises = snapshot.docChanges().map(async (change) => {
+          if (change.type === "added" || change.type === "modified") {
+            const doc = change.doc;
+            const booksCollectionRef = collection(doc.ref, "books");
+            const q = query(
+              booksCollectionRef,
+              where("book.isbn13", "==", isbn13),
+              orderBy("date", "desc"),
+              where("isPrivate", "==", false)
+            );
+            const booksQuerySnapshot = await getDocs(q);
 
-          // 접근한 계정이 작성한 독후감 경로
-          const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13));
-          const booksQuerySnapshot = await getDocs(q);
+            booksQuerySnapshot.forEach((bookData) => {
+              const bookInfo = bookData.data();
+              const titleOutTags = bookInfo.content.replace(
+                /(<([^>]+)>)/gi,
+                ""
+              );
 
-          booksQuerySnapshot.forEach((bookData) => {
-            const bookInfo = bookData.data();
-            const titleOutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
-
-            allReports.push({
-              id: bookData.id,
-              title: bookInfo.title,
-              content: titleOutTags,
-              author: bookInfo.author,
-              profileImage: bookInfo.profileImage,
+              allReports.push({
+                id: bookData.id,
+                title: bookInfo.title,
+                content: titleOutTags,
+                email: bookInfo.author,
+                username: bookInfo.username,
+                profileImage: bookInfo.profileImage,
+                date: bookInfo.date,
+              });
             });
-          });
-
-          setBookReports(allReports);
-        }
+          }
+        });
+        await Promise.all(promises); // 여러 개의 Promise를 병렬로 처리한 후, 모든 Promise가 완료되면 결과를 반환합니다.
+        resolve(allReports);
       });
     });
   };
@@ -99,26 +125,51 @@ const Book = () => {
                   window.location.href = data.link;
                 }}
               />
-              <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
+              <WriteButton
+                onClick={() =>
+                  handleBookClick(
+                    data.title,
+                    data.cover,
+                    data.author,
+                    data.description,
+                    data.isbn13
+                  )
+                }
+              >
+                독후감 작성하기
+              </WriteButton>
             </div>
           </div>
         </BookContent>
 
-        <div>
+        <BookIntroWrapper>
           <BookIntroduction>책소개</BookIntroduction>
-
           <BookIntroductionContent>{data.description}</BookIntroductionContent>
-        </div>
+        </BookIntroWrapper>
 
-        <ThisReport>이 책의 독후감</ThisReport>
+        <ThisReportWrapper>
+          <ThisReport>이 책의 독후감</ThisReport>
+          <FontAwesomeIcon
+            onClick={goToThisBookReport}
+            icon={faArrowRight}
+            cursor={"pointer"}
+          />
+        </ThisReportWrapper>
+
         <ThisBookReport>
           {bookReports.slice(0, 5).map((report, idx) => (
-            <BookReport key={idx}>
+            <BookReport
+              key={idx}
+              onClick={() => goToReport(report.email, report.id)}
+            >
               <ReportTitle>{report.title}</ReportTitle>
               <ReportContent>{report.content}</ReportContent>
               <ReportFooter>
-                <ReportAuthorProfileImage src={report.profileImage} alt={report.author} />
-                <ReportAuthor>{report.author}</ReportAuthor>
+                <ReportAuthorProfileImage
+                  src={report.profileImage}
+                  alt={report.username}
+                />
+                <ReportAuthor>{report.username}</ReportAuthor>
               </ReportFooter>
             </BookReport>
           ))}
@@ -162,13 +213,13 @@ const BookCategory = styled.p`
 const BookCover = styled.img`
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   margin-left: 30px;
+
+  margin-bottom: 30px;
 `;
 
 const BookIntroduction = styled.h1`
-  /* border-bottom: 1px solid #e2e2e2; */
-
   margin-bottom: 20px;
-  margin-top: 50px;
+  margin-top: 30px;
 `;
 
 const BookIntroductionContent = styled.p`
@@ -177,13 +228,9 @@ const BookIntroductionContent = styled.p`
 `;
 
 const ThisReport = styled.h1`
-  /* border-bottom: 1px solid #e2e2e2; */
-
   margin-bottom: 20px;
-  margin-top: 50px;
 `;
 const BookReport = styled.div`
-  border: 1px solid yellow;
   border-radius: 15%;
 
   width: 230px;
@@ -193,8 +240,10 @@ const BookReport = styled.div`
 
   text-align: center;
 
-  background-color: #fffb99;
+  background-color: #ededed;
   box-shadow: 12px 0px 11px -3px rgba(0, 0, 0, 0.1);
+
+  cursor: pointer;
 `;
 
 const WriteButton = styled.button`
@@ -207,7 +256,9 @@ const WriteButton = styled.button`
 
   font-family: "UhBeeJJIBBABBA";
   font-size: 14px;
+
   color: black;
+
   margin-left: 20px;
   padding: 10px 15px;
   white-space: nowrap;
@@ -218,21 +269,23 @@ const WriteButton = styled.button`
 
 const ThisBookReport = styled.div`
   display: flex;
-  /* justify-content: space-between; */
 `;
 
 const ReportTitle = styled.div`
+  font-family: "UhBeeJJIBBABBA";
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
+
   height: 30px;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
   padding: 10px 14px 0px 14px;
 `;
 
 const ReportContent = styled.div`
-  border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 
   padding: 10px;
@@ -263,4 +316,17 @@ const ReportAuthorProfileImage = styled.img`
   width: 24px;
   height: 24px;
   border-radius: 75px;
+`;
+
+const ThisReportWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;
+
+  border-top: 4px solid #ececec;
+`;
+
+const BookIntroWrapper = styled.div`
+  border-top: 4px solid #ececec;
 `;
