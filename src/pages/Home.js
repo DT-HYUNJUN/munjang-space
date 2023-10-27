@@ -123,7 +123,6 @@ const Home = () => {
           onClick={handleClickNew}
         />
       </NewButtonWrapper>
-
       <BigTitle>베스트셀러</BigTitle>
       <BestSeller>
         <Slider
@@ -189,7 +188,7 @@ const Home = () => {
           ))}
         </Slider>
       </SpecilaBook>
-    </>
+    </div>
   );
 };
 
@@ -227,7 +226,7 @@ const BigTitle = styled.h1`
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
   margin-bottom: 0px;
-  margin-top: 0px;
+  margin-top: 50px;
 `;
 
 const BigTitleLike = styled.h1`

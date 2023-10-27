@@ -17,18 +17,7 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 
 import { db } from "./fbase";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import getDefaultProfileImage from "./utils/getDefaultProfileImage";
 import ThisBookReport from "./pages/ThisBookReport";
@@ -47,17 +36,14 @@ function App() {
         // console.log(user);
         setIsLogin(true);
         // loadData(user.email);
-        unSubscribe = onSnapshot(
-          collection(db, "reports", user.email, "books"),
-          (querySnapShot) => {
-            const data = [];
-            querySnapShot.forEach((doc) => {
-              data.push(doc.data());
-            });
-            setTestData(data);
-            setReportCount(data.length);
-          }
-        );
+        unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
+          const data = [];
+          querySnapShot.forEach((doc) => {
+            data.push(doc.data());
+          });
+          setTestData(data);
+          setReportCount(data.length);
+        });
         if (user.photoURL) {
           setUserInfo({
             email: user.email,
@@ -86,10 +72,7 @@ function App() {
 
   const onCreate = async (report) => {
     try {
-      const docRef = doc(
-        collection(db, "reports", report.author, "books"),
-        `${report.id}`
-      );
+      const docRef = doc(collection(db, "reports", report.author, "books"), `${report.id}`);
       await setDoc(docRef, report);
     } catch (error) {
       console.log(error);
@@ -107,13 +90,7 @@ function App() {
 
   const onDelete = async (id) => {
     try {
-      const deleteReportRef = doc(
-        db,
-        "reports",
-        userInfo.email,
-        "books",
-        `${id}`
-      );
+      const deleteReportRef = doc(db, "reports", userInfo.email, "books", `${id}`);
       console.log(deleteReportRef);
       await deleteDoc(deleteReportRef);
     } catch (error) {
@@ -122,14 +99,7 @@ function App() {
   };
 
   const onLike = async (author, id) => {
-    const likeListRef = collection(
-      db,
-      "reports",
-      author,
-      "books",
-      `${id}`,
-      "likeList"
-    );
+    const likeListRef = collection(db, "reports", author, "books", `${id}`, "likeList");
     const docRef = doc(likeListRef, userInfo.email);
     const document = await getDoc(docRef);
     if (document.data()) {
@@ -142,10 +112,7 @@ function App() {
       }
     } else {
       // 좋아요 리스트에 없으면 -> 좋아요
-      const reportRef = doc(
-        collection(db, "reports", author, "books", `${id}`, "likeList"),
-        userInfo.email
-      );
+      const reportRef = doc(collection(db, "reports", author, "books", `${id}`, "likeList"), userInfo.email);
       await setDoc(reportRef, { isLike: true });
     }
     const q = query(likeListRef, where("isLike", "==", true));
@@ -168,10 +135,7 @@ function App() {
           const doc = change.doc;
 
           const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(
-            booksCollectionRef,
-            where("book.isbn13", "==", isbn13)
-          );
+          const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13));
           const booksQuerySnapshot = await getDocs(q);
 
           booksQuerySnapshot.forEach((bookDoc) => {

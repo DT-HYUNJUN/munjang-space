@@ -17,6 +17,8 @@ const Modal = ({ setModal, setBook, reportList }) => {
 
   const [searchComplete, setSearchComplete] = useState(false);
 
+  const checkRef = useRef();
+
   // Pagination
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -54,15 +56,28 @@ const Modal = ({ setModal, setBook, reportList }) => {
   };
 
   // 검색한 책 클릭 이벤트
-  const handleClickBook = (title, cover, description, author, isbn13) => {
-    setBook({
-      title,
-      cover,
-      description,
-      author,
-      isbn13,
-    });
-    setModal(false);
+  const handleClickBook = (title, cover, description, author, isbn13, check) => {
+    if (check) {
+      if (window.confirm("이미 독후감을 작성한 책입니다. 그래도 선택하시겠습니까?")) {
+        setBook({
+          title,
+          cover,
+          description,
+          author,
+          isbn13,
+        });
+        setModal(false);
+      }
+    } else {
+      setBook({
+        title,
+        cover,
+        description,
+        author,
+        isbn13,
+      });
+      setModal(false);
+    }
   };
 
   return (
@@ -93,12 +108,23 @@ const Modal = ({ setModal, setBook, reportList }) => {
               ) : (
                 currentPageData.map((it) => (
                   <BookContainer key={it.isbn}>
-                    <BookList onClick={() => handleClickBook(it.title, it.cover, it.description, it.author, it.isbn13)}>
+                    <BookList
+                      onClick={() =>
+                        handleClickBook(
+                          it.title,
+                          it.cover,
+                          it.description,
+                          it.author,
+                          it.isbn13,
+                          reportList.find((report) => report.book.isbn13 === it.isbn13)
+                        )
+                      }
+                    >
                       <BookCover src={it.cover} alt={it.title} />
                       <BookDetail>
                         <BookTitleWrapper>
                           <BookTitle>{it.title}</BookTitle>
-                          {reportList.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon icon={faCheckCircle} color="#337ab7" />}
+                          {reportList.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon ref={checkRef} icon={faCheckCircle} color="#337ab7" />}
                         </BookTitleWrapper>
                         <BookAuthor>{it.author}</BookAuthor>
                       </BookDetail>
