@@ -188,7 +188,7 @@ const Home = () => {
           ))}
         </Slider>
       </SpecilaBook>
-    </div>
+    </>
   );
 };
 
