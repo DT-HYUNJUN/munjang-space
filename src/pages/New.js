@@ -204,6 +204,9 @@ const BookInfoSpan = styled.span`
 `;
 
 const Book = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: bold;
   text-decoration: underline;
   cursor: pointer;

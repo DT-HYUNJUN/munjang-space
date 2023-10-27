@@ -25,7 +25,11 @@ const Home = () => {
 
   useEffect(() => {
     try {
-      getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+      getLikeReports().then((res) =>
+        setLikeReports(
+          res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
+        )
+      );
       listBooks().then((res) => setBestSellerBook(res));
       newSpecialBook().then((res) => setSpecialBook(res));
     } catch (error) {
@@ -46,15 +50,30 @@ const Home = () => {
   }
 
   const handleClickLikeReports = () => {
-    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+    getLikeReports().then((res) =>
+      setLikeReports(
+        res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
+      )
+    );
   };
 
   const handleClickReport = (email, id) => {
     navigate(`/report/${email}/${id}`);
   };
 
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+  };
+
   return (
-    <>
+    <div>
+      <Slider {...settings}>
+        <div>Slide 1</div>
+        <div>Slide 2</div>
+        <div>Slide 3</div>
+      </Slider>
       <BigTitle>베스트셀러</BigTitle>
       <BestSeller>
         {bestsellerBook.map((item) => (
@@ -74,7 +93,10 @@ const Home = () => {
       <BestLikesReport>
         {likeReports.slice(0, 5).map((it, idx) => (
           <LikeReport key={idx}>
-            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
+            <BookBackground
+              backgroundimage={it.book.cover}
+              onClick={() => handleClickReport(it.author, it.id)}
+            ></BookBackground>
             <ReportRank>BEST {idx + 1}</ReportRank>
             <BookCover src={it.book.cover} alt={it.book.title} />
             <ReportTitle>{it.title}</ReportTitle>
@@ -96,7 +118,7 @@ const Home = () => {
           </div>
         ))}
       </SpecilaBook>
-    </>
+    </div>
   );
 };
 
@@ -136,7 +158,7 @@ const BigTitle = styled.h1`
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
   margin-bottom: 0px;
-  margin-top: 0px;
+  margin-top: 50px;
 `;
 
 const BestLikesReport = styled.div`
