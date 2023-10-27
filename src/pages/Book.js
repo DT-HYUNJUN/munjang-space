@@ -20,7 +20,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../fbase";
 
-const Book = () => {
+const Book = ({ isLogin }) => {
   const { isbn13 } = useParams();
 
   const [data, setData] = useState({});
@@ -63,6 +63,11 @@ const Book = () => {
         isbn13: isbn13,
       },
     });
+  };
+
+  const handleBookClickLogin = () => {
+    alert("로그인을 해주세요!");
+    navigate("/login");
   };
 
   const getBookReports = async (isbn13) => {
@@ -117,6 +122,7 @@ const Book = () => {
             <BookTitle>{data.title}</BookTitle>
             <BookAuthor>{data.author}</BookAuthor>
             <BookCategory>{data.categoryName}</BookCategory>
+            <BookIsbn13>isbn13 : {data.isbn13}</BookIsbn13>
             <div>
               <MyButton
                 type={"positive"}
@@ -126,14 +132,17 @@ const Book = () => {
                 }}
               />
               <WriteButton
-                onClick={() =>
-                  handleBookClick(
-                    data.title,
-                    data.cover,
-                    data.author,
-                    data.description,
-                    data.isbn13
-                  )
+                onClick={
+                  isLogin
+                    ? () =>
+                        handleBookClick(
+                          data.title,
+                          data.cover,
+                          data.author,
+                          data.description,
+                          data.isbn13
+                        )
+                    : handleBookClickLogin
                 }
               >
                 독후감 작성하기
@@ -210,6 +219,12 @@ const BookCategory = styled.p`
   color: gray;
 `;
 
+const BookIsbn13 = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  color: gray;
+`;
+
 const BookCover = styled.img`
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   margin-left: 30px;
@@ -267,9 +282,7 @@ const WriteButton = styled.button`
   }
 `;
 
-const ThisBookReport = styled.div`
-  display: flex;
-`;
+const ThisBookReport = styled.div``;
 
 const ReportTitle = styled.div`
   font-family: "UhBeeJJIBBABBA";

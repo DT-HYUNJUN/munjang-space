@@ -166,15 +166,46 @@ function App() {
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/book/:isbn13" element={<Book />} />
+          <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
-          <Route path="/list" element={<List reportList={testData} onDelete={onDelete} />} />
+          <Route
+            path="/list"
+            element={
+              <List
+                reportList={testData}
+                onDelete={onDelete}
+                IsLogin={IsLogin}
+              />
+            }
+          />
 
-          <Route path="/report/:email/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
-          <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} reportList={testData} userInfo={userInfo} />} />
+          <Route
+            path="/report/:email/:id"
+            element={
+              <Report
+                reportList={testData}
+                onLike={onLike}
+                onDelete={onDelete}
+                userInfo={userInfo}
+              />
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <New
+                onCreate={onCreate}
+                reportCount={reportCount}
+                userInfo={userInfo}
+              />
+            }
+          />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
-          <Route path="/statistics" element={<Statistics />} />
+          <Route
+            path="/statistics"
+            element={<Statistics IsLogin={IsLogin} />}
+          />
         </Routes>
       </div>
       <MyFooter />

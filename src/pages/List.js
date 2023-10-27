@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
@@ -39,7 +39,13 @@ const ControlMenu = ({ value, onChange, optionList }) => {
   );
 };
 
-const List = ({ reportList, onDelete }) => {
+const List = ({ reportList, onDelete, IsLogin }) => {
+  useEffect(() => {
+    if (!IsLogin) {
+      navigate("/login");
+      alert("로그인 해주세요!");
+    }
+  }, []);
   const navigate = useNavigate();
   const [all, setAll] = useState(false);
 
