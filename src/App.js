@@ -202,11 +202,17 @@ function App() {
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/book/:isbn13" element={<Book />} />
+          <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
           <Route
             path="/list"
-            element={<List reportList={testData} onDelete={onDelete} />}
+            element={
+              <List
+                reportList={testData}
+                onDelete={onDelete}
+                IsLogin={IsLogin}
+              />
+            }
           />
 
           <Route
@@ -232,7 +238,10 @@ function App() {
           />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
-          <Route path="/statistics" element={<Statistics />} />
+          <Route
+            path="/statistics"
+            element={<Statistics IsLogin={IsLogin} />}
+          />
         </Routes>
       </div>
       <MyFooter />

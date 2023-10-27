@@ -18,6 +18,7 @@ import DOMPurify from "dompurify";
 const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   const [report, setReport] = useState({});
   const [like, setLike] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   const auth = getAuth();
 
   const navigate = useNavigate();
@@ -27,8 +28,11 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user && email === user.email) {
+        setUserEmail(user.email);
         if (reportList.length > 0) {
-          const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
+          const targetReport = reportList.find(
+            (it) => parseInt(it.id) === parseInt(id)
+          );
           if (targetReport) {
             setReport(targetReport);
             loadLike(targetReport.author, user.email);
@@ -68,7 +72,15 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   };
 
   const loadLike = async (reportAuthor, email) => {
-    const isLikeRef = doc(db, "reports", reportAuthor, "books", id, "likeList", email);
+    const isLikeRef = doc(
+      db,
+      "reports",
+      reportAuthor,
+      "books",
+      id,
+      "likeList",
+      email
+    );
     const isLikeDoc = await getDoc(isLikeRef);
     if (isLikeDoc.data()) {
       const isLike = isLikeDoc.data().isLike;
@@ -89,16 +101,33 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
                 <span>({report.author})</span>
               </Author>
               <span>·</span>
-              <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
+              <span>
+                {new Date(parseInt(report.date)).toLocaleDateString()}
+              </span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
             <ButtonWrapper>
-              <MyButton text={"수정하기"} type={"positive"} onClick={handleClickEdit} />
-              <MyButton text={"삭제하기"} type={"negative"} onClick={() => handleClickDelete(report.id)} />
+              {userEmail === email && (
+                <>
+                  <MyButton
+                    text={"수정하기"}
+                    type={"positive"}
+                    onClick={handleClickEdit}
+                  />
+                  <MyButton
+                    text={"삭제하기"}
+                    type={"negative"}
+                    onClick={() => handleClickDelete(report.id)}
+                  />
+                </>
+              )}
             </ButtonWrapper>
           </SubTitle>
           <BookWrapper>
-            <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
+            <BookBackground
+              backgroundimage={report.book.cover}
+              onClick={() => handleClickBook(report.book.isbn13)}
+            ></BookBackground>
             <BookInfo>
               <BookTitle>{report.book.title}</BookTitle>
               <BookDescription>{report.book.description}</BookDescription>
