@@ -15,12 +15,13 @@ const MyHeader = ({ IsLogin }) => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const username = user.displayName;
+        console.log(username);
         setUsername(username);
       } else {
         setUsername(null);
       }
     });
-  }, []);
+  }, [auth]);
 
   const navigate = useNavigate();
 
@@ -34,11 +35,7 @@ const MyHeader = ({ IsLogin }) => {
       <div className="LeftHeader">
         <NavLink to="/">
           <div className="Logo">
-            <img
-              className="logoImg"
-              src={process.env.PUBLIC_URL + "/images/dog.png"}
-              alt="logoImg"
-            />
+            <img className="logoImg" src={process.env.PUBLIC_URL + "/images/dog.png"} alt="logoImg" />
             <h2>문장의 공간</h2>
           </div>
         </NavLink>
@@ -50,17 +47,13 @@ const MyHeader = ({ IsLogin }) => {
           <NavLink to="/list">나의 서재</NavLink>
           <NavLink to="/statistics">나의 통계</NavLink>
 
-          <NavLink to={IsLogin ? "/profile" : "/login"}>
-            {IsLogin ? "나의 정보" : "로그인"}
-          </NavLink>
+          <NavLink to={IsLogin ? "/profile" : "/login"}>{IsLogin ? "나의 정보" : "로그인"}</NavLink>
 
           <NavLink to="/signup">{IsLogin ? " " : "회원가입"}</NavLink>
 
           {IsLogin ? <Logout onClick={onLogOutClick}>로그아웃</Logout> : " "}
         </div>
-        <LoginInformation>
-          {username ? `${username} 님 독후감을 작성해보세요 😀` : " "}
-        </LoginInformation>
+        <LoginInformation>{username && `${username} 님 독후감을 작성해보세요 😀`}</LoginInformation>
       </div>
     </div>
   );

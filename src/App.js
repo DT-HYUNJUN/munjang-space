@@ -33,9 +33,7 @@ function App() {
     let unSubscribe;
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // console.log(user);
         setIsLogin(true);
-        // loadData(user.email);
         unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
           const data = [];
           querySnapShot.forEach((doc) => {
@@ -123,38 +121,6 @@ function App() {
     });
   };
 
-  const getBookReports = (isbn13) => {
-    const reportsCollectionRef = collection(db, "reports");
-    const allReports = [];
-
-    // 각 사용자 문서에서 'books' 컬렉션을 참조합니다.
-    onSnapshot(reportsCollectionRef, (snapshot) => {
-      snapshot.docChanges().forEach(async (change) => {
-        if (change.type === "added" || change.type === "modified") {
-          // 추가 또는 수정된 문서 처리
-          const doc = change.doc;
-
-          const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13));
-          const booksQuerySnapshot = await getDocs(q);
-
-          booksQuerySnapshot.forEach((bookDoc) => {
-            // 각 'books' 컬렉션의 독후감 문서를 allReports 목록에 추가합니다.
-            allReports.push(bookDoc.data());
-          });
-
-          // 이제 allReports 배열은 변경된 데이터를 포함하게 됩니다.
-          // console.log(allReports);
-        }
-      });
-    });
-  };
-
-  // useEffect(() => {
-  //   const isbn13 = "9791192908236";
-  //   getBookReports(isbn13);
-  // }, []);
-
   return (
     <BrowserRouter>
       <MyHeader IsLogin={IsLogin} />
@@ -168,44 +134,13 @@ function App() {
 
           <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
-          <Route
-            path="/list"
-            element={
-              <List
-                reportList={testData}
-                onDelete={onDelete}
-                IsLogin={IsLogin}
-              />
-            }
-          />
+          <Route path="/list" element={<List reportList={testData} onDelete={onDelete} IsLogin={IsLogin} />} />
 
-          <Route
-            path="/report/:email/:id"
-            element={
-              <Report
-                reportList={testData}
-                onLike={onLike}
-                onDelete={onDelete}
-                userInfo={userInfo}
-              />
-            }
-          />
-          <Route
-            path="/new"
-            element={
-              <New
-                onCreate={onCreate}
-                reportCount={reportCount}
-                userInfo={userInfo}
-              />
-            }
-          />
+          <Route path="/report/:email/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
+          <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
-          <Route
-            path="/statistics"
-            element={<Statistics IsLogin={IsLogin} />}
-          />
+          <Route path="/statistics" element={<Statistics IsLogin={IsLogin} />} />
         </Routes>
       </div>
       <MyFooter />

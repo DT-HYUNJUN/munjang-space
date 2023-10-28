@@ -1,22 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import MyButton from "../components/MyButton";
-import styled from "styled-components";
-import ReactQuill from "react-quill";
-import Quill from "quill";
-import "react-quill/dist/quill.snow.css";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { ImageResize } from "quill-image-resize-module-react";
-import ReactStars from "react-stars";
-import Modal from "../components/Modal";
-import { getAuth } from "firebase/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// if (typeof Quill === "object") {
-//   Quill.register("modules/ImageResize", ImageResize);
-// }
+import Modal from "../components/Modal";
+import MyButton from "../components/MyButton";
+import styled from "styled-components";
 
-const New = ({ onCreate, reportList, reportCount, userInfo }) => {
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+import ReactStars from "react-stars";
+
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getAuth } from "firebase/auth";
+
+const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
+  // 로그인 접근
+
+  useEffect(() => {
+    if (!IsLogin) {
+      navigate("/login");
+      alert("로그인 해주세요!");
+    }
+  }, []);
+
   const [modal, setModal] = useState(false);
+
   const [book, setBook] = useState({
     title: "",
     cover: "",
@@ -24,6 +32,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo }) => {
     description: "",
     isbn13: "",
   });
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -84,16 +93,12 @@ const New = ({ onCreate, reportList, reportCount, userInfo }) => {
       const range = editor.getSelection(true);
       try {
         const storage = getStorage();
-        // 파일명을 "image/Date.now()"로 저장
+
         const storageRef = ref(storage, `image/${Date.now()}`);
-        // Firebase Method : uploadBytes, getDownloadURL
+
         await uploadBytes(storageRef, file).then((snapshot) => {
           getDownloadURL(snapshot.ref).then((url) => {
-            // 이미지 URL 에디터에 삽입
             editor.insertEmbed(range.index, "image", url);
-            // URL 삽입 후 커서를 이미지 뒷 칸으로 이동
-            // const img = `<img src="${url}" style="max-width: 100%;" />`;
-            // editor.clipboard.dangerouslyPasteHTML(range.index, img);
             editor.setSelection(range.index + 1);
           });
         });
@@ -118,11 +123,6 @@ const New = ({ onCreate, reportList, reportCount, userInfo }) => {
         handlers: {
           image: imageHandler,
         },
-        // imageResize: {
-        //   // https://www.npmjs.com/package/quill-image-resize-module-react 참고
-        //   parchment: Quill.import("parchment"),
-        //   modules: ["Resize", "DisplaySize", "Toolbar"],
-        // },
       },
       history: {
         delay: 500,
@@ -215,7 +215,6 @@ const Book = styled.span`
 
 const BookWrapper = styled.div`
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -261,7 +260,6 @@ const LabelWrapper = styled.label`
   align-items: center;
   user-select: none;
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   height: 42px;
   padding-left: 5px;
@@ -302,7 +300,6 @@ const HeaderWrapper = styled.div`
 
 const StarWrapper = styled.div`
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   padding-bottom: 7px;
   padding-left: 3px;
