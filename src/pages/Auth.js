@@ -6,13 +6,9 @@ import styled from "styled-components";
 
 import MyButton from "../components/MyButton";
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
-  const REST_API_KEY = "d54df59401e33ca5fea835ed1e3862a1";
-  const REDIRECT_URI = "http://localhost:3000";
-  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
   const inputRef = useRef();
 
   const navigate = useNavigate();
@@ -30,6 +26,24 @@ const Login = () => {
 
   // caps lock 기능
   const [capsLockFlag, setCapsLockFlag] = useState(false);
+
+  // 구글 로그인
+
+  const [userData, setUserData] = useState(null);
+
+  function handleGoogleLogin() {
+    const provider = new GoogleAuthProvider(); //Provider 설정
+    const auth = getAuth();
+    signInWithPopup(auth, provider) //팝업창 띄어서 로그인
+      .then((data) => {
+        setUserData(data.user); // user data 설정
+        navigate("/"); // 로그인시 홈으로 이동
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   useEffect(() => {
     inputRef.current.focus();
@@ -105,78 +119,36 @@ const Login = () => {
       <LoginForm onSubmit={handleSubmit}>
         <LoginWrapper>
           <Label htmlFor="id_login">이메일*</Label>
-          <Logininput
-            ref={inputRef}
-            type="text"
-            name="userName"
-            placeholder="Email"
-            id="id_login"
-            onKeyDown={(e) => checkCapsLock(e)}
-            onChange={onEmailHandler}
-            value={email}
-          />
+          <Logininput ref={inputRef} type="text" name="userName" placeholder="Email" id="id_login" onKeyDown={(e) => checkCapsLock(e)} onChange={onEmailHandler} value={email} />
           <Label htmlFor="pw_login">비밀번호*</Label>
-          <Logininput
-            type={passwordDisplay}
-            name="userPassword"
-            placeholder="Password"
-            id="pw_login"
-            onKeyDown={(e) => checkCapsLock(e)}
-            onChange={onPasswordHandler}
-            value={password}
-          />
+          <Logininput type={passwordDisplay} name="userPassword" placeholder="Password" id="pw_login" onKeyDown={(e) => checkCapsLock(e)} onChange={onPasswordHandler} value={password} />
         </LoginWrapper>
 
         <CheckBoxStyle>
           <SaveId htmlFor="remember-check">
-            <input
-              type="checkbox"
-              id="remember-check"
-              onChange={handleOnChange}
-              checked={isRemember}
-              defaultValue={email}
-            />
+            <input type="checkbox" id="remember-check" onChange={handleOnChange} checked={isRemember} defaultValue={email} />
             아이디 저장하기
           </SaveId>
 
           <PwSee htmlFor="remember-password">
-            <input
-              id="remember-password"
-              type="checkbox"
-              onChange={handleDisplay}
-              checked={isPassword}
-            />
+            <input id="remember-password" type="checkbox" onChange={handleDisplay} checked={isPassword} />
             비밀번호 보이기
           </PwSee>
 
-          <CapsLockSpan
-            className={capsLockFlag ? "caps-lock caps-lock-on" : "caps-lock"}
-          >
-            {capsLockFlag ? (
-              <CapsOn>Caps Lock ON</CapsOn>
-            ) : (
-              <CapsOff>Caps Lock Off</CapsOff>
-            )}
-          </CapsLockSpan>
+          <CapsLockSpan className={capsLockFlag ? "caps-lock caps-lock-on" : "caps-lock"}>{capsLockFlag ? <CapsOn>Caps Lock ON</CapsOn> : <CapsOff>Caps Lock Off</CapsOff>}</CapsLockSpan>
         </CheckBoxStyle>
 
         <MyButton text={"로그인"} type={"positive"} />
 
-        <KakaoLogin>
-          <p>카카오톡으로 시작하기</p>
-          <a href={link}>
-            <img
-              src={process.env.PUBLIC_URL + "images/kakao_start.png"}
-              alt="카카오톡 회원가입"
-            />
-          </a>
-        </KakaoLogin>
+        <GoogleLogin>
+          <p>구글로 시작하기</p>
+          <div>
+            <Google onClick={handleGoogleLogin} src={process.env.PUBLIC_URL + "images/google2.png"} alt="google_ctn" />
+          </div>
+        </GoogleLogin>
       </LoginForm>
 
-      <LoginImg
-        src={process.env.PUBLIC_URL + "images/login_4.jpeg"}
-        alt="login_img"
-      />
+      <LoginImg src={process.env.PUBLIC_URL + "images/login_4.jpeg"} alt="login_img" />
     </div>
   );
 };
@@ -261,18 +233,21 @@ const LoginImg = styled.img`
   width: 100%;
 `;
 
-const KakaoLogin = styled.div`
+const GoogleLogin = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   margin-top: 10px;
 
   font-family: "UhBeeJJIBBABBA";
+  font-size: 18px;
   color: gray;
 
   border-bottom: 1px solid gray;
 
   margin-top: 15px;
+  padding-bottom: 10px;
 `;
 
 const CapsLockSpan = styled.span`
@@ -297,4 +272,8 @@ const CapsOff = styled.span`
   background-color: green;
   padding-left: 3px;
   padding-right: 3px;
+`;
+
+const Google = styled.img`
+  cursor: pointer;
 `;
