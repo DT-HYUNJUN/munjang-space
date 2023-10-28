@@ -6,18 +6,9 @@ import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-import {
-  doc,
-  getDoc,
-  collection,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  orderBy,
-} from "firebase/firestore";
+import { doc, getDoc, collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
 
 const Book = ({ isLogin }) => {
@@ -26,6 +17,8 @@ const Book = ({ isLogin }) => {
   const [data, setData] = useState({});
 
   const [bookReports, setBookReports] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -38,12 +31,16 @@ const Book = ({ isLogin }) => {
   };
 
   useEffect(() => {
+    setLoading(false);
     try {
+      setLoading(true);
       getBookReports(isbn13).then((res) => {
         setBookReports(res.sort((a, b) => parseInt(b.date) - parseInt(a.date)));
       });
       getBooks(isbn13).then((res) => {
         setData(res[0]);
+        console.log("data loading end");
+        setLoading(false);
       });
     } catch (error) {
       console.log(error);
@@ -80,20 +77,12 @@ const Book = ({ isLogin }) => {
           if (change.type === "added" || change.type === "modified") {
             const doc = change.doc;
             const booksCollectionRef = collection(doc.ref, "books");
-            const q = query(
-              booksCollectionRef,
-              where("book.isbn13", "==", isbn13),
-              orderBy("date", "desc"),
-              where("isPrivate", "==", false)
-            );
+            const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
             const booksQuerySnapshot = await getDocs(q);
 
             booksQuerySnapshot.forEach((bookData) => {
               const bookInfo = bookData.data();
-              const titleOutTags = bookInfo.content.replace(
-                /(<([^>]+)>)/gi,
-                ""
-              );
+              const titleOutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
 
               allReports.push({
                 id: bookData.id,
@@ -113,81 +102,56 @@ const Book = ({ isLogin }) => {
     });
   };
 
-  if (data) {
-    return (
-      <BookDetailEntire>
-        <BookContent>
-          <BookCover src={data.cover} alt="bookcover" />
+  return loading ? (
+    <LoadingWrapper>
+      <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+    </LoadingWrapper>
+  ) : (
+    <BookDetailEntire>
+      <BookContent>
+        <BookCover src={data.cover} alt="bookcover" />
+        <div>
+          <BookTitle>{data.title}</BookTitle>
+          <BookAuthor>{data.author}</BookAuthor>
+          <BookCategory>{data.categoryName}</BookCategory>
+          <BookIsbn13>isbn13 : {data.isbn13}</BookIsbn13>
           <div>
-            <BookTitle>{data.title}</BookTitle>
-            <BookAuthor>{data.author}</BookAuthor>
-            <BookCategory>{data.categoryName}</BookCategory>
-            <BookIsbn13>isbn13 : {data.isbn13}</BookIsbn13>
-            <div>
-              <MyButton
-                type={"positive"}
-                text={"종이책 구매"}
-                onClick={() => {
-                  window.location.href = data.link;
-                }}
-              />
-              <WriteButton
-                onClick={
-                  isLogin
-                    ? () =>
-                        handleBookClick(
-                          data.title,
-                          data.cover,
-                          data.author,
-                          data.description,
-                          data.isbn13
-                        )
-                    : handleBookClickLogin
-                }
-              >
-                독후감 작성하기
-              </WriteButton>
-            </div>
+            <MyButton
+              type={"positive"}
+              text={"종이책 구매"}
+              onClick={() => {
+                window.location.href = data.link;
+              }}
+            />
+            <WriteButton onClick={isLogin ? () => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13) : handleBookClickLogin}>독후감 작성하기</WriteButton>
           </div>
-        </BookContent>
+        </div>
+      </BookContent>
 
-        <BookIntroWrapper>
-          <BookIntroduction>책소개</BookIntroduction>
-          <BookIntroductionContent>{data.description}</BookIntroductionContent>
-        </BookIntroWrapper>
+      <BookIntroWrapper>
+        <BookIntroduction>책소개</BookIntroduction>
+        <BookIntroductionContent>{data.description}</BookIntroductionContent>
+      </BookIntroWrapper>
 
-        <ThisReportWrapper>
-          <ThisReport>이 책의 독후감</ThisReport>
-          <FontAwesomeIcon
-            onClick={goToThisBookReport}
-            icon={faArrowRight}
-            cursor={"pointer"}
-          />
-        </ThisReportWrapper>
+      <ThisReportWrapper>
+        <ThisReport>이 책의 독후감</ThisReport>
+        <FontAwesomeIcon onClick={goToThisBookReport} icon={faArrowRight} cursor={"pointer"} />
+      </ThisReportWrapper>
 
-        <ThisBookReport>
-          {bookReports.slice(0, 5).map((report, idx) => (
-            <BookReport
-              key={idx}
-              onClick={() => goToReport(report.email, report.id)}
-            >
-              <ReportTitle>{report.title}</ReportTitle>
-              <ReportContent>{report.content}</ReportContent>
-              <ReportFooter>
-                <ReportAuthorProfileImage
-                  src={report.profileImage}
-                  alt={report.username}
-                />
-                <ReportAuthor>{report.username}</ReportAuthor>
-              </ReportFooter>
-            </BookReport>
-          ))}
-        </ThisBookReport>
-      </BookDetailEntire>
-    );
-  } else {
-    return <div>loading...</div>;
-  }
+      <ThisBookReport>
+        {bookReports.slice(0, 5).map((report, idx) => (
+          <BookReport key={idx} onClick={() => goToReport(report.email, report.id)}>
+            <ReportTitle>{report.title}</ReportTitle>
+            <ReportContent>{report.content}</ReportContent>
+            <ReportFooter>
+              <ReportAuthorProfileImage src={report.profileImage} alt={report.username} />
+              <ReportAuthor>{report.username}</ReportAuthor>
+            </ReportFooter>
+          </BookReport>
+        ))}
+      </ThisBookReport>
+    </BookDetailEntire>
+  );
 };
 
 export default Book;
@@ -342,4 +306,11 @@ const ThisReportWrapper = styled.div`
 
 const BookIntroWrapper = styled.div`
   border-top: 4px solid #ececec;
+`;
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

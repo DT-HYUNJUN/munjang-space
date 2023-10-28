@@ -126,7 +126,7 @@ const Home = () => {
       </NewButtonWrapper>
       <TitleWrapper>
         <EmptyTag></EmptyTag>
-        <BigTitle>베스트셀러</BigTitle>
+        <BestSellerBigTitle>베스트셀러</BestSellerBigTitle>
         <PageWrapper>
           <PauseButton>{isPlay ? <FontAwesomeIcon icon={faPause} color="#777" onClick={handleClickPause} /> : <FontAwesomeIcon icon={faPlay} color="#777" onClick={handleClickPause} />}</PauseButton>
           {bookRank < 6 ? (
@@ -155,7 +155,7 @@ const Home = () => {
             bookRank === item.bestRank ? (
               <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
                 <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
-                <BestBookTitle>{item.title}</BestBookTitle>
+                <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
               </SelectedBookItem>
             ) : (
               <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
@@ -243,10 +243,16 @@ const BookTitle = styled.p`
   font-size: 18px;
 `;
 
-const BigTitle = styled.h1`
+const BestSellerBigTitle = styled.h1`
   display: flex;
   justify-content: center;
-  width: 75%;
+  width: 50%;
+  text-align: center;
+  font-family: "UhBeeJJIBBABBA";
+  margin: 0;
+`;
+
+const BigTitle = styled.h1`
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
   margin: 0;
@@ -500,7 +506,7 @@ const CreateButton = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   transition: 0.5s;
-  opacity: 0.9;
+  opacity: 0.85;
   z-index: 10;
   width: fit-content;
   display: flex;
@@ -526,4 +532,11 @@ const CreateButton = styled.div`
     color: white;
     opacity: 1;
   }
+`;
+
+const SelectedBestBookTitleItem = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: black;
 `;

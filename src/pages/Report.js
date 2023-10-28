@@ -9,7 +9,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartFill, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
@@ -30,9 +30,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
       if (user && email === user.email) {
         setUserEmail(user.email);
         if (reportList.length > 0) {
-          const targetReport = reportList.find(
-            (it) => parseInt(it.id) === parseInt(id)
-          );
+          const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
           if (targetReport) {
             setReport(targetReport);
             loadLike(targetReport.author, user.email);
@@ -72,15 +70,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   };
 
   const loadLike = async (reportAuthor, email) => {
-    const isLikeRef = doc(
-      db,
-      "reports",
-      reportAuthor,
-      "books",
-      id,
-      "likeList",
-      email
-    );
+    const isLikeRef = doc(db, "reports", reportAuthor, "books", id, "likeList", email);
     const isLikeDoc = await getDoc(isLikeRef);
     if (isLikeDoc.data()) {
       const isLike = isLikeDoc.data().isLike;
@@ -101,33 +91,20 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
                 <span>({report.author})</span>
               </Author>
               <span>·</span>
-              <span>
-                {new Date(parseInt(report.date)).toLocaleDateString()}
-              </span>
+              <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
             <ButtonWrapper>
               {userEmail === email && (
                 <>
-                  <MyButton
-                    text={"수정하기"}
-                    type={"positive"}
-                    onClick={handleClickEdit}
-                  />
-                  <MyButton
-                    text={"삭제하기"}
-                    type={"negative"}
-                    onClick={() => handleClickDelete(report.id)}
-                  />
+                  <MyButton text={"수정하기"} type={"positive"} onClick={handleClickEdit} />
+                  <MyButton text={"삭제하기"} type={"negative"} onClick={() => handleClickDelete(report.id)} />
                 </>
               )}
             </ButtonWrapper>
           </SubTitle>
           <BookWrapper>
-            <BookBackground
-              backgroundimage={report.book.cover}
-              onClick={() => handleClickBook(report.book.isbn13)}
-            ></BookBackground>
+            <BookBackground backgroundimage={report.book.cover} onClick={() => handleClickBook(report.book.isbn13)}></BookBackground>
             <BookInfo>
               <BookTitle>{report.book.title}</BookTitle>
               <BookDescription>{report.book.description}</BookDescription>
@@ -148,7 +125,11 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
       </Container>
     );
   } else {
-    return <Container>loading</Container>;
+    return (
+      <LoadingWrapper>
+        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+      </LoadingWrapper>
+    );
   }
 };
 
@@ -296,4 +277,11 @@ const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+`;
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

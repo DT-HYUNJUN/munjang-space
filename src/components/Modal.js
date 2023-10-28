@@ -116,7 +116,7 @@ const Modal = ({ setModal, setBook, reportList }) => {
                           it.description,
                           it.author,
                           it.isbn13,
-                          reportList.find((report) => report.book.isbn13 === it.isbn13)
+                          reportList?.find((report) => report.book.isbn13 === it.isbn13)
                         )
                       }
                     >
@@ -124,7 +124,7 @@ const Modal = ({ setModal, setBook, reportList }) => {
                       <BookDetail>
                         <BookTitleWrapper>
                           <BookTitle>{it.title}</BookTitle>
-                          {reportList.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon ref={checkRef} icon={faCheckCircle} color="#337ab7" />}
+                          {reportList?.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon ref={checkRef} icon={faCheckCircle} color="#337ab7" />}
                         </BookTitleWrapper>
                         <BookAuthor>{it.author}</BookAuthor>
                       </BookDetail>
