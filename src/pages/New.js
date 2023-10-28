@@ -144,7 +144,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo }) => {
       <FormContainer onSubmit={handleSubmit}>
         <HeaderWrapper>
           <BookWrapper>
-            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
+            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="bookImage" />
             <BookInfoSpan>
               {book.title ? (
                 <>
