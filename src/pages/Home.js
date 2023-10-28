@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import listBooks from "../utils/listBooks";
@@ -14,7 +14,8 @@ import "../slick.css";
 import "../slick-theme.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRefresh, faPenFancy } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faPenFancy, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import useInterval from "../utils/useInterval";
 
 const Home = () => {
   const [bestsellerBook, setBestSellerBook] = useState([]);
@@ -23,23 +24,47 @@ const Home = () => {
 
   const [likeReports, setLikeReports] = useState([]);
 
-  const [currentSlide, setCurrentSlide] = useState();
+  const [bookRank, setBookRank] = useState(1);
+
+  const [isPlay, setIsPlay] = useState(true);
+
+  const intervalValue = useRef(5000);
+
+  const startIndex = () => {
+    if (bookRank < 6) {
+      return 0;
+    } else {
+      return 5;
+    }
+  };
+
+  const endIndex = () => {
+    if (bookRank < 6) {
+      return 5;
+    } else {
+      return 10;
+    }
+  };
 
   const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      getLikeReports().then((res) =>
-        setLikeReports(
-          res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
-        )
-      );
+      getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
       listBooks().then((res) => setBestSellerBook(res));
       newSpecialBook().then((res) => setSpecialBook(res));
     } catch (error) {
       console.log(error);
     }
   }, []);
+
+  useInterval(() => {
+    if (bookRank === 10) {
+      setBookRank(1);
+    } else {
+      setBookRank((bookRank) => bookRank + 1);
+    }
+  }, intervalValue.current);
 
   const clickBestSellerBook = (isbn13) => {
     navigate(`/book/${isbn13}`);
@@ -54,11 +79,7 @@ const Home = () => {
   }
 
   const handleClickLikeReports = () => {
-    getLikeReports().then((res) =>
-      setLikeReports(
-        res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
-      )
-    );
+    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
   };
 
   const handleClickReport = (email, id) => {
@@ -69,21 +90,21 @@ const Home = () => {
     navigate("/new");
   };
 
-  // 캐러셀
-  const settings = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    vertical: true,
-    verticalSwiping: true,
-    swipeToSlide: true,
-    beforeChange: function (currentSlide, nextSlide) {
-      console.log("before change", currentSlide, nextSlide);
-    },
-    afterChange: function (currentSlide) {
-      console.log("after change", currentSlide);
-    },
+  const handleSelectBook = (index) => {
+    setBookRank(index);
+  };
+
+  const handleClickPageOne = () => {
+    setBookRank(1);
+  };
+
+  const handleClickPageTwo = () => {
+    setBookRank(6);
+  };
+
+  const handleClickPause = () => {
+    setIsPlay((prev) => !prev);
+    isPlay ? (intervalValue.current = null) : (intervalValue.current = 5000);
   };
 
   const newSpecialBookSettings = {
@@ -96,57 +117,54 @@ const Home = () => {
     pauseOnHover: true,
   };
 
-  let sliderRef;
-
-  const CustomDots = ({ currentSlide, slideCount }) => {
-    const list = bestsellerBook.map((book, index) => (
-      <li key={index}>
-        <button onClick={() => sliderRef.slickGoTo(index)}>
-          {index + 1} {book.title}
-        </button>
-      </li>
-    ));
-
-    return <StyledUl>{list}</StyledUl>;
-  };
-
   return (
     <>
       <NewButtonWrapper>
-        <MyButton
-          text={
-            <>
-              <FontAwesomeIcon icon={faPenFancy} /> 작성하기
-            </>
-          }
-          type={"positive"}
-          onClick={handleClickNew}
-        />
+        <CreateButton onClick={handleClickNew}>
+          <FontAwesomeIcon icon={faPenFancy} /> 독후감 작성하기
+        </CreateButton>
       </NewButtonWrapper>
-      <BigTitle>베스트셀러</BigTitle>
+      <TitleWrapper>
+        <EmptyTag></EmptyTag>
+        <BigTitle>베스트셀러</BigTitle>
+        <PageWrapper>
+          <PauseButton>{isPlay ? <FontAwesomeIcon icon={faPause} color="#777" onClick={handleClickPause} /> : <FontAwesomeIcon icon={faPlay} color="#777" onClick={handleClickPause} />}</PauseButton>
+          {bookRank < 6 ? (
+            <>
+              <SelectedPageItem onClick={handleClickPageOne}>1</SelectedPageItem>
+              <PageItem onClick={handleClickPageTwo}>2</PageItem>
+            </>
+          ) : (
+            <>
+              <PageItem onClick={handleClickPageOne}>1</PageItem>
+              <SelectedPageItem onClick={handleClickPageTwo}>2</SelectedPageItem>
+            </>
+          )}
+        </PageWrapper>
+      </TitleWrapper>
       <BestSeller>
-        <Slider
-          ref={(c) => (sliderRef = c)}
-          {...settings}
-          afterChange={(current) => setCurrentSlide(current)}
-        >
-          {bestsellerBook.map((item) => (
-            <SlideItem
-              title={item.title}
-              key={item.isbn}
-              onClick={() => clickBestSellerBook(item.isbn13)}
-            >
-              <Bookimg src={item.cover} alt={item.title} />
-              <div>
-                <BookTitle>{truncateText(item.title, 10)}</BookTitle>
-              </div>
-            </SlideItem>
-          ))}
-        </Slider>
-        <CustomDots
-          currentSlide={currentSlide}
-          slideCount={bestsellerBook.length}
-        />
+        <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
+          <BestBookCover src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
+          <BestBookInfo>
+            <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
+            <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
+          </BestBookInfo>
+        </BestBookInfoWrapper>
+        <BestBookList>
+          {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
+            bookRank === item.bestRank ? (
+              <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
+                <BestBookTitle>{item.title}</BestBookTitle>
+              </SelectedBookItem>
+            ) : (
+              <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                <BestBookIndex>{item.bestRank}</BestBookIndex>
+                <BestBookTitle>{item.title}</BestBookTitle>
+              </BookItem>
+            )
+          )}
+        </BestBookList>
       </BestSeller>
 
       <BigTitleLike>
@@ -158,10 +176,7 @@ const Home = () => {
       <BestLikesReport>
         {likeReports.slice(0, 5).map((it, idx) => (
           <LikeReport key={idx}>
-            <BookBackground
-              backgroundimage={it.book.cover}
-              onClick={() => handleClickReport(it.author, it.id)}
-            ></BookBackground>
+            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
             <ReportRank>BEST {idx + 1}</ReportRank>
             <BookCover src={it.book.cover} alt={it.book.title} />
             <ReportTitle>{it.title}</ReportTitle>
@@ -178,10 +193,7 @@ const Home = () => {
       <SpecilaBook>
         <Slider {...newSpecialBookSettings}>
           {specialBook.map((item) => (
-            <BookWrapper
-              key={item.isbn}
-              onClick={() => clickBestSellerBook(item.isbn13)}
-            >
+            <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
               <Bookimg src={item.cover} alt={item.title} />
               <BookTitle>{truncateText(item.title, 10)}</BookTitle>
             </BookWrapper>
@@ -195,10 +207,19 @@ const Home = () => {
 export default Home;
 
 const BestSeller = styled.div`
-  cursor: pointer;
-  margin-left: 450px;
-  margin-bottom: 30px;
-  margin-top: 20px;
+  border-top: 1px solid #d8d8d8;
+  border-bottom: 1px solid #d8d8d8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+
+  /* margin-left: 450px; */
+  /* margin-bottom: 30px;
+  margin-top: 20px; */
+  margin: 10px 100px 30px 100px;
+
+  padding: 40px 0;
 `;
 
 const SpecilaBook = styled.div`
@@ -223,10 +244,12 @@ const BookTitle = styled.p`
 `;
 
 const BigTitle = styled.h1`
+  display: flex;
+  justify-content: center;
+  width: 75%;
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
-  margin-bottom: 0px;
-  margin-top: 50px;
+  margin: 0;
 `;
 
 const BigTitleLike = styled.h1`
@@ -337,16 +360,170 @@ const BookWrapper = styled.div`
   justify-content: center;
 `;
 
-const SlideItem = styled.div`
+const NewButtonWrapper = styled.div``;
+
+const SelectedBookItem = styled.div`
+  font-size: 24px;
   display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+`;
+
+const BookItem = styled.div`
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+`;
+
+const BestBookTitle = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #777;
+`;
+
+const SelectedBestBookIndex = styled.span`
+  font-size: 28px;
+  font-weight: bold;
+`;
+
+const BestBookIndex = styled.span`
+  font-size: 28px;
+  color: #777;
+`;
+
+const BestBookList = styled.div`
+  cursor: pointer;
+  width: 400px;
+  font-family: "KyoboHandwriting2021sjy";
+`;
+
+const BestBookCover = styled.img`
+  border: 1px solid #ccc;
+  width: 140px;
+  height: 200px;
+  transition: all 1s ease 0s;
+`;
+
+const BestBookInfo = styled.div`
+  font-family: "KyoboHandwriting2021sjy";
+  width: 200px;
+`;
+
+const BestBookInfoWrapper = styled.div`
+  cursor: pointer;
+  display: flex;
+  gap: 15px;
   align-items: center;
 `;
 
-const StyledUl = styled.ul`
-  display: block;
-  position: absolute;
-  top: 200px;
-  right: 400px;
+const SelectedBestBookTitle = styled.p`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 24px;
+  font-weight: bold;
 `;
 
-const NewButtonWrapper = styled.div``;
+const SelectedBestBookAuthor = styled.p`
+  font-size: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 50px 100px 0px 100px;
+`;
+
+const PageWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 25%;
+  gap: 5px;
+  justify-content: end;
+`;
+
+const EmptyTag = styled.div`
+  display: flex;
+  width: 25%;
+  justify-content: start;
+`;
+
+const SelectedPageItem = styled.button`
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  background-color: black;
+`;
+
+const PageItem = styled.button`
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  color: #777;
+  background: none;
+`;
+
+const PauseButton = styled.div`
+  cursor: pointer;
+  margin-right: 10px;
+`;
+
+const CreateButton = styled.div`
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.5s;
+  opacity: 0.9;
+  z-index: 10;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #a7d7e8;
+  color: white;
+  white-space: nowrap;
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 18px;
+  padding: 10px 15px;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  &:hover {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2, 1.2);
+    transition: 0.5s;
+    background-color: #79cbe9;
+    color: white;
+    opacity: 1;
+  }
+`;
