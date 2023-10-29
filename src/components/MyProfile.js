@@ -1,14 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { getAuth, updateProfile, deleteUser } from "firebase/auth";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
 
 import styled from "styled-components";
@@ -17,7 +10,7 @@ import MyButton from "./MyButton";
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
 
-const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
+const MyProfile = ({ email, username, photoURL, handleChangePW, isSocial }) => {
   const [init, setInit] = useState(false);
 
   const [currentUsername, setCurrentUsername] = useState(username);
@@ -50,10 +43,7 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
   };
 
   const handleEdit = async () => {
-    const q = query(
-      collection(db, "users"),
-      where("username", "==", currentUsername)
-    );
+    const q = query(collection(db, "users"), where("username", "==", currentUsername));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       alert("닉네임 중복");
@@ -87,48 +77,37 @@ const MyProfile = ({ email, username, photoURL, handleChangePW }) => {
         {init && (
           <div>
             <ImageInputWrapper>
-              <InputLabel htmlFor="profileImage">
-                <ImagePreview src={profileImagePreview} alt="" />
-              </InputLabel>
+              {isSocial ? (
+                <SocialInputLabel htmlFor="profileImage">
+                  <ImagePreview src={profileImagePreview} alt="" />
+                </SocialInputLabel>
+              ) : (
+                <InputLabel htmlFor="profileImage">
+                  <ImagePreview src={profileImagePreview} alt="" />
+                </InputLabel>
+              )}
             </ImageInputWrapper>
-            <StyledInputFile
-              ref={imageInput}
-              id="profileImage"
-              name="profileImage"
-              type="file"
-              accept="image/*"
-              onChange={handleInput}
-            />
+            {!isSocial && <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />}
+
             <InfoWrapper>
               <div>
                 <InfoText>닉네임 :</InfoText>
-                <UsernameInput
-                  name="username"
-                  type="text"
-                  value={currentUsername}
-                  onChange={handleInput}
-                />
+                {isSocial ? <InfoText>{currentUsername}</InfoText> : <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />}
               </div>
               <div>
                 <InfoText>이메일 :</InfoText>
                 <InfoText>{email}</InfoText>
               </div>
               <Center>
-                <ChangePasswordLink onClick={handleChangePW}>
-                  비밀번호 변경
-                </ChangePasswordLink>
-                <ChangePasswordLink onClick={handleChangePW}>
-                  비밀번호 찾기
-                </ChangePasswordLink>
+                {!isSocial && (
+                  <>
+                    <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
+                    <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
+                  </>
+                )}
               </Center>
             </InfoWrapper>
-            <BottomWrapper>
-              <MyButton
-                text={"수정 완료"}
-                type={"positive"}
-                onClick={handleEdit}
-              />
-            </BottomWrapper>
+            <BottomWrapper>{!isSocial && <MyButton text={"수정 완료"} type={"positive"} onClick={handleEdit} />}</BottomWrapper>
           </div>
         )}
       </div>
@@ -170,15 +149,11 @@ const BottomWrapper = styled.div`
 
 const ImagePreview = styled.img`
   border: 1px solid gray;
-  cursor: pointer;
   margin: auto;
   display: block;
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  &:hover {
-    filter: brightness(70%);
-  }
 `;
 
 const ImageInputWrapper = styled.div`
@@ -188,6 +163,9 @@ const ImageInputWrapper = styled.div`
 
 const InputLabel = styled.label`
   cursor: pointer;
+  &:hover {
+    filter: brightness(70%);
+  }
 `;
 
 const StyledInputFile = styled.input`
@@ -205,3 +183,5 @@ const ChangePasswordLink = styled.span`
   color: blue;
   text-decoration: underline;
 `;
+
+const SocialInputLabel = styled.label``;

@@ -10,11 +10,7 @@ import ChangePassword from "../components/ChangePassword";
 import MyProfile from "../components/MyProfile";
 import MyButton from "../components/MyButton";
 
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
 const Profile = () => {
   const [init, setInit] = useState(false);
@@ -22,6 +18,8 @@ const Profile = () => {
   const [isCorrect, setIsCorrect] = useState(false);
 
   const [isChangePW, setIsChangePW] = useState(false);
+
+  const [isSocial, setIsSocial] = useState(false);
 
   const [user, setUser] = useState();
   const [email, setEmail] = useState("");
@@ -34,6 +32,8 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const isSocialLogin = localStorage.getItem("socialLogin");
+    if (isSocialLogin) setIsSocial(true);
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -103,28 +103,17 @@ const Profile = () => {
 
   return (
     init &&
-    (isCorrect ? (
+    (isCorrect || isSocial ? (
       <div>
         <Container>
           {isChangePW ? (
-            <ChangePassword
-              email={email}
-              setIsChangePW={setIsChangePW}
-              handleChangePW={handleChangePW}
-            />
+            <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
           ) : (
-            <MyProfile
-              email={email}
-              username={username}
-              photoURL={photoURL}
-              handleChangePW={handleChangePW}
-            />
+            <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} isSocial={isSocial} />
           )}
         </Container>
         <DeleteButton>
-          <DeleteUserButton onClick={handleDeleteUser}>
-            회원탈퇴
-          </DeleteUserButton>
+          <DeleteUserButton onClick={handleDeleteUser}>회원탈퇴</DeleteUserButton>
         </DeleteButton>
       </div>
     ) : (
@@ -135,19 +124,10 @@ const Profile = () => {
             안전한 개인정보 변경을 위해
             <br /> 비밀번호를 다시 입력해주세요.
           </Info>
-          <Input
-            name="password"
-            type="password"
-            value={password}
-            onChange={handleInput}
-            placeholder="비밀번호 입력"
-          />
+          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="비밀번호 입력" />
           <MyButton text={"확인"} type={"positive"} />
         </PasswordForm>
-        <PasswordImage
-          src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"}
-          alt="image"
-        />
+        <PasswordImage src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"} alt="image" />
       </PasswordCheckContainer>
     ))
   );
