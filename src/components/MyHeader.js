@@ -15,7 +15,6 @@ const MyHeader = ({ IsLogin }) => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const username = user.displayName;
-        console.log(username);
         setUsername(username);
       } else {
         setUsername(null);

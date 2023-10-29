@@ -25,7 +25,7 @@ import ThisBookReport from "./pages/ThisBookReport";
 function App() {
   const [IsLogin, setIsLogin] = useState(localStorage.getItem("isLogin"));
   const [userInfo, setUserInfo] = useState({});
-  const [testData, setTestData] = useState([]);
+  const [reportList, setReportList] = useState([]);
   const [reportCount, setReportCount] = useState(0);
   const auth = getAuth();
 
@@ -39,7 +39,7 @@ function App() {
           querySnapShot.forEach((doc) => {
             data.push(doc.data());
           });
-          setTestData(data);
+          setReportList(data);
           setReportCount(data.length);
         });
         if (user.photoURL) {
@@ -134,13 +134,13 @@ function App() {
 
           <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
-          <Route path="/list" element={<List reportList={testData} onDelete={onDelete} IsLogin={IsLogin} />} />
+          <Route path="/list" element={<List reportList={reportList} onDelete={onDelete} IsLogin={IsLogin} />} />
 
-          <Route path="/report/:email/:id" element={<Report reportList={testData} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
+          <Route path="/report/:email/:id" element={<Report reportList={reportList} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
-          <Route path="/statistics" element={<Statistics IsLogin={IsLogin} />} />
+          <Route path="/statistics" element={<Statistics IsLogin={IsLogin} reportList={reportList} />} />
         </Routes>
       </div>
       <MyFooter />

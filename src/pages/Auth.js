@@ -7,6 +7,8 @@ import styled from "styled-components";
 import MyButton from "../components/MyButton";
 
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../fbase";
 
 const Login = () => {
   const inputRef = useRef();
@@ -35,10 +37,13 @@ const Login = () => {
     const provider = new GoogleAuthProvider(); //Provider 설정
     const auth = getAuth();
     signInWithPopup(auth, provider) //팝업창 띄어서 로그인
-      .then((data) => {
+      .then(async (data) => {
+        console.log(data);
+        const username = data.user.displayName;
+        localStorage.setItem("socialLogin", data.providerId);
+        await setDoc(doc(db, "reports", data.user.email), { username });
         setUserData(data.user); // user data 설정
         navigate("/"); // 로그인시 홈으로 이동
-        console.log(data);
       })
       .catch((error) => {
         console.log(error);
