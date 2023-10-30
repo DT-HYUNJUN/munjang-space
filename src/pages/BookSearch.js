@@ -49,6 +49,7 @@ const BookSearch = () => {
     });
   };
 
+  // book정보로 이동
   const handleClickBook = (isbn13) => {
     navigate(`/book/${isbn13}`);
   };
@@ -60,13 +61,20 @@ const BookSearch = () => {
   ) : searchComplete && bookList.length > 0 ? (
     <div>
       <SearchBoookName>검색한 '{state.bookName}' 입니다.</SearchBoookName>
+
       {bookList.map((book) => (
-        <BookInfo key={book.isbn13}>
+        <BookInfo
+          key={book.isbn13}
+          onClick={() => {
+            handleClickBook(book.isbn13);
+          }}
+        >
           <img src={book.cover} alt={book.title} />
           <TitleAndAuthor>
             <BookTitle>{book.title}</BookTitle>
             <BookAuthor>{book.author}</BookAuthor>
           </TitleAndAuthor>
+
           <BookButton>
             <ReportWriteButton
               onClick={() =>
@@ -109,6 +117,8 @@ const BookInfo = styled.div`
   align-items: center;
   font-family: "KyoboHandwriting2021sjy";
   margin-bottom: 20px;
+
+  cursor: pointer;
 `;
 
 const BookButton = styled.div``;
