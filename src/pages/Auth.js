@@ -40,7 +40,7 @@ const Login = () => {
       .then(async (data) => {
         console.log(data);
         const username = data.user.displayName;
-        localStorage.setItem("socialLogin", data.providerId);
+        localStorage.setItem("isSocial", true);
         await setDoc(doc(db, "reports", data.user.email), { username });
         setUserData(data.user); // user data 설정
         navigate("/"); // 로그인시 홈으로 이동
@@ -95,6 +95,7 @@ const Login = () => {
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem("isSocial", false);
       navigate("/");
     } catch (error) {
       if (error.code === "auth/user-not-found") {

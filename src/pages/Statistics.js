@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Statistics = ({ IsLogin, reportList }) => {
   const [year, setYear] = useState(new Date().getFullYear());
+  const [reportCount, setReportCount] = useState(0);
   const [targetBookNum, setTargetBookNum] = useState(0);
   const [barHeight, setBarHeight] = useState([]);
 
@@ -34,7 +35,9 @@ const Statistics = ({ IsLogin, reportList }) => {
       };
       const data = [];
       const barHeight = [];
-      reportList.forEach((it) => {
+      const yearFilterData = reportList.filter((it) => new Date(it.date).getFullYear() === year);
+      setReportCount(yearFilterData.length);
+      yearFilterData.forEach((it) => {
         const month = new Date(it.date).getMonth() + 1;
         tempObj[month] += 1;
       });
@@ -46,7 +49,7 @@ const Statistics = ({ IsLogin, reportList }) => {
       });
       setBarHeight(barHeight);
     }
-  }, [reportList]);
+  }, [reportList, year]);
 
   const handleClickNextYear = () => {
     setYear((year) => year + 1);
@@ -54,6 +57,10 @@ const Statistics = ({ IsLogin, reportList }) => {
 
   const handleClickPrevYear = () => {
     setYear((year) => year - 1);
+  };
+
+  const handleInput = (e) => {
+    setTargetBookNum(e.target.value);
   };
 
   return (
@@ -67,7 +74,8 @@ const Statistics = ({ IsLogin, reportList }) => {
           </ArrowWrapper>
         </Box>
         <Box>
-          <Book>목표 독서량 : {targetBookNum}</Book>
+          <Book>목표 독서량 :</Book>
+          <TargetInput type="text" value={targetBookNum} onChange={handleInput} />
         </Box>
       </Header>
       <Content>
@@ -79,17 +87,19 @@ const Statistics = ({ IsLogin, reportList }) => {
             </Month>
           ))}
         </Graph>
-        <TargetBox>
-          <TargetWrapper>
-            <CircleGraph>
-              <CircleGraphCenter>100%</CircleGraphCenter>
-            </CircleGraph>
-            <div>
-              <TargetText>목표 : {targetBookNum}권 중</TargetText>
-              <TargetText>{reportList.length}권 읽었어요</TargetText>
-            </div>
-          </TargetWrapper>
-        </TargetBox>
+        <Target>
+          <TargetBox>
+            <TargetWrapper>
+              <CircleGraph>
+                <CircleGraphCenter>100%</CircleGraphCenter>
+              </CircleGraph>
+              <div>
+                <TargetText>목표 : {targetBookNum}권 중</TargetText>
+                <TargetText>{reportCount}권 읽었어요</TargetText>
+              </div>
+            </TargetWrapper>
+          </TargetBox>
+        </Target>
       </Content>
     </Container>
   );
@@ -105,8 +115,9 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 50px;
 `;
 
 const Box = styled.div`
@@ -143,6 +154,7 @@ const Content = styled.div`
 `;
 
 const Graph = styled.div`
+  min-height: 221px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -177,7 +189,7 @@ const TargetBox = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 260px;
+  width: 320px;
   height: 100px;
   padding: 5px 10px;
   border-radius: 5px;
@@ -213,4 +225,17 @@ const CircleGraphCenter = styled.span`
   transform: translate(-50%, -50%);
 `;
 
-const TargetText = styled.div``;
+const TargetText = styled.div`
+  font-size: 20px;
+`;
+
+const Target = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const TargetInput = styled.input`
+  border: 0;
+  background: none;
+  width: 10px;
+`;
