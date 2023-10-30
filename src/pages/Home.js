@@ -14,7 +14,12 @@ import "../slick.css";
 import "../slick-theme.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRefresh, faPenFancy, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import {
+  faRefresh,
+  faPenFancy,
+  faPause,
+  faPlay,
+} from "@fortawesome/free-solid-svg-icons";
 import useInterval from "../utils/useInterval";
 
 const Home = () => {
@@ -28,7 +33,12 @@ const Home = () => {
 
   const [isPlay, setIsPlay] = useState(true);
 
+  const [bookName, setBookName] = useState("");
+
   const intervalValue = useRef(5000);
+
+  // placeholder
+  const [inputClick, setInputClick] = useState("false");
 
   const startIndex = () => {
     if (bookRank < 6) {
@@ -50,7 +60,11 @@ const Home = () => {
 
   useEffect(() => {
     try {
-      getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+      getLikeReports().then((res) =>
+        setLikeReports(
+          res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
+        )
+      );
       listBooks().then((res) => setBestSellerBook(res));
       newSpecialBook().then((res) => setSpecialBook(res));
     } catch (error) {
@@ -79,7 +93,11 @@ const Home = () => {
   }
 
   const handleClickLikeReports = () => {
-    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+    getLikeReports().then((res) =>
+      setLikeReports(
+        res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
+      )
+    );
   };
 
   const handleClickReport = (email, id) => {
@@ -107,6 +125,10 @@ const Home = () => {
     isPlay ? (intervalValue.current = null) : (intervalValue.current = 5000);
   };
 
+  const handleInput = (e) => {
+    setBookName(e.target.value);
+  };
+
   const newSpecialBookSettings = {
     dots: true,
     infinite: true,
@@ -119,46 +141,109 @@ const Home = () => {
 
   return (
     <>
+      <BookSearchWrapper>
+        <BookSearchForm
+          onSubmit={() =>
+            navigate("/booksearch", {
+              state: {
+                bookName,
+              },
+            })
+          }
+        >
+          <BookSearchInput
+            type="text"
+            value={bookName}
+            onChange={handleInput}
+            required
+            onFocus={() => {
+              setInputClick(true);
+            }}
+            onBlur={() => setInputClick(false)}
+            placeholder={inputClick === true ? "" : "책 제목을 입력해주세요."}
+          />
+          <MyButton type={"positive"} text={"책 검색"} />
+        </BookSearchForm>
+      </BookSearchWrapper>
+
       <NewButtonWrapper>
         <CreateButton onClick={handleClickNew}>
           <FontAwesomeIcon icon={faPenFancy} /> 독후감 작성하기
         </CreateButton>
       </NewButtonWrapper>
+
       <TitleWrapper>
         <EmptyTag></EmptyTag>
         <BestSellerBigTitle>베스트셀러</BestSellerBigTitle>
         <PageWrapper>
-          <PauseButton>{isPlay ? <FontAwesomeIcon icon={faPause} color="#777" onClick={handleClickPause} /> : <FontAwesomeIcon icon={faPlay} color="#777" onClick={handleClickPause} />}</PauseButton>
+          <PauseButton>
+            {isPlay ? (
+              <FontAwesomeIcon
+                icon={faPause}
+                color="#777"
+                onClick={handleClickPause}
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={faPlay}
+                color="#777"
+                onClick={handleClickPause}
+              />
+            )}
+          </PauseButton>
           {bookRank < 6 ? (
             <>
-              <SelectedPageItem onClick={handleClickPageOne}>1</SelectedPageItem>
+              <SelectedPageItem onClick={handleClickPageOne}>
+                1
+              </SelectedPageItem>
               <PageItem onClick={handleClickPageTwo}>2</PageItem>
             </>
           ) : (
             <>
               <PageItem onClick={handleClickPageOne}>1</PageItem>
-              <SelectedPageItem onClick={handleClickPageTwo}>2</SelectedPageItem>
+              <SelectedPageItem onClick={handleClickPageTwo}>
+                2
+              </SelectedPageItem>
             </>
           )}
         </PageWrapper>
       </TitleWrapper>
       <BestSeller>
-        <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
-          <BestBookCover src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
+        <BestBookInfoWrapper
+          onClick={() =>
+            clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)
+          }
+        >
+          <BestBookCover
+            src={bestsellerBook[bookRank - 1]?.cover}
+            alt={bestsellerBook[bookRank - 1]?.title}
+          />
           <BestBookInfo>
-            <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
-            <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
+            <SelectedBestBookTitle>
+              {bestsellerBook[bookRank - 1]?.title}
+            </SelectedBestBookTitle>
+            <SelectedBestBookAuthor>
+              {bestsellerBook[bookRank - 1]?.author}
+            </SelectedBestBookAuthor>
           </BestBookInfo>
         </BestBookInfoWrapper>
         <BestBookList>
           {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
             bookRank === item.bestRank ? (
-              <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+              <SelectedBookItem
+                key={item.isbn13}
+                onClick={() => handleSelectBook(item.bestRank)}
+              >
                 <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
-                <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
+                <SelectedBestBookTitleItem>
+                  {item.title}
+                </SelectedBestBookTitleItem>
               </SelectedBookItem>
             ) : (
-              <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+              <BookItem
+                key={item.isbn13}
+                onClick={() => handleSelectBook(item.bestRank)}
+              >
                 <BestBookIndex>{item.bestRank}</BestBookIndex>
                 <BestBookTitle>{item.title}</BestBookTitle>
               </BookItem>
@@ -176,7 +261,10 @@ const Home = () => {
       <BestLikesReport>
         {likeReports.slice(0, 5).map((it, idx) => (
           <LikeReport key={idx}>
-            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
+            <BookBackground
+              backgroundimage={it.book.cover}
+              onClick={() => handleClickReport(it.author, it.id)}
+            ></BookBackground>
             <ReportRank>BEST {idx + 1}</ReportRank>
             <BookCover src={it.book.cover} alt={it.book.title} />
             <ReportTitle>{it.title}</ReportTitle>
@@ -193,7 +281,10 @@ const Home = () => {
       <SpecilaBook>
         <Slider {...newSpecialBookSettings}>
           {specialBook.map((item) => (
-            <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
+            <BookWrapper
+              key={item.isbn}
+              onClick={() => clickBestSellerBook(item.isbn13)}
+            >
               <Bookimg src={item.cover} alt={item.title} />
               <BookTitle>{truncateText(item.title, 10)}</BookTitle>
             </BookWrapper>
@@ -214,17 +305,12 @@ const BestSeller = styled.div`
   align-items: center;
   gap: 50px;
 
-  /* margin-left: 450px; */
-  /* margin-bottom: 30px;
-  margin-top: 20px; */
   margin: 10px 100px 30px 100px;
 
   padding: 40px 0;
 `;
 
 const SpecilaBook = styled.div`
-  // display: flex;
-  // justify-content: space-between;
   cursor: pointer;
 
   margin-bottom: 60px;
@@ -234,11 +320,9 @@ const SpecilaBook = styled.div`
 const Bookimg = styled.img`
   width: 100px;
   height: 150px;
-  /* margin-right: 20px; */
 `;
 
 const BookTitle = styled.p`
-  // text-align: center;
   font-family: "KyoboHandwriting2021sjy";
   font-size: 18px;
 `;
@@ -279,7 +363,6 @@ const LikeReport = styled.div`
   position: relative;
   overflow: hidden;
   text-align: center;
-  /* border: 1px solid #ccc; */
   box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.06), 2px 2px 10px rgba(0, 0, 0, 0.04);
   border-radius: 15px;
   padding: 10px;
@@ -294,7 +377,8 @@ const RefreshButton = styled.span`
 `;
 
 const BookCover = styled.img`
-  width: 150px;
+  width: 140px;
+  height: 200px;
   border: 0.5px solid #ccc;
 `;
 
@@ -521,7 +605,8 @@ const CreateButton = styled.div`
   font-family: "UhBeeJJIBBABBA";
   font-size: 18px;
   padding: 10px 15px;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
   &:hover {
     position: fixed;
     bottom: 50px;
@@ -539,4 +624,25 @@ const SelectedBestBookTitleItem = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   color: black;
+`;
+
+const BookSearchWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-self: center;
+`;
+
+const BookSearchInput = styled.input`
+  border: 1px solid #777;
+  font-size: 24px;
+  border-radius: 8px;
+  width: 500px;
+
+  font-family: "UhBeeJJIBBABBA";
+`;
+
+const BookSearchForm = styled.form`
+  display: flex;
+  align-self: center;
+  gap: 10px;
 `;

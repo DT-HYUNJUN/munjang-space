@@ -7,6 +7,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Book from "./pages/Book";
 import List from "./pages/List";
+import BookSearch from "./pages/BookSearch";
 import Report from "./pages/Report";
 import New from "./pages/New";
 import Edit from "./pages/Edit";
@@ -17,7 +18,18 @@ import MyHeader from "./components/MyHeader";
 import MyFooter from "./components/MyFooter";
 
 import { db } from "./fbase";
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import getDefaultProfileImage from "./utils/getDefaultProfileImage";
 import ThisBookReport from "./pages/ThisBookReport";
@@ -34,14 +46,17 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLogin(true);
-        unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
-          const data = [];
-          querySnapShot.forEach((doc) => {
-            data.push(doc.data());
-          });
-          setReportList(data);
-          setReportCount(data.length);
-        });
+        unSubscribe = onSnapshot(
+          collection(db, "reports", user.email, "books"),
+          (querySnapShot) => {
+            const data = [];
+            querySnapShot.forEach((doc) => {
+              data.push(doc.data());
+            });
+            setReportList(data);
+            setReportCount(data.length);
+          }
+        );
         if (user.photoURL) {
           setUserInfo({
             email: user.email,
@@ -70,7 +85,10 @@ function App() {
 
   const onCreate = async (report) => {
     try {
-      const docRef = doc(collection(db, "reports", report.author, "books"), `${report.id}`);
+      const docRef = doc(
+        collection(db, "reports", report.author, "books"),
+        `${report.id}`
+      );
       await setDoc(docRef, report);
     } catch (error) {
       console.log(error);
@@ -88,7 +106,13 @@ function App() {
 
   const onDelete = async (id) => {
     try {
-      const deleteReportRef = doc(db, "reports", userInfo.email, "books", `${id}`);
+      const deleteReportRef = doc(
+        db,
+        "reports",
+        userInfo.email,
+        "books",
+        `${id}`
+      );
       console.log(deleteReportRef);
       await deleteDoc(deleteReportRef);
     } catch (error) {
@@ -97,7 +121,14 @@ function App() {
   };
 
   const onLike = async (author, id) => {
-    const likeListRef = collection(db, "reports", author, "books", `${id}`, "likeList");
+    const likeListRef = collection(
+      db,
+      "reports",
+      author,
+      "books",
+      `${id}`,
+      "likeList"
+    );
     const docRef = doc(likeListRef, userInfo.email);
     const document = await getDoc(docRef);
     if (document.data()) {
@@ -110,7 +141,10 @@ function App() {
       }
     } else {
       // 좋아요 리스트에 없으면 -> 좋아요
-      const reportRef = doc(collection(db, "reports", author, "books", `${id}`, "likeList"), userInfo.email);
+      const reportRef = doc(
+        collection(db, "reports", author, "books", `${id}`, "likeList"),
+        userInfo.email
+      );
       await setDoc(reportRef, { isLike: true });
     }
     const q = query(likeListRef, where("isLike", "==", true));
@@ -134,13 +168,46 @@ function App() {
 
           <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
-          <Route path="/list" element={<List reportList={reportList} onDelete={onDelete} IsLogin={IsLogin} />} />
+          <Route
+            path="/list"
+            element={
+              <List
+                reportList={reportList}
+                onDelete={onDelete}
+                IsLogin={IsLogin}
+              />
+            }
+          />
+          <Route path="/booksearch" element={<BookSearch />} />
 
-          <Route path="/report/:email/:id" element={<Report reportList={reportList} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
-          <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
+          <Route
+            path="/report/:email/:id"
+            element={
+              <Report
+                reportList={reportList}
+                onLike={onLike}
+                onDelete={onDelete}
+                userInfo={userInfo}
+              />
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <New
+                onCreate={onCreate}
+                reportCount={reportCount}
+                userInfo={userInfo}
+                IsLogin={IsLogin}
+              />
+            }
+          />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
 
-          <Route path="/statistics" element={<Statistics IsLogin={IsLogin} reportList={reportList} />} />
+          <Route
+            path="/statistics"
+            element={<Statistics IsLogin={IsLogin} reportList={reportList} />}
+          />
         </Routes>
       </div>
       <MyFooter />
