@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Statistics = ({ IsLogin, reportList }) => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [targetBookNum, setTargetBookNum] = useState(0);
-  const [booksPerMonth, setBooksPerMonth] = useState({});
+  const [barHeight, setBarHeight] = useState([]);
 
   const navigate = useNavigate();
 
@@ -32,11 +32,19 @@ const Statistics = ({ IsLogin, reportList }) => {
         11: 0,
         12: 0,
       };
+      const data = [];
+      const barHeight = [];
       reportList.forEach((it) => {
         const month = new Date(it.date).getMonth() + 1;
         tempObj[month] += 1;
       });
-      setBooksPerMonth({ ...tempObj });
+      Object.values(tempObj).map((value) => data.push(value));
+      const maxData = Math.max(...data);
+      data.forEach((it) => {
+        const ratio = it / maxData;
+        barHeight.push(ratio * 200);
+      });
+      setBarHeight(barHeight);
     }
   }, [reportList]);
 
@@ -64,13 +72,24 @@ const Statistics = ({ IsLogin, reportList }) => {
       </Header>
       <Content>
         <Graph>
-          {Object.values(booksPerMonth).map((value, index) => (
+          {barHeight.map((value, index) => (
             <Month key={index}>
-              <Bar value={`${value + 10}px`}></Bar>
+              <Bar value={`${value}px`}></Bar>
               <span>{index + 1}</span>
             </Month>
           ))}
         </Graph>
+        <TargetBox>
+          <TargetWrapper>
+            <CircleGraph>
+              <CircleGraphCenter>100%</CircleGraphCenter>
+            </CircleGraph>
+            <div>
+              <TargetText>목표 : {targetBookNum}권 중</TargetText>
+              <TargetText>{reportList.length}권 읽었어요</TargetText>
+            </div>
+          </TargetWrapper>
+        </TargetBox>
       </Content>
     </Container>
   );
@@ -128,6 +147,7 @@ const Graph = styled.div`
   align-items: flex-end;
   justify-content: center;
   gap: 10px;
+  margin: 50px 0;
 `;
 
 const Month = styled.div`
@@ -136,8 +156,61 @@ const Month = styled.div`
   align-items: center;
 `;
 
+const fillUp = keyframes`
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+`;
+
 const Bar = styled.div`
   width: 20px;
   background-color: gray;
   height: ${(props) => props.value};
+  animation: ${fillUp} ease-in-out 0.3s forwards;
+  transform-origin: bottom;
 `;
+
+const TargetBox = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 260px;
+  height: 100px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  background-color: #e8e8e8;
+`;
+
+const TargetWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+`;
+
+const CircleGraph = styled.div`
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: tomato;
+`;
+
+const CircleGraphCenter = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: #e8e8e8;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const TargetText = styled.div``;
