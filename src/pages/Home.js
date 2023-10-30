@@ -14,12 +14,7 @@ import "../slick.css";
 import "../slick-theme.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faRefresh,
-  faPenFancy,
-  faPause,
-  faPlay,
-} from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faPenFancy, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import useInterval from "../utils/useInterval";
 
 const Home = () => {
@@ -35,7 +30,7 @@ const Home = () => {
 
   const [bookName, setBookName] = useState("");
 
-  const intervalValue = useRef(5000);
+  const intervalValue = useRef(3000);
 
   // placeholder
   const [inputClick, setInputClick] = useState("false");
@@ -60,11 +55,7 @@ const Home = () => {
 
   useEffect(() => {
     try {
-      getLikeReports().then((res) =>
-        setLikeReports(
-          res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
-        )
-      );
+      getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
       listBooks().then((res) => setBestSellerBook(res));
       newSpecialBook().then((res) => setSpecialBook(res));
     } catch (error) {
@@ -93,11 +84,7 @@ const Home = () => {
   }
 
   const handleClickLikeReports = () => {
-    getLikeReports().then((res) =>
-      setLikeReports(
-        res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)
-      )
-    );
+    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
   };
 
   const handleClickReport = (email, id) => {
@@ -122,7 +109,7 @@ const Home = () => {
 
   const handleClickPause = () => {
     setIsPlay((prev) => !prev);
-    isPlay ? (intervalValue.current = null) : (intervalValue.current = 5000);
+    isPlay ? (intervalValue.current = null) : (intervalValue.current = 3000);
   };
 
   const handleInput = (e) => {
@@ -176,74 +163,37 @@ const Home = () => {
         <EmptyTag></EmptyTag>
         <BestSellerBigTitle>베스트셀러</BestSellerBigTitle>
         <PageWrapper>
-          <PauseButton>
-            {isPlay ? (
-              <FontAwesomeIcon
-                icon={faPause}
-                color="#777"
-                onClick={handleClickPause}
-              />
-            ) : (
-              <FontAwesomeIcon
-                icon={faPlay}
-                color="#777"
-                onClick={handleClickPause}
-              />
-            )}
-          </PauseButton>
+          <PauseButton>{isPlay ? <FontAwesomeIcon icon={faPause} color="#777" onClick={handleClickPause} /> : <FontAwesomeIcon icon={faPlay} color="#777" onClick={handleClickPause} />}</PauseButton>
           {bookRank < 6 ? (
             <>
-              <SelectedPageItem onClick={handleClickPageOne}>
-                1
-              </SelectedPageItem>
+              <SelectedPageItem onClick={handleClickPageOne}>1</SelectedPageItem>
               <PageItem onClick={handleClickPageTwo}>2</PageItem>
             </>
           ) : (
             <>
               <PageItem onClick={handleClickPageOne}>1</PageItem>
-              <SelectedPageItem onClick={handleClickPageTwo}>
-                2
-              </SelectedPageItem>
+              <SelectedPageItem onClick={handleClickPageTwo}>2</SelectedPageItem>
             </>
           )}
         </PageWrapper>
       </TitleWrapper>
       <BestSeller>
-        <BestBookInfoWrapper
-          onClick={() =>
-            clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)
-          }
-        >
-          <BestBookCover
-            src={bestsellerBook[bookRank - 1]?.cover}
-            alt={bestsellerBook[bookRank - 1]?.title}
-          />
+        <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
+          <BestBookCover src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
           <BestBookInfo>
-            <SelectedBestBookTitle>
-              {bestsellerBook[bookRank - 1]?.title}
-            </SelectedBestBookTitle>
-            <SelectedBestBookAuthor>
-              {bestsellerBook[bookRank - 1]?.author}
-            </SelectedBestBookAuthor>
+            <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
+            <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
           </BestBookInfo>
         </BestBookInfoWrapper>
         <BestBookList>
           {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
             bookRank === item.bestRank ? (
-              <SelectedBookItem
-                key={item.isbn13}
-                onClick={() => handleSelectBook(item.bestRank)}
-              >
+              <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
                 <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
-                <SelectedBestBookTitleItem>
-                  {item.title}
-                </SelectedBestBookTitleItem>
+                <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
               </SelectedBookItem>
             ) : (
-              <BookItem
-                key={item.isbn13}
-                onClick={() => handleSelectBook(item.bestRank)}
-              >
+              <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
                 <BestBookIndex>{item.bestRank}</BestBookIndex>
                 <BestBookTitle>{item.title}</BestBookTitle>
               </BookItem>
@@ -261,10 +211,7 @@ const Home = () => {
       <BestLikesReport>
         {likeReports.slice(0, 5).map((it, idx) => (
           <LikeReport key={idx}>
-            <BookBackground
-              backgroundimage={it.book.cover}
-              onClick={() => handleClickReport(it.author, it.id)}
-            ></BookBackground>
+            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
             <ReportRank>BEST {idx + 1}</ReportRank>
             <BookCover src={it.book.cover} alt={it.book.title} />
             <ReportTitle>{it.title}</ReportTitle>
@@ -281,10 +228,7 @@ const Home = () => {
       <SpecilaBook>
         <Slider {...newSpecialBookSettings}>
           {specialBook.map((item) => (
-            <BookWrapper
-              key={item.isbn}
-              onClick={() => clickBestSellerBook(item.isbn13)}
-            >
+            <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
               <Bookimg src={item.cover} alt={item.title} />
               <BookTitle>{truncateText(item.title, 10)}</BookTitle>
             </BookWrapper>
@@ -359,6 +303,7 @@ const BestLikesReport = styled.div`
 `;
 
 const LikeReport = styled.div`
+  text-align: center;
   font-family: "KyoboHandwriting2021sjy";
   position: relative;
   overflow: hidden;
@@ -406,7 +351,8 @@ const ReportAuthor = styled.div`
 `;
 
 const ReportTitle = styled.div`
-  width: 200px;
+  padding-left: 5px;
+
   font-size: 18px;
   font-weight: bold;
   white-space: nowrap;
@@ -605,8 +551,7 @@ const CreateButton = styled.div`
   font-family: "UhBeeJJIBBABBA";
   font-size: 18px;
   padding: 10px 15px;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
-    0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
   &:hover {
     position: fixed;
     bottom: 50px;

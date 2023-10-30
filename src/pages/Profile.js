@@ -19,7 +19,7 @@ const Profile = () => {
 
   const [isChangePW, setIsChangePW] = useState(false);
 
-  const [isSocial, setIsSocial] = useState(false);
+  const [isSocial, setIsSocial] = useState(localStorage.getItem("isSocial"));
 
   const [user, setUser] = useState();
   const [email, setEmail] = useState("");
@@ -32,8 +32,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isSocialLogin = localStorage.getItem("socialLogin");
-    if (isSocialLogin) setIsSocial(true);
+    setIsSocial(localStorage.getItem("isSocial"));
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -101,35 +100,45 @@ const Profile = () => {
     await deleteDoc(doc(db, "users", email));
   }
 
-  return (
-    init &&
-    (isCorrect || isSocial ? (
-      <div>
-        <Container>
-          {isChangePW ? (
-            <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
-          ) : (
-            <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} isSocial={isSocial} />
-          )}
-        </Container>
-        <DeleteButton>
-          <DeleteUserButton onClick={handleDeleteUser}>회원탈퇴</DeleteUserButton>
-        </DeleteButton>
-      </div>
-    ) : (
-      <PasswordCheckContainer>
-        <Title>비밀번호 확인</Title>
-        <PasswordForm onSubmit={handleSubmit}>
-          <Info>
-            안전한 개인정보 변경을 위해
-            <br /> 비밀번호를 다시 입력해주세요.
-          </Info>
-          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="비밀번호 입력" />
-          <MyButton text={"확인"} type={"positive"} />
-        </PasswordForm>
-        <PasswordImage src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"} alt="image" />
-      </PasswordCheckContainer>
-    ))
+  return init && isSocial === "true" ? (
+    <div>
+      <Container>
+        {isChangePW ? (
+          <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
+        ) : (
+          <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} isSocial={isSocial} />
+        )}
+      </Container>
+      <DeleteButton>
+        <DeleteUserButton onClick={handleDeleteUser}>회원탈퇴</DeleteUserButton>
+      </DeleteButton>
+    </div>
+  ) : isCorrect ? (
+    <div>
+      <Container>
+        {isChangePW ? (
+          <ChangePassword email={email} setIsChangePW={setIsChangePW} handleChangePW={handleChangePW} />
+        ) : (
+          <MyProfile email={email} username={username} photoURL={photoURL} handleChangePW={handleChangePW} isSocial={isSocial} />
+        )}
+      </Container>
+      <DeleteButton>
+        <DeleteUserButton onClick={handleDeleteUser}>회원탈퇴</DeleteUserButton>
+      </DeleteButton>
+    </div>
+  ) : (
+    <PasswordCheckContainer>
+      <Title>비밀번호 확인</Title>
+      <PasswordForm onSubmit={handleSubmit}>
+        <Info>
+          안전한 개인정보 변경을 위해
+          <br /> 비밀번호를 다시 입력해주세요.
+        </Info>
+        <Input name="password" type="password" value={password} onChange={handleInput} placeholder="비밀번호 입력" />
+        <MyButton text={"확인"} type={"positive"} />
+      </PasswordForm>
+      <PasswordImage src={process.env.PUBLIC_URL + "/images/passwordCheck.jpeg"} alt="image" />
+    </PasswordCheckContainer>
   );
 };
 

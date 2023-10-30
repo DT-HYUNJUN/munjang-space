@@ -117,6 +117,7 @@ const SignUp = () => {
       }
       console.log(error.message);
     } finally {
+      localStorage.setItem("isSocial", false);
       setLoading(false);
     }
   };
