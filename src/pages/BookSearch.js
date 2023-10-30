@@ -63,17 +63,18 @@ const BookSearch = () => {
       <SearchBoookName>검색한 '{state.bookName}' 입니다.</SearchBoookName>
 
       {bookList.map((book) => (
-        <BookInfo
-          key={book.isbn13}
-          onClick={() => {
-            handleClickBook(book.isbn13);
-          }}
-        >
-          <img src={book.cover} alt={book.title} />
-          <TitleAndAuthor>
-            <BookTitle>{book.title}</BookTitle>
-            <BookAuthor>{book.author}</BookAuthor>
-          </TitleAndAuthor>
+        <BookInfo key={book.isbn13}>
+          <BookDetail
+            onClick={() => {
+              handleClickBook(book.isbn13);
+            }}
+          >
+            <img src={book.cover} alt={book.title} />
+            <TitleAndAuthor>
+              <BookTitle>{book.title}</BookTitle>
+              <BookAuthor>{book.author}</BookAuthor>
+            </TitleAndAuthor>
+          </BookDetail>
 
           <BookButton>
             <ReportWriteButton
@@ -172,4 +173,10 @@ const LoadingWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const BookDetail = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 30px;
 `;
