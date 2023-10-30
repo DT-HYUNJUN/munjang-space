@@ -28,6 +28,18 @@ const ReportContentList = ({ reportList, onDelete }) => {
     navigate(`/edit/${id}`);
   };
 
+  // delete 할때 alert 창
+
+  const handleDelete = (item) => {
+    if (window.confirm("독후감을 삭제 하겠습니까?")) {
+      onDelete(item.id);
+      window.alert("삭제되었습니다.");
+      console.log(item);
+    } else {
+      window.alert("취소 되었습니다.");
+    }
+  };
+
   return (
     <div>
       <div>
@@ -41,7 +53,8 @@ const ReportContentList = ({ reportList, onDelete }) => {
                   <p>책 제목: {item.book.title}</p>
                   <p>공개 여부: {item.isPrivate ? "비공개" : "공개"}</p>
                   <ReportRating>
-                    별점 : <ReactStars value={item.star} edit={false} size={24} />
+                    별점 :{" "}
+                    <ReactStars value={item.star} edit={false} size={24} />
                   </ReportRating>
                   <p>
                     작성 날:
@@ -52,13 +65,31 @@ const ReportContentList = ({ reportList, onDelete }) => {
             </ImageContent>
 
             <EditButton>
-              <MyButton text={"수정하기"} type={"positive"} onClick={() => goEdit(item.id)} />
-              <MyButton text={"삭제하기"} type={"negative"} onClick={() => onDelete(item.id)} />
+              <MyButton
+                text={"수정하기"}
+                type={"positive"}
+                onClick={() => goEdit(item.id)}
+              />
+              <MyButton
+                text={"삭제하기"}
+                type={"negative"}
+                onClick={() => {
+                  handleDelete(item);
+                }}
+              />
             </EditButton>
           </ReportContent>
         ))}
         {currentPageData.length !== 0 && (
-          <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={reportList.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChage} />
+          <Pagination
+            activePage={page}
+            itemsCountPerPage={5}
+            totalItemsCount={reportList.length}
+            pageRangeDisplayed={5}
+            prevPageText={"<"}
+            nextPageText={">"}
+            onChange={handlePageChage}
+          />
         )}
       </div>
     </div>

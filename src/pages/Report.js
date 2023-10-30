@@ -70,8 +70,13 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   };
 
   const handleClickDelete = (id) => {
-    onDelete(id);
-    navigate("/list", { replace: true });
+    if (window.confirm("독후감을 삭제 하시겠습니까?")) {
+      onDelete(id);
+      window.alert("삭제되었습니다.");
+      navigate("/list", { replace: true });
+    } else {
+      window.alert("취소 되었습니다.");
+    }
   };
 
   const replaceString = (string, from, to) => {
