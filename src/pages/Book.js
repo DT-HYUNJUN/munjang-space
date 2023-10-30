@@ -8,10 +8,19 @@ import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-import { doc, getDoc, collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../fbase";
 
-const Book = ({ isLogin }) => {
+const Book = () => {
   const { isbn13 } = useParams();
 
   const [data, setData] = useState({});
@@ -30,6 +39,7 @@ const Book = ({ isLogin }) => {
     navigate(`/report/${email}/${id}`);
   };
 
+  // 로딩
   useEffect(() => {
     setLoading(false);
     try {
@@ -39,7 +49,6 @@ const Book = ({ isLogin }) => {
       });
       getBooks(isbn13).then((res) => {
         setData(res[0]);
-        console.log("data loading end");
         setLoading(false);
       });
     } catch (error) {
@@ -62,11 +71,6 @@ const Book = ({ isLogin }) => {
     });
   };
 
-  const handleBookClickLogin = () => {
-    alert("로그인을 해주세요!");
-    navigate("/login");
-  };
-
   const getBookReports = async (isbn13) => {
     return new Promise(async (resolve, reject) => {
       const reportsCollectionRef = collection(db, "reports");
@@ -77,12 +81,20 @@ const Book = ({ isLogin }) => {
           if (change.type === "added" || change.type === "modified") {
             const doc = change.doc;
             const booksCollectionRef = collection(doc.ref, "books");
-            const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
+            const q = query(
+              booksCollectionRef,
+              where("book.isbn13", "==", isbn13),
+              orderBy("date", "desc"),
+              where("isPrivate", "==", false)
+            );
             const booksQuerySnapshot = await getDocs(q);
 
             booksQuerySnapshot.forEach((bookData) => {
               const bookInfo = bookData.data();
-              const titleOutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
+              const titleOutTags = bookInfo.content.replace(
+                /(<([^>]+)>)/gi,
+                ""
+              );
 
               allReports.push({
                 id: bookData.id,
@@ -123,7 +135,19 @@ const Book = ({ isLogin }) => {
                 window.location.href = data.link;
               }}
             />
-            <WriteButton onClick={isLogin ? () => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13) : handleBookClickLogin}>독후감 작성하기</WriteButton>
+            <WriteButton
+              onClick={() =>
+                handleBookClick(
+                  data.title,
+                  data.cover,
+                  data.author,
+                  data.description,
+                  data.isbn13
+                )
+              }
+            >
+              독후감 작성하기
+            </WriteButton>
           </div>
         </div>
       </BookContent>
@@ -135,16 +159,26 @@ const Book = ({ isLogin }) => {
 
       <ThisReportWrapper>
         <ThisReport>이 책의 독후감</ThisReport>
-        <FontAwesomeIcon onClick={goToThisBookReport} icon={faArrowRight} cursor={"pointer"} />
+        <FontAwesomeIcon
+          onClick={goToThisBookReport}
+          icon={faArrowRight}
+          cursor={"pointer"}
+        />
       </ThisReportWrapper>
 
       <ThisBookReport>
         {bookReports.slice(0, 5).map((report, idx) => (
-          <BookReport key={idx} onClick={() => goToReport(report.email, report.id)}>
+          <BookReport
+            key={idx}
+            onClick={() => goToReport(report.email, report.id)}
+          >
             <ReportTitle>{report.title}</ReportTitle>
             <ReportContent>{report.content}</ReportContent>
             <ReportFooter>
-              <ReportAuthorProfileImage src={report.profileImage} alt={report.username} />
+              <ReportAuthorProfileImage
+                src={report.profileImage}
+                alt={report.username}
+              />
               <ReportAuthor>{report.username}</ReportAuthor>
             </ReportFooter>
           </BookReport>
@@ -246,7 +280,9 @@ const WriteButton = styled.button`
   }
 `;
 
-const ThisBookReport = styled.div``;
+const ThisBookReport = styled.div`
+  display: flex;
+`;
 
 const ReportTitle = styled.div`
   font-family: "UhBeeJJIBBABBA";
@@ -297,6 +333,7 @@ const ReportAuthorProfileImage = styled.img`
 
 const ThisReportWrapper = styled.div`
   display: flex;
+
   align-items: center;
   justify-content: space-between;
   margin-top: 50px;
