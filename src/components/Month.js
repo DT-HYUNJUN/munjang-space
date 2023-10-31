@@ -22,9 +22,7 @@ const Month = ({ reportList, onDelete }) => {
   const headText = `${curDate.getFullYear()}년 ${curDate.getMonth() + 1}월`;
 
   const increaseMonth = () => {
-    setCurDate(
-      new Date(curDate.getFullYear(), curDate.getMonth() + 1, curDate.getDate())
-    );
+    setCurDate(new Date(curDate.getFullYear(), curDate.getMonth() + 1, 1));
   };
 
   const decreaseMonth = () => {
@@ -43,7 +41,10 @@ const Month = ({ reportList, onDelete }) => {
     const lastDay = new Date(
       curDate.getFullYear(),
       curDate.getMonth() + 1,
-      0
+      0,
+      23,
+      59,
+      59
     ).getTime();
 
     setData(
