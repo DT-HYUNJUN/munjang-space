@@ -26,9 +26,7 @@ const Month = ({ reportList, onDelete }) => {
   };
 
   const decreaseMonth = () => {
-    setCurDate(
-      new Date(curDate.getFullYear(), curDate.getMonth() - 1, curDate.getDate())
-    );
+    setCurDate(new Date(curDate.getFullYear(), curDate.getMonth() - 1, curDate.getDate()));
   };
 
   useEffect(() => {
@@ -54,11 +52,7 @@ const Month = ({ reportList, onDelete }) => {
 
   return (
     <div>
-      <MyHeader
-        headText={headText}
-        leftChild={<Mybutton text={"<"} onClick={decreaseMonth} />}
-        rightChild={<Mybutton text={">"} onClick={increaseMonth} />}
-      />
+      <MyHeader headText={headText} leftChild={<Mybutton text={"<"} onClick={decreaseMonth} />} rightChild={<Mybutton text={">"} onClick={increaseMonth} />} />
       <ReportContentList reportList={data} onDelete={onDelete} />
     </div>
   );

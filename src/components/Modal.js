@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faExclamationCircle, faSearch, faSpinner, faX } from "@fortawesome/free-solid-svg-icons";
 
 import getBooks from "../utils/getBooks";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const Modal = ({ setModal, setBook, reportList }) => {
   const [loading, setLoading] = useState(false);
@@ -145,6 +145,16 @@ const Modal = ({ setModal, setBook, reportList }) => {
 
 export default Modal;
 
+const fadein = keyframes`
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+      
+  }
+`;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -164,6 +174,8 @@ const Container = styled.div`
   background-color: #ececec;
   /* box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.35); */
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+
+  animation: ${fadein} 0.3s;
 `;
 
 const CloseButton = styled.button`
