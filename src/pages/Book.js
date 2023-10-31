@@ -8,16 +8,7 @@ import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-import {
-  doc,
-  getDoc,
-  collection,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  orderBy,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
 
 const Book = () => {
@@ -56,9 +47,6 @@ const Book = () => {
     }
   }, [isbn13]);
 
-  // 데이터에 값이 있으면 -> 렌더링
-  // 데이터에 값이 없으면 -> loading
-
   const handleBookClick = (title, cover, author, description, isbn13) => {
     navigate("/new", {
       state: {
@@ -81,20 +69,12 @@ const Book = () => {
           if (change.type === "added" || change.type === "modified") {
             const doc = change.doc;
             const booksCollectionRef = collection(doc.ref, "books");
-            const q = query(
-              booksCollectionRef,
-              where("book.isbn13", "==", isbn13),
-              orderBy("date", "desc"),
-              where("isPrivate", "==", false)
-            );
+            const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
             const booksQuerySnapshot = await getDocs(q);
 
             booksQuerySnapshot.forEach((bookData) => {
               const bookInfo = bookData.data();
-              const titleOutTags = bookInfo.content.replace(
-                /(<([^>]+)>)/gi,
-                ""
-              );
+              const titleOutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
 
               allReports.push({
                 id: bookData.id,
@@ -108,7 +88,7 @@ const Book = () => {
             });
           }
         });
-        await Promise.all(promises); // 여러 개의 Promise를 병렬로 처리한 후, 모든 Promise가 완료되면 결과를 반환합니다.
+        await Promise.all(promises); // 여러 개의 Promise를 병렬로 처리한 후, 모든 Promise가 완료되면 결과를 반환
         resolve(allReports);
       });
     });
@@ -135,19 +115,7 @@ const Book = () => {
                 window.location.href = data.link;
               }}
             />
-            <WriteButton
-              onClick={() =>
-                handleBookClick(
-                  data.title,
-                  data.cover,
-                  data.author,
-                  data.description,
-                  data.isbn13
-                )
-              }
-            >
-              독후감 작성하기
-            </WriteButton>
+            <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
           </div>
         </div>
       </BookContent>
@@ -159,26 +127,16 @@ const Book = () => {
 
       <ThisReportWrapper>
         <ThisReport>이 책의 독후감</ThisReport>
-        <FontAwesomeIcon
-          onClick={goToThisBookReport}
-          icon={faArrowRight}
-          cursor={"pointer"}
-        />
+        <FontAwesomeIcon onClick={goToThisBookReport} icon={faArrowRight} cursor={"pointer"} />
       </ThisReportWrapper>
 
       <ThisBookReport>
         {bookReports.slice(0, 5).map((report, idx) => (
-          <BookReport
-            key={idx}
-            onClick={() => goToReport(report.email, report.id)}
-          >
+          <BookReport key={idx} onClick={() => goToReport(report.email, report.id)}>
             <ReportTitle>{report.title}</ReportTitle>
             <ReportContent>{report.content}</ReportContent>
             <ReportFooter>
-              <ReportAuthorProfileImage
-                src={report.profileImage}
-                alt={report.username}
-              />
+              <ReportAuthorProfileImage src={report.profileImage} alt={report.username} />
               <ReportAuthor>{report.username}</ReportAuthor>
             </ReportFooter>
           </BookReport>

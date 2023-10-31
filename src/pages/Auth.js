@@ -38,7 +38,6 @@ const Login = () => {
     const auth = getAuth();
     signInWithPopup(auth, provider) //팝업창 띄어서 로그인
       .then(async (data) => {
-        console.log(data);
         const username = data.user.displayName;
         localStorage.setItem("isSocial", true);
         await setDoc(doc(db, "reports", data.user.email), { username });
@@ -162,7 +161,6 @@ const Login = () => {
 
 export default Login;
 
-// Style
 const Title = styled.h2`
   padding-left: 30px;
   padding-right: 30px;

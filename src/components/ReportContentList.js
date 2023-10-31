@@ -1,7 +1,8 @@
 import { useState } from "react";
-import Pagination from "react-js-pagination";
-import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import Pagination from "react-js-pagination";
+
+import styled from "styled-components";
 
 import MyButton from "./MyButton";
 import ReactStars from "react-stars";
@@ -53,8 +54,7 @@ const ReportContentList = ({ reportList, onDelete }) => {
                   <p>책 제목: {item.book.title}</p>
                   <p>공개 여부: {item.isPrivate ? "비공개" : "공개"}</p>
                   <ReportRating>
-                    별점 :{" "}
-                    <ReactStars value={item.star} edit={false} size={24} />
+                    별점 : <ReactStars value={item.star} edit={false} size={24} />
                   </ReportRating>
                   <p>
                     작성 날:
@@ -65,11 +65,7 @@ const ReportContentList = ({ reportList, onDelete }) => {
             </ImageContent>
 
             <EditButton>
-              <MyButton
-                text={"수정하기"}
-                type={"positive"}
-                onClick={() => goEdit(item.id)}
-              />
+              <MyButton text={"수정하기"} type={"positive"} onClick={() => goEdit(item.id)} />
               <MyButton
                 text={"삭제하기"}
                 type={"negative"}
@@ -81,15 +77,7 @@ const ReportContentList = ({ reportList, onDelete }) => {
           </ReportContent>
         ))}
         {currentPageData.length !== 0 && (
-          <Pagination
-            activePage={page}
-            itemsCountPerPage={5}
-            totalItemsCount={reportList.length}
-            pageRangeDisplayed={5}
-            prevPageText={"<"}
-            nextPageText={">"}
-            onChange={handlePageChage}
-          />
+          <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={reportList.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChage} />
         )}
       </div>
     </div>

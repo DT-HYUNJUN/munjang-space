@@ -10,7 +10,6 @@ import "react-quill/dist/quill.snow.css";
 
 import ReactStars from "react-stars";
 
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
 const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
@@ -82,32 +81,6 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
     navigate(`/report/${auth.currentUser.email}/${reportCount}`, { replace: true });
   };
 
-  const imageHandler = () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
-    input.addEventListener("change", async () => {
-      const editor = quillRef.current.getEditor();
-      const file = input.files[0];
-      const range = editor.getSelection(true);
-      try {
-        const storage = getStorage();
-
-        const storageRef = ref(storage, `image/${Date.now()}`);
-
-        await uploadBytes(storageRef, file).then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            editor.insertEmbed(range.index, "image", url);
-            editor.setSelection(range.index + 1);
-          });
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
   const modules = useMemo(() => {
     return {
       toolbar: {
@@ -120,9 +93,6 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
           [{ color: [] }, { background: [] }],
           [{ align: [] }, "link", "image"],
         ],
-        handlers: {
-          image: imageHandler,
-        },
       },
       history: {
         delay: 500,

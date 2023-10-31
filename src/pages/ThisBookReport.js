@@ -8,14 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styled from "styled-components";
 
-import {
-  collection,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  orderBy,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
 
 const ThisBookReport = () => {
@@ -31,42 +24,31 @@ const ThisBookReport = () => {
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribe = onSnapshot(
-      collection(db, "reports"),
-      async (snapshot) => {
-        const reports = [];
-        for (const doc of snapshot.docs) {
-          const booksCollectionRef = collection(doc.ref, "books");
-          const q = query(
-            booksCollectionRef,
-            where("book.isbn13", "==", isbn13),
-            orderBy("date", "desc"),
-            where("isPrivate", "==", false)
-          );
-          const booksQuerySnapshot = await getDocs(q);
+    const unsubscribe = onSnapshot(collection(db, "reports"), async (snapshot) => {
+      const reports = [];
+      for (const doc of snapshot.docs) {
+        const booksCollectionRef = collection(doc.ref, "books");
+        const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
+        const booksQuerySnapshot = await getDocs(q);
 
-          booksQuerySnapshot.forEach((bookData) => {
-            const bookInfo = bookData.data();
-            const titleWithoutTags = bookInfo.content.replace(
-              /(<([^>]+)>)/gi,
-              ""
-            );
-            reports.push({
-              id: bookData.id,
-              title: bookInfo.title,
-              content: titleWithoutTags,
-              email: bookInfo.author,
-              username: bookInfo.username,
-              profileImage: bookInfo.profileImage,
-              date: bookInfo.date,
-            });
+        booksQuerySnapshot.forEach((bookData) => {
+          const bookInfo = bookData.data();
+          const titleWithoutTags = bookInfo.content.replace(/(<([^>]+)>)/gi, "");
+          reports.push({
+            id: bookData.id,
+            title: bookInfo.title,
+            content: titleWithoutTags,
+            email: bookInfo.author,
+            username: bookInfo.username,
+            profileImage: bookInfo.profileImage,
+            date: bookInfo.date,
           });
-        }
-
-        setBookReports(reports);
-        setLoading(false);
+        });
       }
-    );
+
+      setBookReports(reports);
+      setLoading(false);
+    });
 
     return () => unsubscribe();
   }, [isbn13]);
@@ -88,19 +70,13 @@ const ThisBookReport = () => {
 
   const getBookReports = async (isbn13) => {
     const reportsCollectionRef = collection(db, "reports");
-    const q = query(
-      reportsCollectionRef,
-      where("book.isbn13", "==", isbn13),
-      orderBy("date", "desc"),
-      where("isPrivate", "==", false)
-    );
+    const q = query(reportsCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
     const querySnapshot = await getDocs(q);
     const reports = [];
 
     querySnapshot.forEach((doc) => {
       const reportData = doc.data();
-      const { title, content, author, username, profileImage, date } =
-        reportData.book;
+      const { title, content, author, username, profileImage, date } = reportData.book;
       const titleWithoutTags = content.replace(/(<([^>]+)>)/gi, "");
       reports.push({
         id: doc.id,
@@ -125,23 +101,15 @@ const ThisBookReport = () => {
       ) : (
         <div>
           <div>
-            <ReportLength>
-              📚 해당 독후감은 총 {bookReports.length}개 입니다.
-            </ReportLength>
+            <ReportLength>📚 해당 독후감은 총 {bookReports.length}개 입니다.</ReportLength>
           </div>
           <ThisBookReports>
             {bookReports.map((report, index) => (
-              <BookReport
-                key={index}
-                onClick={() => goToReport(report.email, report.id)}
-              >
+              <BookReport key={index} onClick={() => goToReport(report.email, report.id)}>
                 <ReportTitle>{report.title}</ReportTitle>
                 <ReportContent>{report.content}</ReportContent>
                 <ReportFooter>
-                  <ReportAuthorProfileImage
-                    src={report.profileImage}
-                    alt={report.username}
-                  />
+                  <ReportAuthorProfileImage src={report.profileImage} alt={report.username} />
                   <ReportAuthor>{report.username}</ReportAuthor>
                 </ReportFooter>
               </BookReport>

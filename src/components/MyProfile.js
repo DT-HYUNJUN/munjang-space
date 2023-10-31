@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { getAuth, updateProfile, deleteUser } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
 
@@ -136,7 +136,6 @@ const UsernameInput = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  /* background-color: #ececec; */
 `;
 
 const BottomWrapper = styled.div`

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import Pagination from "react-js-pagination";
 
@@ -147,11 +147,10 @@ export default Modal;
 
 const fadein = keyframes`
   from {
-      opacity:0;
+  opacity:0;
   }
   to {
-      opacity:1;
-      
+  opacity:1;
   }
 `;
 
@@ -172,7 +171,6 @@ const Container = styled.div`
   border-radius: 8px;
 
   background-color: #ececec;
-  /* box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.35); */
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 
   animation: ${fadein} 0.3s;

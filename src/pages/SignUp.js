@@ -12,7 +12,7 @@ import { db } from "../fbase";
 
 import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");

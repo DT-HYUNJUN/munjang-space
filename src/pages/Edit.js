@@ -5,23 +5,18 @@ import MyButton from "../components/MyButton";
 import Modal from "../components/Modal";
 
 import ReactQuill from "react-quill";
-import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
-import { ImageResize } from "quill-image-resize-module-react";
 
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 
 import ReactStars from "react-stars";
 
 import styled from "styled-components";
-import { doc, getDoc } from "firebase/firestore";
 
 const Edit = ({ onEdit }) => {
   const [modal, setModal] = useState(false);
-
-  const [data, setData] = useState({});
 
   const auth = getAuth();
 
@@ -96,36 +91,6 @@ const Edit = ({ onEdit }) => {
     navigate(`/report/${id}`, { replace: true });
   };
 
-  const imageHandler = () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
-    input.addEventListener("change", async () => {
-      const editor = quillRef.current.getEditor();
-      const file = input.files[0];
-      const range = editor.getSelection(true);
-      try {
-        const storage = getStorage();
-        // 파일명을 "image/Date.now()"로 저장
-        const storageRef = ref(storage, `image/${Date.now()}`);
-        // Firebase Method : uploadBytes, getDownloadURL
-        await uploadBytes(storageRef, file).then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            // 이미지 URL 에디터에 삽입
-            editor.insertEmbed(range.index, "image", url);
-            // URL 삽입 후 커서를 이미지 뒷 칸으로 이동
-            // const img = `<img src="${url}" style="max-width: 100%;" />`;
-            // editor.clipboard.dangerouslyPasteHTML(range.index, img);
-            editor.setSelection(range.index + 1);
-          });
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
   const modules = useMemo(() => {
     return {
       toolbar: {
@@ -137,14 +102,6 @@ const Edit = ({ onEdit }) => {
           [{ color: [] }, { background: [] }],
           [{ align: [] }, "link", "image"],
         ],
-        handlers: {
-          image: imageHandler,
-        },
-        // imageResize: {
-        //   // https://www.npmjs.com/package/quill-image-resize-module-react 참고
-        //   parchment: Quill.import("parchment"),
-        //   modules: ["Resize", "DisplaySize", "Toolbar"],
-        // },
       },
       history: {
         delay: 500,
@@ -166,15 +123,11 @@ const Edit = ({ onEdit }) => {
       <FormContainer onSubmit={handleSubmit}>
         <HeaderWrapper>
           <BookWrapper>
-            <BookImage
-              src={process.env.PUBLIC_URL + "/images/book.png"}
-              alt=""
-            />
+            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
             <BookInfoSpan>
               {book.title ? (
                 <>
-                  <Book onClick={handleBook}>{book.title}</Book>에 관련된
-                  독후감입니다.
+                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
                 </>
               ) : (
                 <Book onClick={handleBook}>책을 선택해주세요</Book>
@@ -182,43 +135,18 @@ const Edit = ({ onEdit }) => {
             </BookInfoSpan>
           </BookWrapper>
           <StarWrapper>
-            <ReactStars
-              count={5}
-              value={star}
-              size={26}
-              half={false}
-              onChange={setStar}
-            />
+            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
           </StarWrapper>
         </HeaderWrapper>
         <HeaderWrapper>
-          <TitleInput
-            name="title"
-            type="text"
-            value={title}
-            onChange={handleInput}
-            placeholder="독후감 제목"
-          />
+          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
           <LabelWrapper htmlFor="isPrivate">
-            <PrivateLabel
-              id="isPrivate"
-              type="checkbox"
-              name="isPrivate"
-              checked={isPrivate}
-              onChange={handleInput}
-            />
+            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
             <PrivateSpan>비공개</PrivateSpan>
           </LabelWrapper>
         </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill
-            ref={quillRef}
-            style={{ height: "800px", width: "1000px" }}
-            modules={modules}
-            theme="snow"
-            onChange={setContent}
-            value={content}
-          />
+          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="수정완료" type="positive" />
@@ -260,7 +188,6 @@ const Book = styled.span`
 
 const BookWrapper = styled.div`
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -279,7 +206,6 @@ const EditorWrapper = styled.div`
 `;
 
 const TitleInput = styled.input`
-  /* border: 1px solid #ccc; */
   border: 0;
   border-radius: 5px;
   background-color: #ececec;
@@ -296,7 +222,6 @@ const LabelWrapper = styled.label`
   align-items: center;
   user-select: none;
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   height: 42px;
   padding-left: 5px;
@@ -337,7 +262,6 @@ const HeaderWrapper = styled.div`
 
 const StarWrapper = styled.div`
   background-color: #ececec;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   padding-bottom: 7px;
   padding-left: 3px;

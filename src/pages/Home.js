@@ -7,7 +7,7 @@ import getLikeReports from "../utils/getLikeReports";
 
 import MyButton from "../components/MyButton";
 
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import Slider from "react-slick";
 import "../slick.css";
@@ -179,7 +179,7 @@ const Home = () => {
       </TitleWrapper>
       <BestSeller>
         <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
-          <BestBookCover src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
+          <BestBookCover key={bookRank} src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
           <BestBookInfo>
             <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
             <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
@@ -441,11 +441,22 @@ const BestBookList = styled.div`
   font-family: "KyoboHandwriting2021sjy";
 `;
 
+const fillUp = keyframes`
+  0% {
+  opacity: 0;
+  transform: translate3d(0, -10%, 0);
+  }
+  100% {
+  opacity: 1;
+  transform: translateZ(0);
+  }
+`;
+
 const BestBookCover = styled.img`
   border: 1px solid #ccc;
   width: 140px;
   height: 200px;
-  transition: all 1s ease 0s;
+  animation: ${fillUp} ease-in-out 0.3s forwards;
 `;
 
 const BestBookInfo = styled.div`

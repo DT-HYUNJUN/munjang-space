@@ -41,7 +41,9 @@ function App() {
             data.push(doc.data());
           });
           setReportList(data);
-          setReportCount(data.length);
+          if (data.length > 0) {
+            setReportCount(data[data.length - 1].id + 1);
+          }
         });
         if (user.photoURL) {
           setUserInfo({

@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import styled, { keyframes } from "styled-components";
 
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../fbase";
 
 import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Statistics = ({ IsLogin, reportList, userInfo }) => {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -376,11 +376,6 @@ const CircleGraphCenter = styled.span`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-`;
-
-const TargetText = styled.div`
-  font-family: "UhBeeJJIBBABBA";
-  font-size: 20px;
 `;
 
 const Target = styled.div`
