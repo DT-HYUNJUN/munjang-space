@@ -30,11 +30,24 @@ const Month = ({ reportList, onDelete }) => {
   };
 
   useEffect(() => {
-    const firstDay = new Date(curDate.getFullYear(), curDate.getMonth(), 1).getTime();
+    const firstDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth(),
+      1
+    ).getTime();
 
-    const lastDay = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0, 23, 59, 59).getTime();
+    const lastDay = new Date(
+      curDate.getFullYear(),
+      curDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59
+    ).getTime();
 
-    setData(reportList.filter((it) => firstDay <= it.date && it.date <= lastDay));
+    setData(
+      reportList.filter((it) => firstDay <= it.date && it.date <= lastDay)
+    );
   }, [reportList, curDate]);
 
   return (
