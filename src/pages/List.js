@@ -69,19 +69,11 @@ const List = ({ reportList, onDelete, IsLogin }) => {
 
     const copyList = JSON.parse(JSON.stringify(reportList));
 
-    const filterdStarList =
-      filterStar === "allStar"
-        ? copyList
-        : copyList.filter((it) => parseInt(it.star) === parseInt(filterStar));
+    const filterdStarList = filterStar === "allStar" ? copyList : copyList.filter((it) => parseInt(it.star) === parseInt(filterStar));
 
     const sortedList = filterdStarList.sort(compare);
 
-    const filterPrivateList =
-      filterPrivate === "true"
-        ? sortedList.filter((it) => it.isPrivate === false)
-        : filterPrivate === "false"
-        ? sortedList.filter((it) => it.isPrivate === true)
-        : sortedList;
+    const filterPrivateList = filterPrivate === "true" ? sortedList.filter((it) => it.isPrivate === false) : filterPrivate === "false" ? sortedList.filter((it) => it.isPrivate === true) : sortedList;
 
     return filterPrivateList;
   };
@@ -96,36 +88,16 @@ const List = ({ reportList, onDelete, IsLogin }) => {
       <div>
         <ControlHeader>
           <ControlFilter>
-            <ControlMenu
-              value={sortType}
-              onChange={setSortType}
-              optionList={sortOptionList}
-            />
+            <ControlMenu value={sortType} onChange={setSortType} optionList={sortOptionList} />
 
-            <ControlMenu
-              value={filterStar}
-              onChange={setFilterStar}
-              optionList={sortStarOptionList}
-            />
+            <ControlMenu value={filterStar} onChange={setFilterStar} optionList={sortStarOptionList} />
 
-            <ControlMenu
-              value={filterPrivate}
-              onChange={setFilterPrivate}
-              optionList={sortPrivateOptionList}
-            />
+            <ControlMenu value={filterPrivate} onChange={setFilterPrivate} optionList={sortPrivateOptionList} />
           </ControlFilter>
 
-          <MyButton
-            type={"positive"}
-            text={"새 독후감 작성하기"}
-            onClick={() => navigate("/new")}
-          />
+          <MyButton type={"positive"} text={"새 독후감 작성하기"} onClick={() => navigate("/new")} />
         </ControlHeader>
-        {all ? (
-          <All reportList={getProcessReportList()} onDelete={onDelete} />
-        ) : (
-          <Month reportList={getProcessReportList()} onDelete={onDelete} />
-        )}
+        {all ? <All reportList={getProcessReportList()} onDelete={onDelete} /> : <Month reportList={getProcessReportList()} onDelete={onDelete} />}
       </div>
     </div>
   );
