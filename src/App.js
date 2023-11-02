@@ -122,6 +122,7 @@ function App() {
     await updateDoc(doc(db, "reports", author, "books", `${id}`), {
       like: count,
     });
+    return count;
   };
 
   return (

@@ -18,6 +18,7 @@ import DOMPurify from "dompurify";
 const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   const [report, setReport] = useState({});
   const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const [userEmail, setUserEmail] = useState("");
   const auth = getAuth();
 
@@ -34,6 +35,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
           if (targetReport) {
             setReport(targetReport);
             loadLike(targetReport.author, user.email);
+            setLikeCount(targetReport.like);
           }
         }
       } else {
@@ -49,6 +51,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
     const targetReportRef = doc(db, "reports", email, "books", id);
     const targetReport = await getDoc(targetReportRef);
     setReport(targetReport.data());
+    setLikeCount(targetReport.data().like);
   };
 
   const handleClickEdit = () => {
@@ -60,8 +63,8 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   };
 
   const handleClickLike = (author, id) => {
+    onLike(author, id).then((res) => setLikeCount(res));
     setLike((prev) => !prev);
-    onLike(author, id);
   };
 
   const handleClickDelete = (id) => {
@@ -137,7 +140,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
         ></Content>
         <Like onClick={() => handleClickLike(report.author, report.id)}>
           <FontAwesomeIcon icon={like ? faHeartFill : faHeart} color="red" />
-          {like ? report.like : "좋아요"}
+          {like ? likeCount : "좋아요"}
         </Like>
       </Container>
     );

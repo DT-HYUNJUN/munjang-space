@@ -58,19 +58,16 @@ const Home = () => {
 
   const getBsBooks = async () => {
     const book = await listBooks();
-    console.log(book);
     setBestSellerBook(book);
     setBsLoading(true);
   };
   const getSpBooks = async () => {
     const book = await newSpecialBook();
-    console.log(book);
     setSpecialBook(book);
     setSpLoading(true);
   };
   const getLkBooks = async () => {
     const book = await getLikeReports();
-    console.log(book);
     const sortedBook = book.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10);
     setLikeReports(sortedBook);
     setLrLoading(true);
