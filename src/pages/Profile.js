@@ -32,7 +32,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsSocial(localStorage.getItem("isSocial"));
+    setIsSocial(JSON.parse(localStorage.getItem("isSocial")));
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -100,7 +100,7 @@ const Profile = () => {
     await deleteDoc(doc(db, "users", email));
   }
 
-  return init && isSocial === "true" ? (
+  return init && isSocial ? (
     <div>
       <Container>
         {isChangePW ? (

@@ -77,7 +77,7 @@ const MyProfile = ({ email, username, photoURL, handleChangePW, isSocial }) => {
         {init && (
           <div>
             <ImageInputWrapper>
-              {isSocial === "true" ? (
+              {isSocial ? (
                 <SocialInputLabel htmlFor="profileImage">
                   <ImagePreview src={profileImagePreview} alt="" />
                 </SocialInputLabel>
@@ -87,19 +87,19 @@ const MyProfile = ({ email, username, photoURL, handleChangePW, isSocial }) => {
                 </InputLabel>
               )}
             </ImageInputWrapper>
-            {isSocial === "false" && <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />}
+            {!isSocial && <StyledInputFile ref={imageInput} id="profileImage" name="profileImage" type="file" accept="image/*" onChange={handleInput} />}
 
             <InfoWrapper>
               <div>
                 <InfoText>닉네임 :</InfoText>
-                {isSocial === "true" ? <InfoText>{currentUsername}</InfoText> : <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />}
+                {isSocial ? <InfoText>{currentUsername}</InfoText> : <UsernameInput name="username" type="text" value={currentUsername} onChange={handleInput} />}
               </div>
               <div>
                 <InfoText>이메일 :</InfoText>
                 <InfoText>{email}</InfoText>
               </div>
               <Center>
-                {isSocial === "false" && (
+                {!isSocial && (
                   <>
                     <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
                     <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
