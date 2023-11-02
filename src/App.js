@@ -68,7 +68,7 @@ function App() {
       }
     });
 
-    return () => unSubscribe();
+    // return () => unSubscribe();
   }, []);
 
   const onCreate = async (report) => {

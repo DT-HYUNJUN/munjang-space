@@ -19,10 +19,13 @@ import useInterval from "../utils/useInterval";
 
 const Home = () => {
   const [bestsellerBook, setBestSellerBook] = useState([]);
+  const [bsLoading, setBsLoading] = useState(false);
 
   const [specialBook, setSpecialBook] = useState([]);
+  const [spLoading, setSpLoading] = useState(false);
 
   const [likeReports, setLikeReports] = useState([]);
+  const [lrLoading, setLrLoading] = useState(false);
 
   const [bookRank, setBookRank] = useState(1);
 
@@ -53,11 +56,31 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const getBsBooks = async () => {
+    const book = await listBooks();
+    console.log(book);
+    setBestSellerBook(book);
+    setBsLoading(true);
+  };
+  const getSpBooks = async () => {
+    const book = await newSpecialBook();
+    console.log(book);
+    setSpecialBook(book);
+    setSpLoading(true);
+  };
+  const getLkBooks = async () => {
+    const book = await getLikeReports();
+    console.log(book);
+    const sortedBook = book.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10);
+    setLikeReports(sortedBook);
+    setLrLoading(true);
+  };
+
   useEffect(() => {
     try {
-      getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
-      listBooks().then((res) => setBestSellerBook(res));
-      newSpecialBook().then((res) => setSpecialBook(res));
+      getLkBooks();
+      getBsBooks();
+      getSpBooks();
     } catch (error) {
       console.log(error);
     }
@@ -177,30 +200,32 @@ const Home = () => {
           )}
         </PageWrapper>
       </TitleWrapper>
-      <BestSeller>
-        <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
-          <BestBookCover key={bookRank} src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
-          <BestBookInfo>
-            <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
-            <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
-          </BestBookInfo>
-        </BestBookInfoWrapper>
-        <BestBookList>
-          {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
-            bookRank === item.bestRank ? (
-              <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
-                <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
-                <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
-              </SelectedBookItem>
-            ) : (
-              <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
-                <BestBookIndex>{item.bestRank}</BestBookIndex>
-                <BestBookTitle>{item.title}</BestBookTitle>
-              </BookItem>
-            )
-          )}
-        </BestBookList>
-      </BestSeller>
+      {bsLoading && (
+        <BestSeller>
+          <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>
+            <BestBookCover key={bookRank} src={bestsellerBook[bookRank - 1]?.cover} alt={bestsellerBook[bookRank - 1]?.title} />
+            <BestBookInfo>
+              <SelectedBestBookTitle>{bestsellerBook[bookRank - 1]?.title}</SelectedBestBookTitle>
+              <SelectedBestBookAuthor>{bestsellerBook[bookRank - 1]?.author}</SelectedBestBookAuthor>
+            </BestBookInfo>
+          </BestBookInfoWrapper>
+          <BestBookList>
+            {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
+              bookRank === item.bestRank ? (
+                <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                  <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
+                  <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
+                </SelectedBookItem>
+              ) : (
+                <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                  <BestBookIndex>{item.bestRank}</BestBookIndex>
+                  <BestBookTitle>{item.title}</BestBookTitle>
+                </BookItem>
+              )
+            )}
+          </BestBookList>
+        </BestSeller>
+      )}
 
       <BigTitleLike>
         지금 인기있는 독후감은?{" "}
@@ -208,33 +233,37 @@ const Home = () => {
           <FontAwesomeIcon icon={faRefresh} />
         </RefreshButton>
       </BigTitleLike>
-      <BestLikesReport>
-        {likeReports.slice(0, 5).map((it, idx) => (
-          <LikeReport key={idx}>
-            <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
-            <ReportRank>BEST {idx + 1}</ReportRank>
-            <BookCover src={it.book.cover} alt={it.book.title} />
-            <ReportTitle>{it.title}</ReportTitle>
-            <ReportProfile>
-              <ReportAuthorImage src={it.profileImage} alt={it.author} />
-              <ReportAuthor>{it.username}</ReportAuthor>
-            </ReportProfile>
-          </LikeReport>
-        ))}
-      </BestLikesReport>
+      {lrLoading && (
+        <BestLikesReport>
+          {likeReports.slice(0, 5).map((it, idx) => (
+            <LikeReport key={idx}>
+              <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
+              <ReportRank>BEST {idx + 1}</ReportRank>
+              <BookCover src={it.book.cover} alt={it.book.title} />
+              <ReportTitle>{it.title}</ReportTitle>
+              <ReportProfile>
+                <ReportAuthorImage src={it.profileImage} alt={it.author} />
+                <ReportAuthor>{it.username}</ReportAuthor>
+              </ReportProfile>
+            </LikeReport>
+          ))}
+        </BestLikesReport>
+      )}
 
       <BigTitle>이런책은 어떠세요? </BigTitle>
       <BigTitle>주목할만한 신간리스트 입니다.</BigTitle>
-      <SpecilaBook>
-        <Slider {...newSpecialBookSettings}>
-          {specialBook.map((item) => (
-            <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
-              <Bookimg src={item.cover} alt={item.title} />
-              <BookTitle>{truncateText(item.title, 10)}</BookTitle>
-            </BookWrapper>
-          ))}
-        </Slider>
-      </SpecilaBook>
+      {spLoading && (
+        <SpecilaBook>
+          <Slider {...newSpecialBookSettings}>
+            {specialBook.map((item) => (
+              <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
+                <Bookimg src={item.cover} alt={item.title} />
+                <BookTitle>{truncateText(item.title, 10)}</BookTitle>
+              </BookWrapper>
+            ))}
+          </Slider>
+        </SpecilaBook>
+      )}
     </>
   );
 };

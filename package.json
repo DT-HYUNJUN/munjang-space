@@ -12,6 +12,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
+    "cors": "^2.8.5",
     "dompurify": "^3.0.6",
     "firebase": "^10.4.0",
     "http-proxy-middleware": "^2.0.6",
@@ -25,7 +26,6 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.29.0",
     "react-stars": "^2.2.5",
-    "react-window": "^1.8.9",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.0.8",
     "web-vitals": "^2.1.4"
