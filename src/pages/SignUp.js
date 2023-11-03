@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
+import MyButton from "../components/MyButton";
 
 import styled from "styled-components";
 
@@ -10,7 +11,6 @@ import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
 
-import MyButton from "../components/MyButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
@@ -98,6 +98,7 @@ const SignUp = () => {
         await setDoc(doc(db, "reports", email), { username });
         alert("회원가입 완료");
         navigate("/", { replace: true });
+        window.location.reload();
       }
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {

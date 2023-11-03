@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import listBooks from "../utils/listBooks";
 import newSpecialBook from "../utils/newSpecialBook";

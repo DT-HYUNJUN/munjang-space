@@ -31,11 +31,10 @@ function App() {
   const auth = getAuth();
 
   useEffect(() => {
-    let unSubscribe;
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLogin(true);
-        unSubscribe = onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
+        onSnapshot(collection(db, "reports", user.email, "books"), (querySnapShot) => {
           const data = [];
           querySnapShot.forEach((doc) => {
             data.push(doc.data());
@@ -67,8 +66,7 @@ function App() {
         localStorage.setItem("isLogin", false);
       }
     });
-
-    // return () => unSubscribe();
+    return unsubscribe;
   }, []);
 
   const onCreate = async (report) => {
@@ -134,7 +132,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
 
           <Route path="/login" element={<Auth />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup" element={<SignUp setUserInfo={setUserInfo} />} />
 
           <Route path="/book/:isbn13" element={<Book IsLogin={IsLogin} />} />
           <Route path="/thisbookreport/:isbn13" element={<ThisBookReport />} />
@@ -143,7 +141,7 @@ function App() {
 
           <Route path="/report/:email/:id" element={<Report reportList={reportList} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
-          <Route path="/edit/:id" element={<Edit onEdit={onEdit} />} />
+          <Route path="/edit/:id" element={<Edit onEdit={onEdit} userInfo={userInfo} />} />
 
           <Route path="/statistics" element={<Statistics IsLogin={IsLogin} reportList={reportList} userInfo={userInfo} />} />
         </Routes>

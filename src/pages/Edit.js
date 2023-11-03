@@ -15,24 +15,8 @@ import ReactStars from "react-stars";
 
 import styled from "styled-components";
 
-const Edit = ({ onEdit }) => {
+const Edit = ({ onEdit, userInfo }) => {
   const [modal, setModal] = useState(false);
-
-  const auth = getAuth();
-
-  const quillRef = useRef(null);
-
-  const navigate = useNavigate();
-
-  const { id } = useParams(); // 넘겨준 id 받기
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      getReport(user.email);
-    });
-    console.log(id);
-  }, []);
-
   const [book, setBook] = useState({
     title: "",
     cover: "",
@@ -44,18 +28,35 @@ const Edit = ({ onEdit }) => {
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [star, setStar] = useState(3);
+  const [like, setLike] = useState(0);
+
+  const auth = getAuth();
+
+  const quillRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  const { id } = useParams(); // 넘겨준 id 받기
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      getReport(user.data.email);
+    });
+  }, []);
 
   // firebase 에서 id 독후감 가져오기
   const getReport = async (user) => {
     const docRef = doc(db, "reports", user, "books", id);
     const targetReport = await getDoc(docRef);
     const targetReportData = targetReport.data();
-
-    setBook(targetReportData.book);
-    setTitle(targetReportData.title);
-    setContent(targetReportData.content);
-    setIsPrivate(targetReportData.isPrivate);
-    setStar(targetReportData.star);
+    if (targetReportData) {
+      setBook(targetReportData.book);
+      setTitle(targetReportData.title);
+      setContent(targetReportData.content);
+      setIsPrivate(targetReportData.isPrivate);
+      setStar(targetReportData.star);
+      setLike(targetReportData.like);
+    }
   };
 
   const handleInput = (e) => {
@@ -81,14 +82,16 @@ const Edit = ({ onEdit }) => {
       content,
       date: new Date().getTime(),
       isPrivate,
-      like: 0,
+      like,
       author: auth.currentUser.email,
+      profileImage: userInfo.photoURL,
+      username: userInfo.username,
       star,
       book,
     };
     onEdit(id, newItem);
     alert("수정 완료");
-    navigate(`/report/${id}`, { replace: true });
+    navigate(`/report/${auth.currentUser.email}/${id}`, { replace: true });
   };
 
   const modules = useMemo(() => {

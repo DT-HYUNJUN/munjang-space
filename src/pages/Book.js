@@ -196,6 +196,7 @@ const BookIntroduction = styled.h1`
 const BookIntroductionContent = styled.p`
   font-size: 20px;
   text-align: left;
+  line-height: 35px;
 `;
 
 const ThisReport = styled.h1`

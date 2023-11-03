@@ -20,6 +20,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
       navigate("/login");
       alert("로그인 해주세요!");
     }
+    console.log(userInfo);
   }, []);
 
   const [modal, setModal] = useState(false);
