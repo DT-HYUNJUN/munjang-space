@@ -1,6 +1,8 @@
-# <img style="width: 20px" src="./build/images/dog.png" alt="logoImg" /> 문장의 정원
+# <img style="width: 20px" src="./public/images/dog.png" alt="logoImg" /> 문장의 공간
 
 ## 프로젝트 소개
+
+- 배포 URL : [문장의 공간](https://gacde-munjang-space.web.app/)
 
 - 개발기간 : 2023.09.11 ~ 2023.11.02
 
