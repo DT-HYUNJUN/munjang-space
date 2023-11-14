@@ -40,7 +40,7 @@ const Edit = ({ onEdit, userInfo }) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      getReport(user.data.email);
+      getReport(user.email);
     });
   }, []);
 
