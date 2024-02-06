@@ -2,7 +2,7 @@
 
 ## 프로젝트 소개
 
-- 배포 URL : <a href="https://gacde-munjang-space.web.app/" target="_blank">문장의 공간</a>
+- 배포 URL : <a href="https://munjang-space-project.web.app/" target="_blank">문장의 공간</a>
 
 - 개발기간 : 2023.09.11 ~ 2023.11.02
 
