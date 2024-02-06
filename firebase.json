@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "gacde-munjang-space",
+    "site": "munjang-space-project",
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
@@ -9,16 +9,5 @@
         "destination": "/index.html"
       }
     ]
-  },
-  "headers": [
-    {
-      "source": "**",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
-    }
-  ]
+  }
 }
