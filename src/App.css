@@ -58,6 +58,10 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   padding: 35px 100px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 }
 
 .Footer a {
