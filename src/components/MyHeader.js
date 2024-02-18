@@ -30,35 +30,102 @@ const MyHeader = ({ IsLogin }) => {
   };
 
   return (
-    <div className="Header">
-      <div className="LeftHeader">
-        <NavLink to="/">
-          <div className="Logo">
-            <img className="logoImg" src={process.env.PUBLIC_URL + "/images/dog.png"} alt="logoImg" />
-            <h2>문장의 공간</h2>
-          </div>
-        </NavLink>
+    <HeaderContainer>
+      <div>
+        <LeftNavLink to="/">
+          <Logo>
+            <LogoImg src={process.env.PUBLIC_URL + "/images/dog.png"} alt="logoImg" />
+            <LogoHeadText>문장의 공간</LogoHeadText>
+          </Logo>
+        </LeftNavLink>
       </div>
 
       <div>
-        <div className="NavBar">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/list">나의 서재</NavLink>
-          <NavLink to="/statistics">나의 통계</NavLink>
+        <NavBar>
+          <NavBarLink to="/">Home</NavBarLink>
+          <NavBarLink to="/list">나의 서재</NavBarLink>
+          <NavBarLink to="/statistics">나의 통계</NavBarLink>
 
-          <NavLink to={IsLogin ? "/profile" : "/login"}>{IsLogin ? "나의 정보" : "로그인"}</NavLink>
+          <NavBarLink to={IsLogin ? "/profile" : "/login"}>{IsLogin ? "나의 정보" : "로그인"}</NavBarLink>
 
-          <NavLink to="/signup">{IsLogin ? " " : "회원가입"}</NavLink>
+          <NavBarLink to="/signup">{IsLogin ? " " : "회원가입"}</NavBarLink>
 
           {IsLogin ? <Logout onClick={onLogOutClick}>로그아웃</Logout> : " "}
-        </div>
+        </NavBar>
         <LoginInformation>{username && `${username} 님 독후감을 작성해보세요 😀`}</LoginInformation>
       </div>
-    </div>
+    </HeaderContainer>
   );
 };
 
 export default MyHeader;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
+`;
+
+const LeftNavLink = styled(NavLink)`
+  text-decoration: none;
+`;
+
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const LogoImg = styled.img`
+  width: 100.82px;
+  height: 126.88px;
+`;
+
+const LogoHeadText = styled.h2`
+  font-family: "UhBeeJJIBBABBA";
+  font-size: 50px;
+  color: black;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const NavBar = styled.div`
+  font-size: 20px;
+  font-family: "UhBeeJJIBBABBA";
+  font-weight: bolder;
+
+  padding-right: 20px;
+
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    padding: 10px 10px 40px 10px;
+    font-size: 16px;
+  }
+`;
+
+const NavBarLink = styled(NavLink)`
+  text-decoration: none;
+  color: black;
+
+  &:hover {
+    color: #4db8ff;
+    border-bottom: 2px solid;
+  }
+
+  &:active {
+    color: #4db8ff;
+    border-bottom: 2px solid;
+  }
+`;
 
 const LoginInformation = styled.div`
   font-family: "UhBeeJJIBBABBA";

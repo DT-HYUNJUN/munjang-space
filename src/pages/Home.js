@@ -277,6 +277,10 @@ const BestSeller = styled.div`
 
   margin: 10px 100px 30px 100px;
 
+  @media (max-width: 768px) {
+    margin: 10px 0 30px 0;
+  }
+
   padding: 40px 0;
 `;
 
@@ -304,6 +308,10 @@ const BestSellerBigTitle = styled.h1`
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const BigTitle = styled.h1`
@@ -518,6 +526,10 @@ const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 50px 100px 0px 100px;
+
+  @media (max-width: 768px) {
+    margin: 50px 0 0 0;
+  }
 `;
 
 const PageWrapper = styled.div`
@@ -621,6 +633,11 @@ const BookSearchInput = styled.input`
   width: 500px;
 
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 12px;
+  }
 `;
 
 const BookSearchForm = styled.form`
