@@ -51,59 +51,6 @@ body {
   font-style: normal;
 }
 
-/* Header */
-.Header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.LeftHeader a {
-  text-decoration: none;
-}
-
-.Logo {
-  display: flex;
-  align-items: center;
-}
-
-.Logo > h2 {
-  font-family: "UhBeeJJIBBABBA";
-  font-size: 50px;
-  color: black;
-}
-
-.Logo img {
-  width: 100.82px;
-  height: 126.88px;
-}
-
-.NavBar {
-  font-size: 20px;
-  font-family: "UhBeeJJIBBABBA";
-  font-weight: bolder;
-
-  padding-right: 20px;
-
-  display: flex;
-  gap: 10px;
-}
-
-.NavBar a {
-  text-decoration: none;
-  color: black;
-}
-
-.NavBar a.active {
-  color: #4db8ff;
-  border-bottom: 2px solid;
-}
-
-.NavBar :hover {
-  color: #4db8ff;
-  border-bottom: 2px solid;
-}
-
 /* Footer */
 .Footer {
   background-color: #f2f2f2;
@@ -197,6 +144,10 @@ body {
   white-space: nowrap;
   font-family: "UhBeeJJIBBABBA";
   font-size: 18px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
   padding: 10px 15px;
 }
 
