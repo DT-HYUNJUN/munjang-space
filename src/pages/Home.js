@@ -351,7 +351,7 @@ const BigTitleLike = styled.h1`
 
 const BestLikesReport = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 50px;
 
   margin-bottom: 70px;
@@ -359,6 +359,7 @@ const BestLikesReport = styled.div`
 
   @media (max-width: 768px) {
     gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
   }
 `;
 
