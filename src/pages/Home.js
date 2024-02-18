@@ -144,6 +144,17 @@ const Home = () => {
     autoplay: true,
     autoplaySpeed: 7000,
     pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          infinite: true,
+          dots: true,
+        },
+      },
+    ],
   };
 
   return (
@@ -279,6 +290,9 @@ const BestSeller = styled.div`
 
   @media (max-width: 768px) {
     margin: 10px 0 30px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   padding: 40px 0;
@@ -318,6 +332,10 @@ const BigTitle = styled.h1`
   text-align: center;
   font-family: "UhBeeJJIBBABBA";
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const BigTitleLike = styled.h1`
@@ -325,15 +343,23 @@ const BigTitleLike = styled.h1`
   font-family: "UhBeeJJIBBABBA";
   margin-bottom: 0px;
   margin-top: 70px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const BestLikesReport = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 50px;
 
   margin-bottom: 70px;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    gap: 5px;
+  }
 `;
 
 const LikeReport = styled.div`
@@ -359,6 +385,11 @@ const BookCover = styled.img`
   width: 140px;
   height: 200px;
   border: 0.5px solid #ccc;
+
+  @media (max-width: 768px) {
+    width: 120px;
+    height: 200px;
+  }
 `;
 
 const ReportRank = styled.div`
@@ -473,6 +504,9 @@ const BestBookList = styled.div`
   cursor: pointer;
   width: 400px;
   font-family: "KyoboHandwriting2021sjy";
+  @media (max-width: 768px) {
+    width: 300px;
+  }
 `;
 
 const fillUp = keyframes`
@@ -503,6 +537,12 @@ const BestBookInfoWrapper = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+  }
 `;
 
 const SelectedBestBookTitle = styled.p`
@@ -520,6 +560,12 @@ const SelectedBestBookAuthor = styled.p`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+
+  @media (max-width: 768px) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
 `;
 
 const TitleWrapper = styled.div`
