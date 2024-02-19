@@ -143,7 +143,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
           </HeaderWrapper>
         </div>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
+          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="저장" type="positive" />
@@ -165,7 +165,8 @@ const FormContainer = styled.form`
   margin-bottom: 30px;
 
   @media (max-width: 768px) {
-    margin: 0;
+    margin-right: auto;
+    margin-left: auto;
   }
 `;
 
@@ -178,6 +179,10 @@ const BookImage = styled.img`
 const BookInfoSpan = styled.span`
   color: #0b4b77;
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    width: 220px;
+  }
 `;
 
 const Book = styled.span`
@@ -188,6 +193,11 @@ const Book = styled.span`
   text-decoration: underline;
   cursor: pointer;
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    display: block;
+    width: 200px;
+  }
 `;
 
 const BookWrapper = styled.div`
@@ -207,6 +217,11 @@ const ButtonWrapper = styled.div`
 const EditorWrapper = styled.div`
   width: 1000px;
   height: 850px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 700px;
+  }
 `;
 
 const TitleInputWrapper = styled.div`
@@ -276,8 +291,9 @@ const HeaderWrapper = styled.div`
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 10px;
     height: auto;
+    margin-bottom: 10px;
   }
 `;
 
