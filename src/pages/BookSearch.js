@@ -59,48 +59,37 @@ const BookSearch = () => {
       <FontAwesomeIcon icon={faSpinner} spin size="3x" />
     </LoadingWrapper>
   ) : searchComplete && bookList.length > 0 ? (
-    <div>
+    <Container>
       <SearchBoookName>검색한 '{state.bookName}' 입니다.</SearchBoookName>
-
-      {bookList.map((book) => (
-        <BookInfo key={book.isbn13}>
-          <BookDetail
-            onClick={() => {
-              handleClickBook(book.isbn13);
-            }}
-          >
-            <img src={book.cover} alt={book.title} />
-            <TitleAndAuthor>
-              <BookTitle>{book.title}</BookTitle>
-              <BookAuthor>{book.author}</BookAuthor>
-            </TitleAndAuthor>
-          </BookDetail>
-
-          <BookButton>
-            <ReportWriteButton
-              onClick={() =>
-                handleClickCreate(
-                  book.title,
-                  book.cover,
-                  book.author,
-                  book.description,
-                  book.isbn13
-                )
-              }
-            >
-              독후감작성
-            </ReportWriteButton>
-            <MyButton
+      <BookList>
+        {bookList.map((book) => (
+          <BookInfo key={book.isbn13}>
+            <BookDetail
               onClick={() => {
                 handleClickBook(book.isbn13);
               }}
-              type={"positive"}
-              text={"책 정보"}
-            />
-          </BookButton>
-        </BookInfo>
-      ))}
-    </div>
+            >
+              <BookCover src={book.cover} alt={book.title} />
+              <TitleAndAuthor>
+                <BookTitle>{book.title}</BookTitle>
+                <BookAuthor>{book.author}</BookAuthor>
+              </TitleAndAuthor>
+            </BookDetail>
+
+            <BookButton>
+              <ReportWriteButton onClick={() => handleClickCreate(book.title, book.cover, book.author, book.description, book.isbn13)}>독후감작성</ReportWriteButton>
+              <MyButton
+                onClick={() => {
+                  handleClickBook(book.isbn13);
+                }}
+                type={"positive"}
+                text={"책 정보"}
+              />
+            </BookButton>
+          </BookInfo>
+        ))}
+      </BookList>
+    </Container>
   ) : (
     <div>`{state.bookName}` 결과가 없습니다.</div>
   );
@@ -110,6 +99,10 @@ export default BookSearch;
 
 const SearchBoookName = styled.h1`
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const BookInfo = styled.div`
@@ -120,9 +113,18 @@ const BookInfo = styled.div`
   margin-bottom: 20px;
 
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 50px;
+  }
 `;
 
-const BookButton = styled.div``;
+const BookButton = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
 
 const ReportWriteButton = styled.button`
   border: 0;
@@ -132,7 +134,7 @@ const ReportWriteButton = styled.button`
   background-color: #fffb85;
 
   width: 100px;
-  height: 52px;
+  height: 40px;
 
   font-family: "UhBeeJJIBBABBA";
   font-size: 14px;
@@ -151,22 +153,36 @@ const ReportWriteButton = styled.button`
 const BookTitle = styled.p`
   font-weight: bold;
   font-size: 32px;
-  width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    width: 100%;
+  }
 `;
 
 const BookAuthor = styled.p`
   color: gray;
   font-size: 24px;
-  width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
-const TitleAndAuthor = styled.div``;
+const TitleAndAuthor = styled.div`
+  width: 500px;
+
+  @media (max-width: 768px) {
+    width: 200px;
+    text-align: center;
+  }
+`;
 
 const LoadingWrapper = styled.div`
   position: absolute;
@@ -179,4 +195,28 @@ const BookDetail = styled.div`
   display: flex;
   align-items: center;
   gap: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 0px;
+  }
+`;
+
+const BookCover = styled.img`
+  @media (max-width: 768px) {
+    width: 60px;
+  }
+`;
+
+const Container = styled.div`
+  @media (max-width: 768px) {
+    margin: 10;
+  }
+`;
+
+const BookList = styled.div`
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;

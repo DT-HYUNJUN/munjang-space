@@ -149,7 +149,7 @@ const Edit = ({ onEdit, userInfo }) => {
           </LabelWrapper>
         </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} />
         </EditorWrapper>
         <ButtonWrapper>
           <MyButton text="수정완료" type="positive" />
@@ -169,6 +169,11 @@ const FormContainer = styled.form`
   margin-right: 100px;
   gap: 20px;
   margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    margin-right: auto;
+    margin-left: auto;
+  }
 `;
 
 const BookImage = styled.img`
@@ -180,6 +185,10 @@ const BookImage = styled.img`
 const BookInfoSpan = styled.span`
   color: #0b4b77;
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    width: 220px;
+  }
 `;
 
 const Book = styled.span`
@@ -206,6 +215,11 @@ const ButtonWrapper = styled.div`
 const EditorWrapper = styled.div`
   width: 1000px;
   height: 850px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 700px;
+  }
 `;
 
 const TitleInput = styled.input`
@@ -261,6 +275,13 @@ const HeaderWrapper = styled.div`
   align-items: center;
   gap: 20px;
   height: 42px;
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: auto;
+    margin-bottom: 10px;
+  }
 `;
 
 const StarWrapper = styled.div`

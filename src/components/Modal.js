@@ -174,6 +174,11 @@ const Container = styled.div`
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 
   animation: ${fadein} 0.3s;
+
+  @media (max-width: 768px) {
+    width: 80%;
+    height: 700px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -191,6 +196,11 @@ const FormWrapper = styled.form`
   position: relative;
   background-color: white;
   border-radius: 8px;
+
+  @media (max-width: 768px) {
+    margin-top: 20px;
+    width: 100%;
+  }
 `;
 
 const TitleInput = styled.input`
@@ -203,6 +213,10 @@ const TitleInput = styled.input`
   background: transparent;
   &:focus {
     outline: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -217,6 +231,10 @@ const Content = styled.div`
   padding: 10px;
   width: 100%;
   height: 100%;
+
+  @media (max-width: 768px) {
+    height: 600px;
+  }
 `;
 
 const LoadingWrapper = styled.div`
@@ -230,6 +248,10 @@ const BookList = styled.div`
   display: flex;
   margin-left: 10px;
   padding: 5px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const BookDetail = styled.div`
@@ -237,6 +259,10 @@ const BookDetail = styled.div`
   font-family: "KyoboHandwriting2021sjy";
   font-size: 20px;
   flex-grow: 1;
+  @media (max-width: 768px) {
+    margin-left: 10px;
+    width: 100%;
+  }
 `;
 
 const BookTitle = styled.p`
@@ -246,10 +272,19 @@ const BookTitle = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   width: 800px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    width: 150px;
+  }
 `;
 
 const BookAuthor = styled.span`
   color: gray;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const BookEntire = styled.div`
@@ -257,6 +292,10 @@ const BookEntire = styled.div`
   margin-bottom: 10px;
   background-color: white;
   border: 1px solid white;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 const NoData = styled.div`
@@ -277,10 +316,19 @@ const BookContainer = styled.div`
 
 const BookCover = styled.img`
   width: 85px;
+
+  @media (max-width: 768px) {
+    width: 85px;
+    height: 100px;
+  }
 `;
 
 const BookTitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;

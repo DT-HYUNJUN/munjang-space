@@ -203,4 +203,8 @@ const ReportLength = styled.h1`
   text-align: left;
 
   color: gray;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;

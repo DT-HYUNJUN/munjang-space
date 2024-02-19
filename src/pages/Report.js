@@ -110,7 +110,6 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
                 <span>{report.username}</span>
                 <span>({emailPrivacy(report.author)})</span>
               </Author>
-              <span>·</span>
               <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
@@ -158,6 +157,10 @@ export default Report;
 const Container = styled.div`
   margin-left: 240px;
   margin-right: 240px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const Header = styled.div`
@@ -231,12 +234,18 @@ const ReportTitle = styled.p`
 
 const UserAndDate = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   color: gray;
   font-style: italic;
   display: flex;
   gap: 15px;
+
+  @media (max-width: 768px) {
+    justify-content: flex-start;
+    gap: 5px;
+  }
 `;
 
 const ProfileImage = styled.img`
@@ -265,6 +274,10 @@ const SubTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+  }
 `;
 
 const Like = styled.div`

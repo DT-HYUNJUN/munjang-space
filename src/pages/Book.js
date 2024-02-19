@@ -107,7 +107,7 @@ const Book = () => {
           <BookAuthor>{data.author}</BookAuthor>
           <BookCategory>{data.categoryName}</BookCategory>
           <BookIsbn13>isbn13 : {data.isbn13}</BookIsbn13>
-          <div>
+          <ButtonWrapper>
             <MyButton
               type={"positive"}
               text={"종이책 구매"}
@@ -116,7 +116,7 @@ const Book = () => {
               }}
             />
             <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
-          </div>
+          </ButtonWrapper>
         </div>
       </BookContent>
 
@@ -155,6 +155,12 @@ const BookDetailEntire = styled.div`
 const BookContent = styled.div`
   display: flex;
   gap: 100px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
 `;
 
 const BookTitle = styled.p`
@@ -163,11 +169,19 @@ const BookTitle = styled.p`
 
   margin-top: 0px;
   margin-bottom: 0px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const BookAuthor = styled.p`
   font-size: 20px;
   color: gray;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const BookCategory = styled.p`
@@ -186,6 +200,12 @@ const BookCover = styled.img`
   margin-left: 30px;
 
   margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 300px;
+    margin: 0;
+  }
 `;
 
 const BookIntroduction = styled.h1`
@@ -216,6 +236,12 @@ const BookReport = styled.div`
   box-shadow: 12px 0px 11px -3px rgba(0, 0, 0, 0.1);
 
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 160px;
+    margin: 0;
+  }
 `;
 
 const WriteButton = styled.button`
@@ -224,7 +250,7 @@ const WriteButton = styled.button`
   cursor: pointer;
   background-color: #fffb85;
   width: 120px;
-  height: 52px;
+  height: 40px;
 
   font-family: "UhBeeJJIBBABBA";
   font-size: 14px;
@@ -237,10 +263,21 @@ const WriteButton = styled.button`
   &:hover {
     background-color: #f7f25e;
   }
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const ThisBookReport = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ReportTitle = styled.div`
@@ -248,7 +285,7 @@ const ReportTitle = styled.div`
   font-weight: bold;
   font-size: 18px;
 
-  height: 30px;
+  height: 20%;
 
   white-space: nowrap;
   overflow: hidden;
@@ -262,13 +299,16 @@ const ReportContent = styled.div`
 
   padding: 10px;
 
-  height: 132px;
+  height: 50%;
 
   text-overflow: ellipsis;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 8;
+  @media (max-width: 768px) {
+    padding: 0;
+  }
 `;
 
 const ReportFooter = styled.div`
@@ -309,4 +349,13 @@ const LoadingWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const ButtonWrapper = styled.div`
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 `;
