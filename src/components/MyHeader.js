@@ -68,6 +68,7 @@ const HeaderContainer = styled.div`
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
+    margin-bottom: 40px;
   }
 `;
 
@@ -107,8 +108,8 @@ const NavBar = styled.div`
 
   @media (max-width: 768px) {
     display: flex;
-    padding: 10px 10px 40px 10px;
-    font-size: 16px;
+    padding: 10px 10px 5px 10px;
+    font-size: 14px;
   }
 `;
 
@@ -135,6 +136,12 @@ const LoginInformation = styled.div`
   margin-top: 3px;
   margin-right: 30px;
   color: #9ad8dc;
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+  }
 `;
 
 const Logout = styled.span`

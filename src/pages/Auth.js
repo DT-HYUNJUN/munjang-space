@@ -206,6 +206,10 @@ const Logininput = styled.input`
   font-size: 22px;
 
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 300px;
+  }
 `;
 
 const LoginWrapper = styled.div`
@@ -214,6 +218,10 @@ const LoginWrapper = styled.div`
 
 const SaveId = styled.label`
   font-family: "KyoboHandwriting2021sjy";
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const PwSee = styled.label`
@@ -221,6 +229,10 @@ const PwSee = styled.label`
 
   margin-left: 10px;
   margin-right: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const CheckBoxStyle = styled.div`

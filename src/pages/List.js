@@ -161,14 +161,30 @@ const FilterSelect = styled.select`
   width: 30%;
 
   margin-right: 5px;
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-right: 0;
+    font-size: 14px;
+  }
 `;
 
 const ControlHeader = styled.div`
   display: flex;
   margin-top: 10px;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 5px;
+  }
 `;
 
 const ControlFilter = styled.div`
   width: 50%;
+  @media (max-width: 768px) {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+  }
 `;

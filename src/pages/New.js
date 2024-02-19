@@ -113,33 +113,35 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
   return (
     <div>
       <FormContainer onSubmit={handleSubmit}>
-        <HeaderWrapper>
-          <BookWrapper>
-            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="bookImage" />
-            <BookInfoSpan>
-              {book.title ? (
-                <>
-                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
-                </>
-              ) : (
-                <Book onClick={handleBook}>책을 선택해주세요</Book>
-              )}
-            </BookInfoSpan>
-          </BookWrapper>
-          <StarWrapper>
-            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
-          </StarWrapper>
-        </HeaderWrapper>
-        <HeaderWrapper>
-          <TitleInputWrapper>
-            <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
-            <TitleLength>{titleLength}/40</TitleLength>
-          </TitleInputWrapper>
-          <LabelWrapper htmlFor="isPrivate">
-            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
-            <PrivateSpan>비공개</PrivateSpan>
-          </LabelWrapper>
-        </HeaderWrapper>
+        <div>
+          <HeaderWrapper>
+            <BookWrapper>
+              <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="bookImage" />
+              <BookInfoSpan>
+                {book.title ? (
+                  <>
+                    <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
+                  </>
+                ) : (
+                  <Book onClick={handleBook}>책을 선택해주세요</Book>
+                )}
+              </BookInfoSpan>
+            </BookWrapper>
+            <StarWrapper>
+              <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
+            </StarWrapper>
+          </HeaderWrapper>
+          <HeaderWrapper>
+            <TitleInputWrapper>
+              <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
+              <TitleLength>{titleLength}/40</TitleLength>
+            </TitleInputWrapper>
+            <LabelWrapper htmlFor="isPrivate">
+              <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+              <PrivateSpan>비공개</PrivateSpan>
+            </LabelWrapper>
+          </HeaderWrapper>
+        </div>
         <EditorWrapper>
           <ReactQuill ref={quillRef} style={{ height: "800px", width: "1000px" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
         </EditorWrapper>
@@ -161,6 +163,10 @@ const FormContainer = styled.form`
   margin-right: 100px;
   gap: 20px;
   margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const BookImage = styled.img`
@@ -267,6 +273,12 @@ const HeaderWrapper = styled.div`
   align-items: center;
   gap: 20px;
   height: 42px;
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    height: auto;
+  }
 `;
 
 const StarWrapper = styled.div`
