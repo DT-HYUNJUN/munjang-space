@@ -102,7 +102,6 @@ const MyProfile = ({ email, username, photoURL, handleChangePW, isSocial }) => {
                 {!isSocial && (
                   <>
                     <ChangePasswordLink onClick={handleChangePW}>비밀번호 변경</ChangePasswordLink>
-                    <ChangePasswordLink onClick={handleChangePW}>비밀번호 찾기</ChangePasswordLink>
                   </>
                 )}
               </Center>
@@ -129,6 +128,9 @@ const InfoText = styled.span`
   font-size: 26px;
   margin-right: 10px;
   letter-spacing: 1px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const UsernameInput = styled.input`
@@ -136,6 +138,10 @@ const UsernameInput = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
+
+  @media (max-width: 768px) {
+    width: 60%;
+  }
 `;
 
 const BottomWrapper = styled.div`
@@ -153,6 +159,11 @@ const ImagePreview = styled.img`
   width: 200px;
   height: 200px;
   border-radius: 50%;
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
 `;
 
 const ImageInputWrapper = styled.div`
