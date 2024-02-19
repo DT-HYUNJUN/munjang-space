@@ -149,7 +149,7 @@ const Statistics = ({ IsLogin, reportList, userInfo }) => {
   };
 
   return isTarget ? (
-    <div>
+    <ContentContainer>
       <ImgWrapper>
         <QuoteImage src={process.env.PUBLIC_URL + "/images/quote.png"} alt="독서명언" />
       </ImgWrapper>
@@ -212,7 +212,7 @@ const Statistics = ({ IsLogin, reportList, userInfo }) => {
           </Target>
         </Content>
       </Container>
-    </div>
+    </ContentContainer>
   ) : (
     <Container>
       <TargetForm onSubmit={handleFirstSubmit}>
@@ -233,6 +233,17 @@ const Container = styled.div`
   padding: 20px;
   border: 3px solid #ececec;
   border-radius: 3%;
+
+  @media (max-width: 768px) {
+    margin: 0;
+    padding: 20px 5px;
+  }
+`;
+
+const ContentContainer = styled.div`
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const Header = styled.div`
@@ -260,10 +271,16 @@ const Box = styled.div`
 
 const Year = styled.div`
   font-size: 30px;
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const Book = styled.div`
   font-size: 18px;
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const ArrowWrapper = styled.div`
@@ -287,6 +304,10 @@ const Graph = styled.div`
   margin: 50px 0;
 
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    gap: 2px;
+  }
 `;
 
 const Month = styled.div`
@@ -295,6 +316,10 @@ const Month = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const fillUp = keyframes`
@@ -329,6 +354,10 @@ const TargetBox = styled.div`
   border-radius: 5px;
   font-weight: bold;
   background-color: #e8e8e8;
+
+  @media (max-width: 768px) {
+    flex-grow: 1;
+  }
 `;
 
 const TargetWrapper = styled.div`
@@ -381,6 +410,7 @@ const CircleGraphCenter = styled.span`
 const Target = styled.div`
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 20px;
 `;
 
@@ -397,7 +427,11 @@ const TargetInput = styled.input`
   }
 `;
 
-const Title = styled.h1``;
+const Title = styled.h1`
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`;
 
 const TargetForm = styled.form`
   display: flex;
@@ -415,6 +449,10 @@ const FirstTargetInput = styled.input`
   font-family: "UhBeeJJIBBABBA";
   &:focus {
     outline: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -435,6 +473,10 @@ const YearBook = styled.div`
 
   font-weight: bold;
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    flex-grow: 2;
+  }
 `;
 
 const BookValue = styled.span`
@@ -459,6 +501,10 @@ const UserName = styled.h1`
   font-size: 22px;
   font-family: "UhBeeJJIBBABBA";
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const ImgWrapper = styled.div`
@@ -471,6 +517,12 @@ const ImgWrapper = styled.div`
   width: 80%;
   height: 120px;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
 `;
 
 const QuoteImage = styled.img`
