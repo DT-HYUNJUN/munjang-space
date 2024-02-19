@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  updatePassword,
-} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
@@ -71,34 +67,14 @@ const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
       {isCorrect ? (
         <PasswordForm onSubmit={handleChangePassword}>
           <label htmlFor="newPassword">새 비밀번호</label>
-          <Input
-            id="newPassword"
-            name="newPassword"
-            type="password"
-            value={newPassword}
-            onChange={handleInput}
-            placeholder="새 비밀번호"
-          />
+          <Input id="newPassword" name="newPassword" type="password" value={newPassword} onChange={handleInput} placeholder="새 비밀번호" />
           <label htmlFor="newPasswordCheck">새 비밀번호 확인</label>
-          <Input
-            id="newPasswordCheck"
-            name="newPasswordCheck"
-            type="password"
-            value={newPasswordCheck}
-            onChange={handleInput}
-            placeholder="새 비밀번호 확인"
-          />
+          <Input id="newPasswordCheck" name="newPasswordCheck" type="password" value={newPasswordCheck} onChange={handleInput} placeholder="새 비밀번호 확인" />
           <MyButton text={"비밀번호 변경"} type={"positive"} />
         </PasswordForm>
       ) : (
         <PasswordForm onSubmit={handleSubmit}>
-          <Input
-            name="password"
-            type="password"
-            value={password}
-            onChange={handleInput}
-            placeholder="현재 비밀번호"
-          />
+          <Input name="password" type="password" value={password} onChange={handleInput} placeholder="현재 비밀번호" />
           <MyButton text={"비밀번호 확인"} type={"positive"} />
         </PasswordForm>
       )}
@@ -116,6 +92,10 @@ const Input = styled.input`
   border-radius: 5px;
   border: 1px solid #ccc;
   background-color: #ececec;
+
+  @media (max-width: 768px) {
+    width: 178px;
+  }
 `;
 
 const PasswordForm = styled.form`
@@ -123,6 +103,11 @@ const PasswordForm = styled.form`
   flex-direction: column;
   gap: 10px;
   font-family: "KyoboHandwriting2021sjy";
+
+  @media (max-width: 768px) {
+    margin-top: 30px;
+    width: 200px;
+  }
 `;
 
 const Container = styled.div`

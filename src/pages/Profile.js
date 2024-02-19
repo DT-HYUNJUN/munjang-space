@@ -159,6 +159,12 @@ const Container = styled.div`
   flex-direction: column;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background-color: #ececec;
+
+  @media (max-width: 768px) {
+    width: 250px;
+    height: 400px;
+    padding: 20px;
+  }
 `;
 
 const PasswordForm = styled.form`
@@ -166,6 +172,10 @@ const PasswordForm = styled.form`
   flex-direction: column;
   gap: 10px;
   font-family: "KyoboHandwriting2021sjy";
+
+  @media (max-width: 768px) {
+    align-items: center;
+  }
 `;
 
 const Input = styled.input`
@@ -175,6 +185,10 @@ const Input = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const PasswordCheckContainer = styled.div`
@@ -186,6 +200,10 @@ const PasswordCheckContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 30px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const Title = styled.div`
@@ -200,6 +218,10 @@ const Info = styled.div`
   color: #8b8b8b;
   font-size: 14px;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const PasswordImage = styled.img`
