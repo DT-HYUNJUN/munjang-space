@@ -48,20 +48,17 @@ const ReportContentList = ({ reportList, onDelete }) => {
           <ReportContent key={item.id}>
             <ImageContent onClick={() => goDetail(item.author, item.id)}>
               <BookImg src={item.book.cover} alt="book" />
-              <div>
-                <ReportTitle>독후감 제목: {item.title}</ReportTitle>
+              <InfoContent>
+                <ReportTitle>{item.title}</ReportTitle>
                 <ReportRemain>
-                  <p>책 제목: {item.book.title}</p>
-                  <p>공개 여부: {item.isPrivate ? "비공개" : "공개"}</p>
+                  <p>{item.book.title}</p>
+                  <p>{item.isPrivate ? "비공개" : "공개"}</p>
                   <ReportRating>
-                    별점 : <ReactStars value={item.star} edit={false} size={24} />
+                    <ReactStars value={item.star} edit={false} size={24} />
                   </ReportRating>
-                  <p>
-                    작성 날:
-                    {new Date(parseInt(item.date)).toLocaleDateString()}
-                  </p>
+                  <p>{new Date(parseInt(item.date)).toLocaleDateString()}</p>
                 </ReportRemain>
-              </div>
+              </InfoContent>
             </ImageContent>
 
             <EditButton>
@@ -100,17 +97,40 @@ const BookImg = styled.img`
   margin-bottom: 20px;
 
   border: 1px solid black;
+
+  @media (max-width: 768px) {
+    margin: 0;
+    width: 140px;
+    height: 200px;
+  }
 `;
 
 const ReportContent = styled.div`
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #e2e2e2;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+  }
 `;
 
 const ImageContent = styled.div`
   display: flex;
   gap: 100px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+`;
+
+const InfoContent = styled.div`
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 `;
 
 const ReportTitle = styled.p`
@@ -120,6 +140,10 @@ const ReportTitle = styled.p`
   margin-bottom: 50px;
 
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+  }
 `;
 
 const ReportRemain = styled.div`
@@ -135,10 +159,18 @@ const EditButton = styled.div`
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    align-items: center;
+    margin-top: 0;
+  }
 `;
 
 const ReportRating = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;

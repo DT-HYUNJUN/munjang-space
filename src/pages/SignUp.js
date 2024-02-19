@@ -174,6 +174,10 @@ const StyledInput = styled.input`
   margin-bottom: 10px;
   padding-left: 10px;
   font-family: "KyoboHandwriting2021sjy";
+
+  @media (max-width: 768px) {
+    width: 300px;
+  }
 `;
 
 const FormContainer = styled.form`
