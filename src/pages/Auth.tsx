@@ -6,12 +6,13 @@ import styled from "styled-components";
 
 import MyButton from "../components/MyButton";
 
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../fbase";
+import { FirebaseError } from "firebase/app";
 
 const Login = () => {
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
 
@@ -31,27 +32,38 @@ const Login = () => {
 
   // 구글 로그인
 
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<User>();
 
-  function handleGoogleLogin() {
+  const handleGoogleLogin = async (): Promise<void> => {
     const provider = new GoogleAuthProvider(); //Provider 설정
     const auth = getAuth();
-    signInWithPopup(auth, provider) //팝업창 띄어서 로그인
-      .then(async (data) => {
-        const username = data.user.displayName;
-        localStorage.setItem("isSocial", true);
-        await setDoc(doc(db, "reports", data.user.email), { username });
-        await setDoc(doc(db, "users", data.user.email), { username });
-        setUserData(data.user); // user data 설정
-        navigate("/"); // 로그인시 홈으로 이동
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+    try {
+      const data = await signInWithPopup(auth, provider);
+
+      if (!data.user || !data.user.email) {
+        throw new Error("이메일 정보를 가져올 수 없습니다.");
+      }
+
+      const username = data.user.displayName;
+      localStorage.setItem("isSocial", "true");
+
+      const reportsRef = collection(db, "reports");
+      const reportsDocRef = doc(reportsRef, data.user.email);
+      await setDoc(reportsDocRef, { username });
+
+      const usersRef = collection(db, "users");
+      const usersDocRef = doc(usersRef, data.user.email);
+      await setDoc(usersDocRef, { username });
+
+      setUserData(data.user); // user data 설정
+      navigate("/"); // 로그인시 홈으로 이동
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current && inputRef.current.focus();
   }, []);
 
   // 쿠키 이벤트
@@ -62,9 +74,9 @@ const Login = () => {
     }
   }, [cookies.rememberEmail]);
 
-  const onEmailHandler = (e) => setEmail(e.target.value);
+  const onEmailHandler = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
 
-  const handleOnChange = (e) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsRemember(e.target.checked);
     if (e.target.checked) {
       setCookie("rememberEmail", email, { maxAge: 2000 });
@@ -74,12 +86,12 @@ const Login = () => {
   };
 
   // 버튼 눌렀을때 동작 이벤트
-  const onPasswordHandler = (e) => {
+  const onPasswordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.currentTarget.value);
   };
 
   // 비밀번호 보이기
-  const handleDisplay = (e) => {
+  const handleDisplay = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsPassword(e.target.checked);
     if (e.target.checked) {
       setPasswordDisplay("text");
@@ -90,17 +102,17 @@ const Login = () => {
 
   // 로그인 submit
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem("isSocial", false);
+      localStorage.setItem("isSocial", "false");
       navigate("/");
     } catch (error) {
-      if (error.code === "auth/user-not-found") {
+      if ((error as FirebaseError).code === "auth/user-not-found") {
         alert("이메일이 일치하지 않습니다.");
-      } else if (error.code === "auth/wrong-password") {
+      } else if ((error as FirebaseError).code === "auth/wrong-password") {
         alert("비밀번호가 일치하지 않습니다.");
       } else {
         alert("입력하신 이메일 또는 비밀번호가 일치하지 않습니다.");
@@ -110,7 +122,7 @@ const Login = () => {
 
   // capsLock
 
-  const checkCapsLock = (e) => {
+  const checkCapsLock = (e: React.KeyboardEvent<HTMLInputElement>) => {
     let capsLock = e.getModifierState("CapsLock");
     setCapsLockFlag(capsLock);
   };

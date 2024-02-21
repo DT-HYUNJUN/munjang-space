@@ -1,22 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import MyButton from "../components/MyButton";
 import Modal from "../components/Modal";
+import MyButton from "../components/MyButton";
+import styled from "styled-components";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../fbase";
-
 import ReactStars from "react-stars";
 
-import styled from "styled-components";
+import { getAuth } from "firebase/auth";
 
-const Edit = ({ onEdit, userInfo }) => {
+const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
+  // 로그인 접근
+
+  useEffect(() => {
+    if (!IsLogin) {
+      navigate("/login");
+      alert("로그인 해주세요!");
+    }
+    console.log(userInfo);
+  }, []);
+
   const [modal, setModal] = useState(false);
+
   const [book, setBook] = useState({
     title: "",
     cover: "",
@@ -24,11 +32,13 @@ const Edit = ({ onEdit, userInfo }) => {
     description: "",
     isbn13: "",
   });
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [star, setStar] = useState(3);
-  const [like, setLike] = useState(0);
+
+  const [titleLength, setTitleLength] = useState(0);
 
   const auth = getAuth();
 
@@ -36,35 +46,13 @@ const Edit = ({ onEdit, userInfo }) => {
 
   const navigate = useNavigate();
 
-  const { id } = useParams(); // 넘겨준 id 받기
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      getReport(user.email);
-    });
-  }, []);
-
-  // firebase 에서 id 독후감 가져오기
-  const getReport = async (user) => {
-    const docRef = doc(db, "reports", user, "books", id);
-    const targetReport = await getDoc(docRef);
-    const targetReportData = targetReport.data();
-    if (targetReportData) {
-      setBook(targetReportData.book);
-      setTitle(targetReportData.title);
-      setContent(targetReportData.content);
-      setIsPrivate(targetReportData.isPrivate);
-      setStar(targetReportData.star);
-      setLike(targetReportData.like);
-    }
-  };
-
   const handleInput = (e) => {
     const name = e.target.name;
     if (name === "isPrivate") {
       setIsPrivate(e.target.checked);
     } else if (name === "title") {
       setTitle(e.target.value);
+      setTitleLength(e.target.value.length);
     } else if (name === "star") {
       setStar(e.target.value);
     }
@@ -77,27 +65,28 @@ const Edit = ({ onEdit, userInfo }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newItem = {
-      id,
+      id: reportCount,
       title,
       content,
       date: new Date().getTime(),
       isPrivate,
-      like,
+      like: 0,
       author: auth.currentUser.email,
       profileImage: userInfo.photoURL,
       username: userInfo.username,
       star,
       book,
     };
-    onEdit(id, newItem);
-    alert("수정 완료");
-    navigate(`/report/${auth.currentUser.email}/${id}`, { replace: true });
+    onCreate(newItem);
+    alert("작성 완료");
+    navigate(`/report/${auth.currentUser.email}/${reportCount}`, { replace: true });
   };
 
   const modules = useMemo(() => {
     return {
       toolbar: {
         container: [
+          [{ font: [] }],
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
           ["bold", "italic", "underline", "strike"],
           ["blockquote"],
@@ -124,43 +113,48 @@ const Edit = ({ onEdit, userInfo }) => {
   return (
     <div>
       <FormContainer onSubmit={handleSubmit}>
-        <HeaderWrapper>
-          <BookWrapper>
-            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
-            <BookInfoSpan>
-              {book.title ? (
-                <>
-                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
-                </>
-              ) : (
-                <Book onClick={handleBook}>책을 선택해주세요</Book>
-              )}
-            </BookInfoSpan>
-          </BookWrapper>
-          <StarWrapper>
-            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
-          </StarWrapper>
-        </HeaderWrapper>
-        <HeaderWrapper>
-          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
-          <LabelWrapper htmlFor="isPrivate">
-            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
-            <PrivateSpan>비공개</PrivateSpan>
-          </LabelWrapper>
-        </HeaderWrapper>
+        <Header>
+          <HeaderWrapper>
+            <BookWrapper>
+              <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="bookImage" />
+              <BookInfoSpan>
+                {book.title ? (
+                  <>
+                    <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
+                  </>
+                ) : (
+                  <Book onClick={handleBook}>책을 선택해주세요</Book>
+                )}
+              </BookInfoSpan>
+            </BookWrapper>
+            <StarWrapper>
+              <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
+            </StarWrapper>
+          </HeaderWrapper>
+          <HeaderWrapper>
+            <TitleInputWrapper>
+              <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
+              <TitleLength>{titleLength}/40</TitleLength>
+            </TitleInputWrapper>
+            <LabelWrapper htmlFor="isPrivate">
+              <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+              <PrivateSpan>비공개</PrivateSpan>
+            </LabelWrapper>
+          </HeaderWrapper>
+        </Header>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} />
+          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
         </EditorWrapper>
         <ButtonWrapper>
-          <MyButton text="수정완료" type="positive" />
+          <MyButton text="저장" type="positive" />
         </ButtonWrapper>
       </FormContainer>
-      {modal && <Modal setModal={setModal} setBook={setBook} />}
+      {modal && <Modal setModal={setModal} setBook={setBook} reportList={reportList} />}
     </div>
   );
 };
 
-export default Edit;
+export default New;
 
 const FormContainer = styled.form`
   display: flex;
@@ -192,10 +186,18 @@ const BookInfoSpan = styled.span`
 `;
 
 const Book = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: bold;
   text-decoration: underline;
   cursor: pointer;
   font-family: "UhBeeJJIBBABBA";
+
+  @media (max-width: 768px) {
+    display: block;
+    width: 200px;
+  }
 `;
 
 const BookWrapper = styled.div`
@@ -222,16 +224,27 @@ const EditorWrapper = styled.div`
   }
 `;
 
+const TitleInputWrapper = styled.div`
+  display: flex;
+  border-radius: 5px;
+  align-items: center;
+  background-color: #ececec;
+  padding-right: 5px;
+  flex-grow: 1;
+`;
+
 const TitleInput = styled.input`
   border: 0;
   border-radius: 5px;
   background-color: #ececec;
-  width: 50%;
   height: 38px;
   font-family: "KyoboHandwriting2021sjy";
   font-size: 22px;
   flex-grow: 1;
   padding-left: 8px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const LabelWrapper = styled.label`
@@ -280,7 +293,6 @@ const HeaderWrapper = styled.div`
     flex-direction: column;
     gap: 10px;
     height: auto;
-    margin-bottom: 10px;
   }
 `;
 
@@ -290,4 +302,12 @@ const StarWrapper = styled.div`
   padding-bottom: 7px;
   padding-left: 3px;
   padding-right: 3px;
+`;
+
+const TitleLength = styled.span``;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;

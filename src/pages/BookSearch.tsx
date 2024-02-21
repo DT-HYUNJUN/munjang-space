@@ -8,18 +8,23 @@ import MyButton from "../components/MyButton";
 
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IBook } from "../types";
+
+type HandleClickCreate = {
+  (title: string, cover: string, author: string, description: string, isbn13: string): void;
+};
 
 const BookSearch = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const [bookList, setBookList] = useState([]);
+  const [bookList, setBookList] = useState<IBook[]>([]);
 
   const [loading, setLoading] = useState(false);
 
   const [searchComplete, setSearchComplete] = useState(false);
 
-  const getBookList = async (bookName) => {
+  const getBookList = async (bookName: string) => {
     try {
       setLoading(true);
       const books = await getBooks(bookName);
@@ -37,7 +42,7 @@ const BookSearch = () => {
     getBookList(bookName);
   }, []);
 
-  const handleClickCreate = (title, cover, author, description, isbn13) => {
+  const handleClickCreate: HandleClickCreate = (title, cover, author, description, isbn13) => {
     navigate("/new", {
       state: {
         title: title,
@@ -50,7 +55,7 @@ const BookSearch = () => {
   };
 
   // book정보로 이동
-  const handleClickBook = (isbn13) => {
+  const handleClickBook = (isbn13: string) => {
     navigate(`/book/${isbn13}`);
   };
 

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "module": "CommonJS",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

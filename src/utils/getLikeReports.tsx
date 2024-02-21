@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../fbase";
 
-const getLikeReports = () => {
+const getLikeReports = (): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
       const reportsCollectionRef = collection(db, "reports");

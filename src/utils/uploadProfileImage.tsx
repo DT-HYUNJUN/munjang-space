@@ -1,7 +1,8 @@
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
-const uploadProfileImage = async (userEmail, file) => {
+const uploadProfileImage = async (userEmail: string, file: File) => {
   const storage = getStorage();
+  console.log(file);
   const storageRef = ref(storage, `profile_images/${userEmail}/${file.name}`);
 
   await uploadBytes(storageRef, file);
