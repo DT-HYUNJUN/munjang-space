@@ -8,8 +8,15 @@ import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import MyButton from "./MyButton";
 
 import styled from "styled-components";
+import { FirebaseError } from "firebase/app";
 
-const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
+interface Props {
+  email: string;
+  setIsChangePW: React.Dispatch<React.SetStateAction<boolean>>;
+  handleChangePW: () => void;
+}
+
+const ChangePassword = (props: Props) => {
   const [isCorrect, setIsCorrect] = useState(true);
 
   const [password, setPassword] = useState("");
@@ -19,7 +26,7 @@ const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
 
   const auth = getAuth();
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     if (name === "password") {
       setPassword(e.target.value);
@@ -30,25 +37,25 @@ const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     let data;
     try {
-      data = await signInWithEmailAndPassword(auth, email, password);
+      data = await signInWithEmailAndPassword(auth, props.email, password);
       if (data) {
         setIsCorrect(true);
       }
     } catch (error) {
-      alert(error.message);
+      alert((error as FirebaseError).message);
     }
   };
 
-  const handleChangePassword = async (e) => {
+  const handleChangePassword = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newPassword === newPasswordCheck) {
       try {
-        await updatePassword(auth.currentUser, newPassword);
-        setIsChangePW(false);
+        await updatePassword(auth.currentUser!, newPassword);
+        props.setIsChangePW(false);
       } catch (error) {
         console.log(error);
       }
@@ -62,7 +69,7 @@ const ChangePassword = ({ email, setIsChangePW, handleChangePW }) => {
   return (
     <Container>
       <BackWrapper>
-        <FontAwesomeIcon onClick={handleChangePW} icon={faChevronLeft} />
+        <FontAwesomeIcon onClick={props.handleChangePW} icon={faChevronLeft} />
       </BackWrapper>
       {isCorrect ? (
         <PasswordForm onSubmit={handleChangePassword}>

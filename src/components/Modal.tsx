@@ -7,40 +7,51 @@ import { faCheckCircle, faExclamationCircle, faSearch, faSpinner, faX } from "@f
 
 import getBooks from "../utils/getBooks";
 import styled, { keyframes } from "styled-components";
+import { IBook, IReport } from "../types";
 
-const Modal = ({ setModal, setBook, reportList }) => {
+interface Props {
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setBook: React.Dispatch<React.SetStateAction<IBook>>;
+  reportList: IReport[];
+}
+
+type HandleClickBook = {
+  (title: string, cover: string, description: string, author: string, isbn13: string, check: IReport): void;
+};
+
+const Modal = (props: Props) => {
   const [loading, setLoading] = useState(false);
 
-  const [bookData, setBookData] = useState([]); // api로 받아온 책 리스트
+  const [bookData, setBookData] = useState<IBook[]>([]); // api로 받아온 책 리스트
 
   const [inputTitle, setInputTitle] = useState(""); // 검색할 책
 
   const [searchComplete, setSearchComplete] = useState(false);
 
-  const checkRef = useRef();
+  const checkRef = useRef<SVGSVGElement>(null);
 
   // Pagination
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handlePageChange = (page) => setPage(page);
+  const handlePageChange = (page: number) => setPage(page);
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageData = bookData.slice(startIndex, endIndex);
 
   const closeModal = () => {
-    setModal(false);
+    props.setModal(false);
   };
 
   // 검색창에 적는 거
-  const handleInput = () => {
-    const inputSave = document.getElementById("searchTitle").value;
-    setInputTitle(inputSave);
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const inputSave = document.getElementById("searchTitle").value;
+    setInputTitle(e.target.value);
   };
 
   // 검색창 엔터 눌렀을 때
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(false);
     try {
@@ -56,27 +67,27 @@ const Modal = ({ setModal, setBook, reportList }) => {
   };
 
   // 검색한 책 클릭 이벤트
-  const handleClickBook = (title, cover, description, author, isbn13, check) => {
+  const handleClickBook: HandleClickBook = (title, cover, description, author, isbn13, check) => {
     if (check) {
       if (window.confirm("이미 독후감을 작성한 책입니다. 그래도 선택하시겠습니까?")) {
-        setBook({
+        props.setBook({
           title,
           cover,
           description,
           author,
           isbn13,
         });
-        setModal(false);
+        props.setModal(false);
       }
     } else {
-      setBook({
+      props.setBook({
         title,
         cover,
         description,
         author,
         isbn13,
       });
-      setModal(false);
+      props.setModal(false);
     }
   };
 
@@ -107,24 +118,17 @@ const Modal = ({ setModal, setBook, reportList }) => {
                 </NoData>
               ) : (
                 currentPageData.map((it) => (
-                  <BookContainer key={it.isbn}>
+                  <BookContainer key={it.isbn13}>
                     <BookList
                       onClick={() =>
-                        handleClickBook(
-                          it.title,
-                          it.cover,
-                          it.description,
-                          it.author,
-                          it.isbn13,
-                          reportList?.find((report) => report.book.isbn13 === it.isbn13)
-                        )
+                        handleClickBook(it.title, it.cover, it.description, it.author, it.isbn13, props.reportList && (props.reportList.find((report) => report.book.isbn13 === it.isbn13) as IReport))
                       }
                     >
                       <BookCover src={it.cover} alt={it.title} />
                       <BookDetail>
                         <BookTitleWrapper>
                           <BookTitle>{it.title}</BookTitle>
-                          {reportList?.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon ref={checkRef} icon={faCheckCircle} color="#337ab7" />}
+                          {props.reportList?.find((report) => report.book.isbn13 === it.isbn13) && <FontAwesomeIcon ref={checkRef} icon={faCheckCircle} color="#337ab7" />}
                         </BookTitleWrapper>
                         <BookAuthor>{it.author}</BookAuthor>
                       </BookDetail>

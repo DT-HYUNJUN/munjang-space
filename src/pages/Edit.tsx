@@ -1,30 +1,29 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import Modal from "../components/Modal";
 import MyButton from "../components/MyButton";
-import styled from "styled-components";
+import Modal from "../components/Modal";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+import { User, getAuth, onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc } from "firebase/firestore";
+import { db } from "../fbase";
+
 import ReactStars from "react-stars";
 
-import { getAuth } from "firebase/auth";
+import styled from "styled-components";
+import { IReport, IUserInfo } from "../types";
 
-const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
-  // 로그인 접근
+interface Props {
+  onEdit: (id: string, newItem: IReport) => void;
+  userInfo: IUserInfo;
+  reportList: IReport[];
+}
 
-  useEffect(() => {
-    if (!IsLogin) {
-      navigate("/login");
-      alert("로그인 해주세요!");
-    }
-    console.log(userInfo);
-  }, []);
-
+const Edit = (props: Props) => {
   const [modal, setModal] = useState(false);
-
   const [book, setBook] = useState({
     title: "",
     cover: "",
@@ -32,13 +31,11 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
     description: "",
     isbn13: "",
   });
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [star, setStar] = useState(3);
-
-  const [titleLength, setTitleLength] = useState(0);
+  const [like, setLike] = useState(0);
 
   const auth = getAuth();
 
@@ -46,15 +43,43 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
 
   const navigate = useNavigate();
 
-  const handleInput = (e) => {
+  const { id } = useParams() as { id: string }; // 넘겨준 id 받기
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      getReport(user!.email!);
+    });
+  }, []);
+
+  // firebase 에서 id 독후감 가져오기
+  const getReport = async (user: string) => {
+    try {
+      const reportsRef = collection(db, "reports");
+      const reportsDocRef = doc(reportsRef, user);
+      const userRef = collection(reportsDocRef, "books");
+      const docRef = doc(userRef, id);
+      const targetReport = await getDoc(docRef);
+      const targetReportData = targetReport.data() as IReport | undefined;
+      if (targetReportData) {
+        const { book, title, content, isPrivate, star, like } = targetReportData;
+        setBook(book);
+        setTitle(title);
+        setContent(content);
+        setIsPrivate(isPrivate);
+        setStar(star);
+        setLike(like);
+      }
+    } catch (error) {}
+  };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     if (name === "isPrivate") {
       setIsPrivate(e.target.checked);
     } else if (name === "title") {
       setTitle(e.target.value);
-      setTitleLength(e.target.value.length);
     } else if (name === "star") {
-      setStar(e.target.value);
+      setStar(parseInt(e.target.value));
     }
   };
 
@@ -62,31 +87,30 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
     setModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newItem = {
-      id: reportCount,
+      id,
       title,
       content,
       date: new Date().getTime(),
       isPrivate,
-      like: 0,
-      author: auth.currentUser.email,
-      profileImage: userInfo.photoURL,
-      username: userInfo.username,
+      like,
+      author: auth.currentUser!.email!,
+      profileImage: props.userInfo.photoURL,
+      username: props.userInfo.username,
       star,
       book,
     };
-    onCreate(newItem);
-    alert("작성 완료");
-    navigate(`/report/${auth.currentUser.email}/${reportCount}`, { replace: true });
+    props.onEdit(id, newItem);
+    alert("수정 완료");
+    navigate(`/report/${auth.currentUser!.email}/${id}`, { replace: true });
   };
 
   const modules = useMemo(() => {
     return {
       toolbar: {
         container: [
-          [{ font: [] }],
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
           ["bold", "italic", "underline", "strike"],
           ["blockquote"],
@@ -113,48 +137,43 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
   return (
     <div>
       <FormContainer onSubmit={handleSubmit}>
-        <div>
-          <HeaderWrapper>
-            <BookWrapper>
-              <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="bookImage" />
-              <BookInfoSpan>
-                {book.title ? (
-                  <>
-                    <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
-                  </>
-                ) : (
-                  <Book onClick={handleBook}>책을 선택해주세요</Book>
-                )}
-              </BookInfoSpan>
-            </BookWrapper>
-            <StarWrapper>
-              <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
-            </StarWrapper>
-          </HeaderWrapper>
-          <HeaderWrapper>
-            <TitleInputWrapper>
-              <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
-              <TitleLength>{titleLength}/40</TitleLength>
-            </TitleInputWrapper>
-            <LabelWrapper htmlFor="isPrivate">
-              <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
-              <PrivateSpan>비공개</PrivateSpan>
-            </LabelWrapper>
-          </HeaderWrapper>
-        </div>
+        <HeaderWrapper>
+          <BookWrapper>
+            <BookImage src={process.env.PUBLIC_URL + "/images/book.png"} alt="" />
+            <BookInfoSpan>
+              {book.title ? (
+                <>
+                  <Book onClick={handleBook}>{book.title}</Book>에 관련된 독후감입니다.
+                </>
+              ) : (
+                <Book onClick={handleBook}>책을 선택해주세요</Book>
+              )}
+            </BookInfoSpan>
+          </BookWrapper>
+          <StarWrapper>
+            <ReactStars count={5} value={star} size={26} half={false} onChange={setStar} />
+          </StarWrapper>
+        </HeaderWrapper>
+        <HeaderWrapper>
+          <TitleInput name="title" type="text" value={title} onChange={handleInput} placeholder="독후감 제목" />
+          <LabelWrapper htmlFor="isPrivate">
+            <PrivateLabel id="isPrivate" type="checkbox" name="isPrivate" checked={isPrivate} onChange={handleInput} />
+            <PrivateSpan>비공개</PrivateSpan>
+          </LabelWrapper>
+        </HeaderWrapper>
         <EditorWrapper>
-          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} placeholder="독후감을 작성해보세요." />
+          <ReactQuill ref={quillRef} style={{ height: "600px", width: "100%" }} modules={modules} theme="snow" onChange={setContent} value={content} />
         </EditorWrapper>
         <ButtonWrapper>
-          <MyButton text="저장" type="positive" />
+          <MyButton text="수정완료" type="positive" />
         </ButtonWrapper>
       </FormContainer>
-      {modal && <Modal setModal={setModal} setBook={setBook} reportList={reportList} />}
+      {modal && <Modal setModal={setModal} setBook={setBook} reportList={props.reportList} />}
     </div>
   );
 };
 
-export default New;
+export default Edit;
 
 const FormContainer = styled.form`
   display: flex;
@@ -186,18 +205,10 @@ const BookInfoSpan = styled.span`
 `;
 
 const Book = styled.span`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-weight: bold;
   text-decoration: underline;
   cursor: pointer;
   font-family: "UhBeeJJIBBABBA";
-
-  @media (max-width: 768px) {
-    display: block;
-    width: 200px;
-  }
 `;
 
 const BookWrapper = styled.div`
@@ -224,27 +235,16 @@ const EditorWrapper = styled.div`
   }
 `;
 
-const TitleInputWrapper = styled.div`
-  display: flex;
-  border-radius: 5px;
-  align-items: center;
-  background-color: #ececec;
-  padding-right: 5px;
-  flex-grow: 1;
-`;
-
 const TitleInput = styled.input`
   border: 0;
   border-radius: 5px;
   background-color: #ececec;
+  width: 50%;
   height: 38px;
   font-family: "KyoboHandwriting2021sjy";
   font-size: 22px;
   flex-grow: 1;
   padding-left: 8px;
-  &:focus {
-    outline: none;
-  }
 `;
 
 const LabelWrapper = styled.label`
@@ -304,5 +304,3 @@ const StarWrapper = styled.div`
   padding-left: 3px;
   padding-right: 3px;
 `;
-
-const TitleLength = styled.span``;

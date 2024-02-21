@@ -6,34 +6,39 @@ import styled from "styled-components";
 
 import MyButton from "./MyButton";
 import ReactStars from "react-stars";
+import { IReport } from "../types";
 
-const ReportContentList = ({ reportList, onDelete }) => {
+interface Props {
+  reportList: IReport[];
+  onDelete: (id: string) => void;
+}
+
+const ReportContentList = (props: Props) => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handlePageChage = (page) => {
+  const handlePageChage = (page: number) => {
     setPage(page);
   };
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = reportList.slice(startIndex, endIndex);
+  const currentPageData = props.reportList.slice(startIndex, endIndex);
 
   const navigate = useNavigate();
 
-  const goDetail = (email, id) => {
+  const goDetail = (email: string, id: string) => {
     navigate(`/report/${email}/${id}`);
   };
 
-  const goEdit = (id) => {
+  const goEdit = (id: string) => {
     navigate(`/edit/${id}`);
   };
 
   // delete 할때 alert 창
-
-  const handleDelete = (item) => {
+  const handleDelete = (item: IReport) => {
     if (window.confirm("독후감을 삭제 하겠습니까?")) {
-      onDelete(item.id);
+      props.onDelete(item.id);
       window.alert("삭제되었습니다.");
       console.log(item);
     } else {
@@ -56,7 +61,7 @@ const ReportContentList = ({ reportList, onDelete }) => {
                   <ReportRating>
                     <ReactStars value={item.star} edit={false} size={24} />
                   </ReportRating>
-                  <p>{new Date(parseInt(item.date)).toLocaleDateString()}</p>
+                  <p>{new Date(item.date).toLocaleDateString()}</p>
                 </ReportRemain>
               </InfoContent>
             </ImageContent>
@@ -74,7 +79,7 @@ const ReportContentList = ({ reportList, onDelete }) => {
           </ReportContent>
         ))}
         {currentPageData.length !== 0 && (
-          <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={reportList.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChage} />
+          <Pagination activePage={page} itemsCountPerPage={5} totalItemsCount={props.reportList.length} pageRangeDisplayed={5} prevPageText={"<"} nextPageText={">"} onChange={handlePageChage} />
         )}
       </div>
     </div>

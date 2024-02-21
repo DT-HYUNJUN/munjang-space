@@ -89,7 +89,7 @@ function App() {
 
   const onDelete = async (id) => {
     try {
-      const deleteReportRef = doc(db, "reports", userInfo.email, "books", `${id}`);
+      const deleteReportRef = doc(db, "reports", userInfo.email, "books", id);
       console.log(deleteReportRef);
       await deleteDoc(deleteReportRef);
     } catch (error) {
@@ -141,7 +141,7 @@ function App() {
 
           <Route path="/report/:email/:id" element={<Report reportList={reportList} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
           <Route path="/new" element={<New onCreate={onCreate} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
-          <Route path="/edit/:id" element={<Edit onEdit={onEdit} userInfo={userInfo} />} />
+          <Route path="/edit/:id" element={<Edit onEdit={onEdit} userInfo={userInfo} reportList={reportList} />} />
 
           <Route path="/statistics" element={<Statistics IsLogin={IsLogin} reportList={reportList} userInfo={userInfo} />} />
         </Routes>

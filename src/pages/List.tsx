@@ -6,6 +6,7 @@ import styled from "styled-components";
 import All from "../components/All";
 import Month from "../components/Month";
 import MyButton from "../components/MyButton";
+import { IReport } from "../types";
 
 const sortOptionList = [
   { value: "latest", name: "최신순" },
@@ -27,10 +28,21 @@ const sortPrivateOptionList = [
   { value: "false", name: "비공개" },
 ];
 
-const ControlMenu = ({ value, onChange, optionList }) => {
+interface OptionList {
+  value: string | number;
+  name: string;
+}
+
+interface ControlMenuProps {
+  value: string | number;
+  onChange: (value: string) => void;
+  optionList: OptionList[];
+}
+
+const ControlMenu = (props: ControlMenuProps) => {
   return (
-    <FilterSelect value={value} onChange={(e) => onChange(e.target.value)}>
-      {optionList.map((it, idx) => (
+    <FilterSelect value={props.value} onChange={(e) => props.onChange(e.target.value)}>
+      {props.optionList.map((it, idx) => (
         <option key={idx} value={it.value}>
           {it.name}
         </option>
@@ -39,9 +51,15 @@ const ControlMenu = ({ value, onChange, optionList }) => {
   );
 };
 
-const List = ({ reportList, onDelete, IsLogin }) => {
+interface Props {
+  reportList: IReport[];
+  onDelete: (id: string) => void;
+  IsLogin: boolean;
+}
+
+const List = (props: Props) => {
   useEffect(() => {
-    if (!IsLogin) {
+    if (!props.IsLogin) {
       navigate("/login");
       alert("로그인 해주세요!");
     }
@@ -59,17 +77,17 @@ const List = ({ reportList, onDelete, IsLogin }) => {
   const [filterPrivate, setFilterPrivate] = useState("true");
 
   const getProcessReportList = () => {
-    const compare = (a, b) => {
+    const compare = (a: IReport, b: IReport) => {
       if (sortType === "latest") {
-        return parseInt(b.date) - parseInt(a.date);
+        return b.date - a.date;
       } else {
-        return parseInt(a.date) - parseInt(b.date);
+        return a.date - b.date;
       }
     };
 
-    const copyList = JSON.parse(JSON.stringify(reportList));
+    const copyList: IReport[] = JSON.parse(JSON.stringify(props.reportList));
 
-    const filterdStarList = filterStar === "allStar" ? copyList : copyList.filter((it) => parseInt(it.star) === parseInt(filterStar));
+    const filterdStarList = filterStar === "allStar" ? copyList : copyList.filter((it) => it.star === parseInt(filterStar));
 
     const sortedList = filterdStarList.sort(compare);
 
@@ -97,7 +115,7 @@ const List = ({ reportList, onDelete, IsLogin }) => {
 
           <MyButton type={"positive"} text={"새 독후감 작성하기"} onClick={() => navigate("/new")} />
         </ControlHeader>
-        {all ? <All reportList={getProcessReportList()} onDelete={onDelete} /> : <Month reportList={getProcessReportList()} onDelete={onDelete} />}
+        {all ? <All reportList={getProcessReportList()} onDelete={props.onDelete} /> : <Month reportList={getProcessReportList()} onDelete={props.onDelete} />}
       </div>
     </div>
   );

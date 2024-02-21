@@ -10,13 +10,38 @@ import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
+import { IBook } from "../types";
+
+interface IAllReports {
+  id: string;
+  title: string;
+  content: string;
+  email: string;
+  username: string;
+  profileImage: string;
+  date: number;
+}
+
+type GoToReport = {
+  (email: string, id: string): void;
+};
+
+type HandleBookClick = {
+  (title: string, cover: string, author: string, description: string, isbn13: string): void;
+};
 
 const Book = () => {
-  const { isbn13 } = useParams();
+  const { isbn13 } = useParams() as { isbn13: string };
 
-  const [data, setData] = useState({});
+  const [data, setData] = useState<IBook>({
+    isbn13: "",
+    title: "",
+    author: "",
+    cover: "",
+    description: "",
+  });
 
-  const [bookReports, setBookReports] = useState([]);
+  const [bookReports, setBookReports] = useState<IAllReports[]>([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +51,7 @@ const Book = () => {
     navigate(`/thisbookreport/${isbn13}`);
   };
 
-  const goToReport = (email, id) => {
+  const goToReport: GoToReport = (email, id) => {
     navigate(`/report/${email}/${id}`);
   };
 
@@ -36,7 +61,7 @@ const Book = () => {
     try {
       setLoading(true);
       getBookReports(isbn13).then((res) => {
-        setBookReports(res.sort((a, b) => parseInt(b.date) - parseInt(a.date)));
+        setBookReports(res.sort((a, b) => b.date - a.date));
       });
       getBooks(isbn13).then((res) => {
         setData(res[0]);
@@ -47,7 +72,7 @@ const Book = () => {
     }
   }, [isbn13]);
 
-  const handleBookClick = (title, cover, author, description, isbn13) => {
+  const handleBookClick: HandleBookClick = (title, cover, author, description, isbn13) => {
     navigate("/new", {
       state: {
         title: title,
@@ -59,10 +84,10 @@ const Book = () => {
     });
   };
 
-  const getBookReports = async (isbn13) => {
+  const getBookReports = async (isbn13: string): Promise<IAllReports[]> => {
     return new Promise(async (resolve, reject) => {
       const reportsCollectionRef = collection(db, "reports");
-      const allReports = [];
+      const allReports: IAllReports[] = [];
 
       onSnapshot(reportsCollectionRef, async (snapshot) => {
         const promises = snapshot.docChanges().map(async (change) => {
@@ -112,7 +137,7 @@ const Book = () => {
               type={"positive"}
               text={"종이책 구매"}
               onClick={() => {
-                window.location.href = data.link;
+                window.location.href = data.link!;
               }}
             />
             <WriteButton onClick={() => handleBookClick(data.title, data.cover, data.author, data.description, data.isbn13)}>독후감 작성하기</WriteButton>
@@ -132,7 +157,7 @@ const Book = () => {
 
       <ThisBookReport>
         {bookReports.slice(0, 5).map((report, idx) => (
-          <BookReport key={idx} onClick={() => goToReport(report.email, report.id)}>
+          <BookReport key={idx} onClick={() => goToReport(report.email!, report.id)}>
             <ReportTitle>{report.title}</ReportTitle>
             <ReportContent>{report.content}</ReportContent>
             <ReportFooter>
