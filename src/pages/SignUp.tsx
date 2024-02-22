@@ -13,14 +13,15 @@ import { db } from "../fbase";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FirebaseError } from "firebase/app";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [username, setUsername] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
-  const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | File>("");
+  const [profileImagePreview, setProfileImagePreview] = useState("");
   const [defaultImage, setDefaultImage] = useState(true);
 
   const [emailError, setEmailError] = useState("");
@@ -30,20 +31,22 @@ const SignUp = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const emailInput = useRef<HTMLInputElement>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    emailInput.current.focus();
+    emailInput.current!.focus();
     getDefaultProfileImage().then((res) => {
-      setProfileImage(res);
-      setProfileImagePreview(res);
+      if (res) {
+        setProfileImage(res);
+        setProfileImagePreview(res);
+      }
     });
   }, []);
 
-  const emailInput = useRef();
-  const imageInput = useRef();
-
   const navigate = useNavigate();
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputName = e.target.name;
     const value = e.target.value;
     if (inputName === "email") {
@@ -55,20 +58,23 @@ const SignUp = () => {
     } else if (inputName === "username") {
       setUsername(value);
     } else if (inputName === "profileImage") {
-      const file = imageInput.current.files[0];
-      setProfileImage(file);
-      setDefaultImage(false);
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProfileImagePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
+      if (imageInput.current && imageInput.current.files) {
+        const file = imageInput.current.files[0];
+        setProfileImage(file as any);
+        setDefaultImage(false);
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageDataUrl = reader.result as string;
+            setProfileImagePreview(imageDataUrl);
+          };
+          reader.readAsDataURL(file);
+        }
       }
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(false);
     try {
@@ -91,7 +97,7 @@ const SignUp = () => {
         if (defaultImage) {
           await updateProfile(data.user, { displayName: username });
         } else {
-          const photoURL = await uploadProfileImage(data.user.email, profileImage);
+          const photoURL = await uploadProfileImage(data.user.email!, profileImage);
           await updateProfile(data.user, { displayName: username, photoURL });
         }
         await setDoc(doc(db, "users", email), { username });
@@ -101,24 +107,23 @@ const SignUp = () => {
         window.location.reload();
       }
     } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
+      if ((error as FirebaseError).code === "auth/email-already-in-use") {
         setEmailError("이미 사용 중인 이메일입니다.");
       }
-      if (error.code === "auth/weak-password") {
+      if ((error as FirebaseError).code === "auth/weak-password") {
         setPasswordError("");
       }
-      if (error.message === "username-already-in-use") {
+      if ((error as FirebaseError).message === "username-already-in-use") {
         setUsernameError("이미 사용 중인 닉네임입니다.");
       }
-      if (error.message === "password-incorrect") {
+      if ((error as FirebaseError).message === "password-incorrect") {
         setPasswordErrorCheck("비밀번호가 일치하지 않습니다.");
       }
-      if (error.message === "username-length") {
+      if ((error as FirebaseError).message === "username-length") {
         setUsernameError("닉네임은 6자까지 설정할 수 있습니다.");
       }
-      console.log(error.message);
     } finally {
-      localStorage.setItem("isSocial", false);
+      localStorage.setItem("isSocial", JSON.stringify(false));
       setLoading(false);
     }
   };
@@ -153,7 +158,7 @@ const SignUp = () => {
         <Label htmlFor="username">
           닉네임 *<ErrorText>{usernameError}</ErrorText>
         </Label>
-        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" placeholder="Nickname (6글자)" maxLength="6" required />
+        <StyledInput id="username" onChange={handleInput} name="username" value={username} type="text" placeholder="Nickname (6글자)" maxLength={6} required />
         <MyButton text={"회원가입"} type={"positive"} />
       </FormContainer>
       <StyledImg src={process.env.PUBLIC_URL + "images/login_1.jpeg"} alt="" />

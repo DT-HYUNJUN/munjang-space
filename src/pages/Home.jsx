@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import listBooks from "../utils/listBooks";
 import newSpecialBook from "../utils/newSpecialBook";
@@ -14,7 +14,7 @@ import "../slick.css";
 import "../slick-theme.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRefresh, faPenFancy, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faPenFancy, faPause, faPlay, faBook } from "@fortawesome/free-solid-svg-icons";
 import useInterval from "../utils/useInterval";
 
 const Home = () => {
@@ -157,8 +157,8 @@ const Home = () => {
     ],
   };
 
-  return (
-    <>
+  return bsLoading && lrLoading ? (
+    <div>
       <BookSearchWrapper>
         <BookSearchForm
           onSubmit={() =>
@@ -272,7 +272,13 @@ const Home = () => {
           </Slider>
         </SpecilaBook>
       )}
-    </>
+    </div>
+  ) : (
+    <div>
+      <LoadingWrapper>
+        <FontAwesomeIcon icon={faBook} beatFade size="3x" />
+      </LoadingWrapper>
+    </div>
   );
 };
 
@@ -691,4 +697,11 @@ const BookSearchForm = styled.form`
   display: flex;
   align-self: center;
   gap: 10px;
+`;
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

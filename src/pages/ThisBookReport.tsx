@@ -8,24 +8,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styled from "styled-components";
 
-import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, query, where, getDocs, orderBy, DocumentData } from "firebase/firestore";
 import { db } from "../fbase";
+import { IReport } from "../types";
 
 const ThisBookReport = () => {
   const [data, setData] = useState({});
-  const { isbn13 } = useParams();
-  const [bookReports, setBookReports] = useState([]);
+  const [bookReports, setBookReports] = useState<IReport[]>([]);
+  const { isbn13 } = useParams() as { isbn13: string };
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const goToReport = (email, id) => {
+  const goToReport = (email: string, id: string) => {
     navigate(`/report/${email}/${id}`);
   };
 
   useEffect(() => {
     setLoading(true);
     const unsubscribe = onSnapshot(collection(db, "reports"), async (snapshot) => {
-      const reports = [];
+      const reports: DocumentData[] = [];
       for (const doc of snapshot.docs) {
         const booksCollectionRef = collection(doc.ref, "books");
         const q = query(booksCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
@@ -46,7 +47,7 @@ const ThisBookReport = () => {
         });
       }
 
-      setBookReports(reports);
+      setBookReports(reports as IReport[]);
       setLoading(false);
     });
 
@@ -57,7 +58,7 @@ const ThisBookReport = () => {
     setLoading(true);
     Promise.all([getBookReports(isbn13), getBooks(isbn13)])
       .then(([reports, books]) => {
-        setBookReports(reports);
+        setBookReports(reports as IReport[]);
         setData(books[0]);
       })
       .catch((error) => {
@@ -68,11 +69,11 @@ const ThisBookReport = () => {
       });
   }, [isbn13]);
 
-  const getBookReports = async (isbn13) => {
+  const getBookReports = async (isbn13: string) => {
     const reportsCollectionRef = collection(db, "reports");
     const q = query(reportsCollectionRef, where("book.isbn13", "==", isbn13), orderBy("date", "desc"), where("isPrivate", "==", false));
     const querySnapshot = await getDocs(q);
-    const reports = [];
+    const reports: DocumentData[] = [];
 
     querySnapshot.forEach((doc) => {
       const reportData = doc.data();
@@ -105,7 +106,7 @@ const ThisBookReport = () => {
           </div>
           <ThisBookReports>
             {bookReports.map((report, index) => (
-              <BookReport key={index} onClick={() => goToReport(report.email, report.id)}>
+              <BookReport key={index} onClick={() => goToReport(report.email!, report.id)}>
                 <ReportTitle>{report.title}</ReportTitle>
                 <ReportContent>{report.content}</ReportContent>
                 <ReportFooter>

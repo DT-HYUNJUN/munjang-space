@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Modal from "../components/Modal";
@@ -11,27 +11,29 @@ import "react-quill/dist/quill.snow.css";
 import ReactStars from "react-stars";
 
 import { getAuth } from "firebase/auth";
+import { IBook, IReport, IUserInfo } from "../types";
 
-const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
+interface Props {
+  onCreate: (newItem: IReport) => Promise<void>;
+  reportList: IReport[];
+  reportCount: number;
+  userInfo: IUserInfo;
+  IsLogin: boolean;
+}
+
+const New = (props: Props) => {
   // 로그인 접근
 
   useEffect(() => {
-    if (!IsLogin) {
+    if (!props.IsLogin) {
       navigate("/login");
       alert("로그인 해주세요!");
     }
-    console.log(userInfo);
   }, []);
 
   const [modal, setModal] = useState(false);
 
-  const [book, setBook] = useState({
-    title: "",
-    cover: "",
-    author: "",
-    description: "",
-    isbn13: "",
-  });
+  const [book, setBook] = useState<IBook>({} as IBook);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -46,7 +48,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
 
   const navigate = useNavigate();
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     if (name === "isPrivate") {
       setIsPrivate(e.target.checked);
@@ -54,7 +56,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
       setTitle(e.target.value);
       setTitleLength(e.target.value.length);
     } else if (name === "star") {
-      setStar(e.target.value);
+      setStar(parseInt(e.target.value));
     }
   };
 
@@ -62,24 +64,25 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
     setModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const newItemId = props.reportCount;
     const newItem = {
-      id: reportCount,
+      id: `${newItemId}`,
       title,
       content,
       date: new Date().getTime(),
       isPrivate,
       like: 0,
-      author: auth.currentUser.email,
-      profileImage: userInfo.photoURL,
-      username: userInfo.username,
+      author: auth.currentUser!.email!,
+      profileImage: props.userInfo.photoURL,
+      username: props.userInfo.username,
       star,
       book,
     };
-    onCreate(newItem);
+    props.onCreate(newItem);
     alert("작성 완료");
-    navigate(`/report/${auth.currentUser.email}/${reportCount}`, { replace: true });
+    navigate(`/report/${auth.currentUser && auth.currentUser.email}/${props.reportCount}`, { replace: true });
   };
 
   const modules = useMemo(() => {
@@ -133,7 +136,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
           </HeaderWrapper>
           <HeaderWrapper>
             <TitleInputWrapper>
-              <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength="40" placeholder="독후감 제목" />
+              <TitleInput name="title" type="text" value={title} onChange={handleInput} maxLength={40} placeholder="독후감 제목" />
               <TitleLength>{titleLength}/40</TitleLength>
             </TitleInputWrapper>
             <LabelWrapper htmlFor="isPrivate">
@@ -149,7 +152,7 @@ const New = ({ onCreate, reportList, reportCount, userInfo, IsLogin }) => {
           <MyButton text="저장" type="positive" />
         </ButtonWrapper>
       </FormContainer>
-      {modal && <Modal setModal={setModal} setBook={setBook} reportList={reportList} />}
+      {modal && <Modal setModal={setModal} setBook={setBook} reportList={props.reportList} />}
     </div>
   );
 };

@@ -9,14 +9,26 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { faHeart as faHeartFill, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faBookOpen, faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 import DOMPurify from "dompurify";
+import { IReport, IUserInfo } from "../types";
 
-const Report = ({ reportList, onLike, onDelete, userInfo }) => {
-  const [report, setReport] = useState({});
+interface BookBackgroundProps {
+  backgroundimage: string;
+}
+
+interface Props {
+  reportList: IReport[];
+  onLike: (author: string, id: string) => Promise<number>;
+  onDelete: (id: string) => void;
+  userInfo: IUserInfo;
+}
+
+const Report = (props: Props) => {
+  const [report, setReport] = useState<IReport>({} as IReport);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [userEmail, setUserEmail] = useState("");
@@ -24,14 +36,14 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
 
   const navigate = useNavigate();
 
-  const { email, id } = useParams();
+  const { email, id } = useParams() as { email: string; id: string };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user && email === user.email) {
         setUserEmail(user.email);
-        if (reportList.length > 0) {
-          const targetReport = reportList.find((it) => parseInt(it.id) === parseInt(id));
+        if (props.reportList.length > 0) {
+          const targetReport = props.reportList.find((it) => parseInt(it.id) === parseInt(id));
           if (targetReport) {
             setReport(targetReport);
             loadLike(targetReport.author, user.email);
@@ -41,35 +53,39 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
       } else {
         getReport();
         if (user) {
-          loadLike(email, user.email);
+          loadLike(email, user.email!);
         }
       }
     });
-  }, [email, id, reportList]);
+  }, [email, id, props.reportList]);
 
   const getReport = async () => {
-    const targetReportRef = doc(db, "reports", email, "books", id);
-    const targetReport = await getDoc(targetReportRef);
-    setReport(targetReport.data());
-    setLikeCount(targetReport.data().like);
+    try {
+      const targetReportRef = doc(db, "reports", email, "books", id);
+      const targetReport = await getDoc(targetReportRef);
+      setReport(targetReport.data() as IReport);
+      setLikeCount(targetReport.data()!.like);
+    } catch (error) {
+      console.log("getReport Error");
+    }
   };
 
   const handleClickEdit = () => {
     navigate(`/edit/${id}`);
   };
 
-  const handleClickBook = (isbn13) => {
+  const handleClickBook = (isbn13: string) => {
     navigate(`/book/${isbn13}`);
   };
 
-  const handleClickLike = (author, id) => {
-    onLike(author, id).then((res) => setLikeCount(res));
+  const handleClickLike = (author: string, id: string) => {
+    props.onLike(author, id).then((res) => setLikeCount(res));
     setLike((prev) => !prev);
   };
 
-  const handleClickDelete = (id) => {
+  const handleClickDelete = (id: string) => {
     if (window.confirm("독후감을 삭제 하시겠습니까?")) {
-      onDelete(id);
+      props.onDelete(id);
       window.alert("삭제되었습니다.");
       navigate("/list", { replace: true });
     } else {
@@ -77,11 +93,11 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
     }
   };
 
-  const replaceString = (string, from, to) => {
+  const replaceString = (string: string, from: number, to: number) => {
     return string.substring(0, from) + "*".repeat(to - from + 1) + string.substring(to + 1, string.length);
   };
 
-  const emailPrivacy = (email) => {
+  const emailPrivacy = (email: string) => {
     const splitString = email.split("@");
     const targetString = splitString[0];
     const etcString = splitString[1];
@@ -89,11 +105,11 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
     return replaceString(targetString, starNum, targetString.length - 1) + "@" + etcString;
   };
 
-  const loadLike = async (reportAuthor, email) => {
+  const loadLike = async (reportAuthor: string, email: string) => {
     const isLikeRef = doc(db, "reports", reportAuthor, "books", id, "likeList", email);
     const isLikeDoc = await getDoc(isLikeRef);
     if (isLikeDoc.data()) {
-      const isLike = isLikeDoc.data().isLike;
+      const isLike = isLikeDoc.data()!.isLike;
       isLike ? setLike(true) : setLike(false);
     }
   };
@@ -110,7 +126,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
                 <span>{report.username}</span>
                 <span>({emailPrivacy(report.author)})</span>
               </Author>
-              <span>{new Date(parseInt(report.date)).toLocaleDateString()}</span>
+              <span>{new Date(report.date).toLocaleDateString()}</span>
               {report.isPrivate ? <span>비공개</span> : null}
             </UserAndDate>
             <ButtonWrapper>
@@ -146,7 +162,7 @@ const Report = ({ reportList, onLike, onDelete, userInfo }) => {
   } else {
     return (
       <LoadingWrapper>
-        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+        <FontAwesomeIcon icon={faBookOpen} beatFade size="3x" />
       </LoadingWrapper>
     );
   }
@@ -194,7 +210,7 @@ const BookWrapper = styled.div`
   border: 1px solid #ccc;
 `;
 
-const BookBackground = styled.div`
+const BookBackground = styled.div<BookBackgroundProps>`
   cursor: pointer;
   position: absolute;
   border-radius: 30px;
