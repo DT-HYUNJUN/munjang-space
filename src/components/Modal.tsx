@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import Pagination from "react-js-pagination";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle, faExclamationCircle, faSearch, faSpinner, faX } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faCheckCircle, faExclamationCircle, faSearch, faX } from "@fortawesome/free-solid-svg-icons";
 
 import getBooks from "../utils/getBooks";
 import styled, { keyframes } from "styled-components";
@@ -106,7 +106,7 @@ const Modal = (props: Props) => {
       <Content>
         {loading ? (
           <LoadingWrapper>
-            <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+            <FontAwesomeIcon icon={faBook} beatFade size="3x" />
           </LoadingWrapper>
         ) : (
           <div>

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import listBooks from "../utils/listBooks";
 import newSpecialBook from "../utils/newSpecialBook";
@@ -14,17 +14,22 @@ import "../slick.css";
 import "../slick-theme.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRefresh, faPenFancy, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faPenFancy, faPause, faPlay, faBook } from "@fortawesome/free-solid-svg-icons";
 import useInterval from "../utils/useInterval";
+import { IBook, IReport } from "../types";
+
+interface BookBackgroundProps {
+  backgroundImage: string;
+}
 
 const Home = () => {
-  const [bestsellerBook, setBestSellerBook] = useState([]);
+  const [bestsellerBook, setBestSellerBook] = useState<IBook[]>([] as IBook[]);
   const [bsLoading, setBsLoading] = useState(false);
 
-  const [specialBook, setSpecialBook] = useState([]);
+  const [specialBook, setSpecialBook] = useState<IBook[]>([] as IBook[]);
   const [spLoading, setSpLoading] = useState(false);
 
-  const [likeReports, setLikeReports] = useState([]);
+  const [likeReports, setLikeReports] = useState<IReport[]>([] as IReport[]);
   const [lrLoading, setLrLoading] = useState(false);
 
   const [bookRank, setBookRank] = useState(1);
@@ -33,10 +38,10 @@ const Home = () => {
 
   const [bookName, setBookName] = useState("");
 
-  const intervalValue = useRef(3000);
+  const intervalValue = useRef<number | null>(3000);
 
   // placeholder
-  const [inputClick, setInputClick] = useState("false");
+  const [inputClick, setInputClick] = useState(false);
 
   const startIndex = () => {
     if (bookRank < 6) {
@@ -68,7 +73,7 @@ const Home = () => {
   };
   const getLkBooks = async () => {
     const book = await getLikeReports();
-    const sortedBook = book.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10);
+    const sortedBook = book.sort((a, b) => b.like - a.like).slice(0, 10);
     setLikeReports(sortedBook);
     setLrLoading(true);
   };
@@ -89,14 +94,14 @@ const Home = () => {
     } else {
       setBookRank((bookRank) => bookRank + 1);
     }
-  }, intervalValue.current);
+  }, intervalValue.current as number);
 
-  const clickBestSellerBook = (isbn13) => {
+  const clickBestSellerBook = (isbn13: string) => {
     navigate(`/book/${isbn13}`);
   };
 
   // 책 제목 길이 제한
-  function truncateText(text, maxLength) {
+  function truncateText(text: string, maxLength: number) {
     if (text.length <= maxLength) {
       return text;
     }
@@ -104,10 +109,10 @@ const Home = () => {
   }
 
   const handleClickLikeReports = () => {
-    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => parseInt(b.like) - parseInt(a.like)).slice(0, 10)));
+    getLikeReports().then((res) => setLikeReports(res.sort((a, b) => b.like - a.like).slice(0, 10)));
   };
 
-  const handleClickReport = (email, id) => {
+  const handleClickReport = (email: string, id: string) => {
     navigate(`/report/${email}/${id}`);
   };
 
@@ -115,7 +120,7 @@ const Home = () => {
     navigate("/new");
   };
 
-  const handleSelectBook = (index) => {
+  const handleSelectBook = (index: number) => {
     setBookRank(index);
   };
 
@@ -132,7 +137,7 @@ const Home = () => {
     isPlay ? (intervalValue.current = null) : (intervalValue.current = 3000);
   };
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBookName(e.target.value);
   };
 
@@ -157,8 +162,8 @@ const Home = () => {
     ],
   };
 
-  return (
-    <>
+  return bsLoading && lrLoading ? (
+    <div>
       <BookSearchWrapper>
         <BookSearchForm
           onSubmit={() =>
@@ -220,12 +225,12 @@ const Home = () => {
           <BestBookList>
             {bestsellerBook.slice(startIndex(), endIndex()).map((item) =>
               bookRank === item.bestRank ? (
-                <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                <SelectedBookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank!)}>
                   <SelectedBestBookIndex>{item.bestRank}</SelectedBestBookIndex>
                   <SelectedBestBookTitleItem>{item.title}</SelectedBestBookTitleItem>
                 </SelectedBookItem>
               ) : (
-                <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank)}>
+                <BookItem key={item.isbn13} onClick={() => handleSelectBook(item.bestRank!)}>
                   <BestBookIndex>{item.bestRank}</BestBookIndex>
                   <BestBookTitle>{item.title}</BestBookTitle>
                 </BookItem>
@@ -245,7 +250,7 @@ const Home = () => {
         <BestLikesReport>
           {likeReports.slice(0, 5).map((it, idx) => (
             <LikeReport key={idx}>
-              <BookBackground backgroundimage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
+              <BookBackground backgroundImage={it.book.cover} onClick={() => handleClickReport(it.author, it.id)}></BookBackground>
               <ReportRank>BEST {idx + 1}</ReportRank>
               <BookCover src={it.book.cover} alt={it.book.title} />
               <ReportTitle>{it.title}</ReportTitle>
@@ -264,7 +269,7 @@ const Home = () => {
         <SpecilaBook>
           <Slider {...newSpecialBookSettings}>
             {specialBook.map((item) => (
-              <BookWrapper key={item.isbn} onClick={() => clickBestSellerBook(item.isbn13)}>
+              <BookWrapper key={item.isbn13} onClick={() => clickBestSellerBook(item.isbn13)}>
                 <Bookimg src={item.cover} alt={item.title} />
                 <BookTitle>{truncateText(item.title, 10)}</BookTitle>
               </BookWrapper>
@@ -272,7 +277,13 @@ const Home = () => {
           </Slider>
         </SpecilaBook>
       )}
-    </>
+    </div>
+  ) : (
+    <div>
+      <LoadingWrapper>
+        <FontAwesomeIcon icon={faBook} beatFade size="3x" />
+      </LoadingWrapper>
+    </div>
   );
 };
 
@@ -427,7 +438,7 @@ const ReportTitle = styled.div`
   margin-bottom: 5px;
 `;
 
-const BookBackground = styled.div`
+const BookBackground = styled.div<BookBackgroundProps>`
   cursor: pointer;
   position: absolute;
 
@@ -440,7 +451,7 @@ const BookBackground = styled.div`
   bottom: 0%;
   left: 0%;
 
-  background-image: url(${(props) => props.backgroundimage});
+  background-image: url(${(props) => props.backgroundImage});
   background-size: cover;
   background-position: center center;
 
@@ -691,4 +702,11 @@ const BookSearchForm = styled.form`
   display: flex;
   align-self: center;
   gap: 10px;
+`;
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

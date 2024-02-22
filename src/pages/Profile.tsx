@@ -10,7 +10,8 @@ import ChangePassword from "../components/ChangePassword";
 import MyProfile from "../components/MyProfile";
 import MyButton from "../components/MyButton";
 
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { User, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 const Profile = () => {
   const [init, setInit] = useState(false);
@@ -19,9 +20,9 @@ const Profile = () => {
 
   const [isChangePW, setIsChangePW] = useState(false);
 
-  const [isSocial, setIsSocial] = useState(localStorage.getItem("isSocial"));
+  const [isSocial, setIsSocial] = useState(localStorage.getItem("isSocial")! === "true");
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User>();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [photoURL, setPhotoURL] = useState("");
@@ -32,23 +33,23 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsSocial(JSON.parse(localStorage.getItem("isSocial")));
+    setIsSocial(localStorage.getItem("isSocial")! === "true");
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        setEmail(user.email);
-        setUsername(user.displayName);
-        setPhotoURL(user.photoURL);
+        setEmail(user.email!);
+        setUsername(user.displayName!);
+        setPhotoURL(user.photoURL!);
         setInit(true);
       }
     });
   }, []);
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     let data;
     try {
@@ -57,7 +58,7 @@ const Profile = () => {
         setIsCorrect(true);
       }
     } catch (error) {
-      if (error.code === "auth/wrong-password") {
+      if ((error as FirebaseError).code === "auth/wrong-password") {
         alert("비밀번호가 일치하지 않습니다.");
         setPassword("");
       }

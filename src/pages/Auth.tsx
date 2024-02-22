@@ -45,7 +45,7 @@ const Login = () => {
       }
 
       const username = data.user.displayName;
-      localStorage.setItem("isSocial", "true");
+      localStorage.setItem("isSocial", JSON.stringify(true));
 
       const reportsRef = collection(db, "reports");
       const reportsDocRef = doc(reportsRef, data.user.email);

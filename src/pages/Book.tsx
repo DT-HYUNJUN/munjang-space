@@ -6,7 +6,7 @@ import getBooks from "../utils/getBooks";
 import MyButton from "../components/MyButton";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBook } from "@fortawesome/free-solid-svg-icons";
 
 import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
@@ -121,7 +121,7 @@ const Book = () => {
 
   return loading ? (
     <LoadingWrapper>
-      <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+      <FontAwesomeIcon icon={faBook} beatFade size="3x" />
     </LoadingWrapper>
   ) : (
     <BookDetailEntire>

@@ -53,7 +53,7 @@ const MyProfile = (props: Props) => {
   const handleEdit = async () => {
     const q = query(collection(db, "users"), where("username", "==", currentUsername));
     const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
+    if (!querySnapshot.empty && currentUsername !== props.username) {
       alert("닉네임 중복");
     } else {
       await setDoc(doc(db, "users", props.email), { currentUsername });
