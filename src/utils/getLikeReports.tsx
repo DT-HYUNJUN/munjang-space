@@ -1,7 +1,8 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../fbase";
+import { IReport } from "../types";
 
-const getLikeReports = () => {
+const getLikeReports = (): Promise<IReport[]> => {
   return new Promise(async (resolve, reject) => {
     try {
       const reportsCollectionRef = collection(db, "reports");
@@ -19,7 +20,7 @@ const getLikeReports = () => {
           allReports.push(bookData.data());
         }
       }
-      resolve(allReports);
+      resolve(allReports as IReport[]);
     } catch (error) {
       reject(error);
     }
