@@ -38,7 +38,7 @@
 
 ## 개발환경
 
-- Front : <img src="https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=HTML&logoColor=white"> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/Font Awesome-528DD7?style=for-the-badge&logo=Font Awesome&logoColor=white">
+- Front : <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/Font Awesome-528DD7?style=for-the-badge&logo=Font Awesome&logoColor=white">
 - Back: <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white"> <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white">
 - 버전 관리 : <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white">
 - 협업 툴 : <img src="https://img.shields.io/badge/Jira Software-0052CC?style=for-the-badge&logo=Jira Software&logoColor=white"> <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white">
@@ -63,41 +63,42 @@
 ```
 src
   ├─ App.css
-  ├─ App.js
-  ├─ fbase.js
+  ├─ App.tsx
+  ├─ fbase.tsx
   ├─ index.css
-  ├─ index.js
+  ├─ index.tsx
+  ├─ types.ts
   ├─ components
-  │  ├─ All.js
-  │  ├─ ChangePassword.js
-  │  ├─ Modal.js
-  │  ├─ Month.js
-  │  ├─ MyButton.js
-  │  ├─ MyFooter.js
-  │  ├─ MyHeader.js
-  │  ├─ MyProfile.js
-  │  └─ ReportContentList.js
+  │  ├─ All.tsx
+  │  ├─ ChangePassword.tsx
+  │  ├─ Modal.tsx
+  │  ├─ Month.tsx
+  │  ├─ MyButton.tsx
+  │  ├─ MyFooter.tsx
+  │  ├─ MyHeader.tsx
+  │  ├─ MyProfile.tsx
+  │  └─ ReportContentList.tsx
   ├─ pages
-  │  ├─ Auth.js
-  │  ├─ Book.js
-  │  ├─ BookSearch.js
-  │  ├─ Edit.js
-  │  ├─ Home.js
-  │  ├─ List.js
-  │  ├─ New.js
-  │  ├─ Profile.js
-  │  ├─ Report.js
-  │  ├─ SignUp.js
-  │  ├─ Statistics.js
-  │  └─ ThisBookReport.js
+  │  ├─ Auth.tsx
+  │  ├─ Book.tsx
+  │  ├─ BookSearch.tsx
+  │  ├─ Edit.tsx
+  │  ├─ Home.tsx
+  │  ├─ List.tsx
+  │  ├─ New.tsx
+  │  ├─ Profile.tsx
+  │  ├─ Report.tsx
+  │  ├─ SignUp.tsx
+  │  ├─ Statistics.tsx
+  │  └─ ThisBookReport.tsx
   └─ utils
-     ├─ getBooks.js
-     ├─ getDefaultProfileImage.js
-     ├─ getLikeReports.js
-     ├─ listBooks.js
-     ├─ newSpecialBook.js
-     ├─ uploadProfileImage.js
-     └─ useInterval.js
+     ├─ getBooks.tsx
+     ├─ getDefaultProfileImage.tsx
+     ├─ getLikeReports.tsx
+     ├─ listBooks.tsx
+     ├─ newSpecialBook.tsx
+     ├─ uploadProfileImage.tsx
+     └─ useInterval.tsx
 ```
 
 ## 페이지 기능
