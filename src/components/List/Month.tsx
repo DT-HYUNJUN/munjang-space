@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import styled from "styled-components";
 
-import Mybutton from "./MyButton";
+import Mybutton from "../Global/MyButton";
 import ReportContentList from "./ReportContentList";
-import { IReport } from "../types";
+import { IReport } from "../../types";
 
 interface HeaderProps {
   headText: string;

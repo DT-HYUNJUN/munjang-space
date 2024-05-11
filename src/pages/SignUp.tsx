@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import styled from "styled-components";
 

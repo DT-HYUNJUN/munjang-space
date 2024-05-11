@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 
 import { getAuth, updateProfile } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
-import { db } from "../fbase";
+import { db } from "../../fbase";
 
 import styled from "styled-components";
 
-import MyButton from "./MyButton";
-import uploadProfileImage from "../utils/uploadProfileImage";
-import getDefaultProfileImage from "../utils/getDefaultProfileImage";
+import MyButton from "../Global/MyButton";
+import uploadProfileImage from "../../utils/uploadProfileImage";
+import getDefaultProfileImage from "../../utils/getDefaultProfileImage";
 
 interface Props {
   email: string;

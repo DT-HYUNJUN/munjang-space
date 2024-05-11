@@ -4,9 +4,9 @@ import Pagination from "react-js-pagination";
 
 import styled from "styled-components";
 
-import MyButton from "./MyButton";
+import MyButton from "../Global/MyButton";
 import ReactStars from "react-stars";
-import { IReport } from "../types";
+import { IReport } from "../../types";
 
 interface Props {
   reportList: IReport[];

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";

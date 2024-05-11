@@ -6,9 +6,9 @@ import { db } from "../fbase";
 
 import styled from "styled-components";
 
-import ChangePassword from "../components/ChangePassword";
-import MyProfile from "../components/MyProfile";
-import MyButton from "../components/MyButton";
+import ChangePassword from "../components/Auth/ChangePassword";
+import MyProfile from "../components/Profile/MyProfile";
+import MyButton from "../components/Global/MyButton";
 
 import { User, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";

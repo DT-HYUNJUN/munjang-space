@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 
 import getBooks from "../utils/getBooks";
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faBook } from "@fortawesome/free-solid-svg-icons";

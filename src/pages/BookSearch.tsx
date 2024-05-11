@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import getBooks from "../utils/getBooks";
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
