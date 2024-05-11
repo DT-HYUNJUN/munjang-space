@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
-import All from "../components/All";
-import Month from "../components/Month";
-import MyButton from "../components/MyButton";
+import All from "../components/List/All";
+import Month from "../components/List/Month";
+import MyButton from "../components/Global/MyButton";
 import { IReport } from "../types";
 
 const sortOptionList = [

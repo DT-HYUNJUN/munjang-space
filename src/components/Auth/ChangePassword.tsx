@@ -5,7 +5,7 @@ import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/au
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
-import MyButton from "./MyButton";
+import MyButton from "../Global/MyButton";
 
 import styled from "styled-components";
 import { FirebaseError } from "firebase/app";

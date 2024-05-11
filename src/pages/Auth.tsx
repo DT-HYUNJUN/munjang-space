@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 
 import styled from "styled-components";
 
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";

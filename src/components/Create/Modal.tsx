@@ -5,9 +5,9 @@ import Pagination from "react-js-pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faCheckCircle, faExclamationCircle, faSearch, faX } from "@fortawesome/free-solid-svg-icons";
 
-import getBooks from "../utils/getBooks";
+import getBooks from "../../utils/getBooks";
 import styled, { keyframes } from "styled-components";
-import { IBook, IReport } from "../types";
+import { IBook, IReport } from "../../types";
 
 interface Props {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;

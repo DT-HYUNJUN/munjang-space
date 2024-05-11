@@ -5,7 +5,7 @@ import listBooks from "../utils/listBooks";
 import newSpecialBook from "../utils/newSpecialBook";
 import getLikeReports from "../utils/getLikeReports";
 
-import MyButton from "../components/MyButton";
+import MyButton from "../components/Global/MyButton";
 
 import styled, { keyframes } from "styled-components";
 
@@ -213,6 +213,7 @@ const Home = () => {
           )}
         </PageWrapper>
       </TitleWrapper>
+
       {bsLoading && (
         <BestSeller>
           <BestBookInfoWrapper onClick={() => clickBestSellerBook(bestsellerBook[bookRank - 1]?.isbn13)}>

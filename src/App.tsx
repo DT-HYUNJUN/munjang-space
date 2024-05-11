@@ -14,8 +14,8 @@ import Edit from "./pages/Edit";
 import Statistics from "./pages/Statistics";
 import SignUp from "./pages/SignUp";
 
-import MyHeader from "./components/MyHeader";
-import MyFooter from "./components/MyFooter";
+import MyHeader from "./components/Global/MyHeader";
+import MyFooter from "./components/Global/MyFooter";
 
 import { db } from "./fbase";
 import { DocumentData, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";

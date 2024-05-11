@@ -1,4 +1,4 @@
-import { IReport } from "../types";
+import { IReport } from "../../types";
 import ReportContentList from "./ReportContentList";
 
 interface Props {

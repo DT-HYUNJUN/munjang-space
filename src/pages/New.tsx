@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Modal from "../components/Modal";
-import MyButton from "../components/MyButton";
+import Modal from "../components/Create/Modal";
+import MyButton from "../components/Global/MyButton";
 import styled from "styled-components";
 
 import ReactQuill from "react-quill";
