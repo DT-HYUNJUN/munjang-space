@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Auth from "./pages/Auth";
+import SignIn from "./pages/SignIn";
 import Profile from "./pages/Profile";
 import Book from "./pages/Book";
 import List from "./pages/List";
 import BookSearch from "./pages/BookSearch";
 import Report from "./pages/Report";
-import New from "./pages/New";
+import Create from "./pages/Create";
 import Edit from "./pages/Edit";
 import Statistics from "./pages/Statistics";
 import SignUp from "./pages/SignUp";
@@ -132,7 +132,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
 
-          <Route path="/login" element={<Auth />} />
+          <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/book/:isbn13" element={<Book />} />
@@ -141,7 +141,7 @@ function App() {
           <Route path="/booksearch" element={<BookSearch />} />
 
           <Route path="/report/:email/:id" element={<Report reportList={reportList} onLike={onLike} onDelete={onDelete} userInfo={userInfo} />} />
-          <Route path="/new" element={<New onCreate={onCreate} reportList={reportList} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
+          <Route path="/new" element={<Create onCreate={onCreate} reportList={reportList} reportCount={reportCount} userInfo={userInfo} IsLogin={IsLogin} />} />
           <Route path="/edit/:id" element={<Edit onEdit={onEdit} userInfo={userInfo} reportList={reportList} />} />
 
           <Route path="/statistics" element={<Statistics IsLogin={IsLogin} reportList={reportList} userInfo={userInfo} />} />

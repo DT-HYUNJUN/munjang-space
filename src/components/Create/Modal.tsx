@@ -8,6 +8,7 @@ import { faBook, faCheckCircle, faExclamationCircle, faSearch, faX } from "@fort
 import getBooks from "../../utils/getBooks";
 import styled, { keyframes } from "styled-components";
 import { IBook, IReport } from "../../types";
+import Loading from "../Global/Loading";
 
 interface Props {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -105,9 +106,7 @@ const Modal = (props: Props) => {
 
       <Content>
         {loading ? (
-          <LoadingWrapper>
-            <FontAwesomeIcon icon={faBook} beatFade size="3x" />
-          </LoadingWrapper>
+          <Loading />
         ) : (
           <div>
             <BookEntire>
@@ -239,13 +238,6 @@ const Content = styled.div`
   @media (max-width: 768px) {
     height: 600px;
   }
-`;
-
-const LoadingWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const BookList = styled.div`

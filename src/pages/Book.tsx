@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
-
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/Global/MyButton";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faBook } from "@fortawesome/free-solid-svg-icons";
-
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { collection, onSnapshot, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../fbase";
 import { IBook } from "../types";
+import Loading from "../components/Global/Loading";
 
 interface IAllReports {
   id: string;
@@ -113,16 +111,14 @@ const Book = () => {
             });
           }
         });
-        await Promise.all(promises); // 여러 개의 Promise를 병렬로 처리한 후, 모든 Promise가 완료되면 결과를 반환
+        await Promise.all(promises);
         resolve(allReports);
       });
     });
   };
 
   return loading ? (
-    <LoadingWrapper>
-      <FontAwesomeIcon icon={faBook} beatFade size="3x" />
-    </LoadingWrapper>
+    <Loading />
   ) : (
     <BookDetailEntire>
       <BookContent>
@@ -367,13 +363,6 @@ const ThisReportWrapper = styled.div`
 
 const BookIntroWrapper = styled.div`
   border-top: 4px solid #ececec;
-`;
-
-const LoadingWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const ButtonWrapper = styled.div`

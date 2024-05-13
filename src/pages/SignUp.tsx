@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import uploadProfileImage from "../utils/uploadProfileImage";
 import getDefaultProfileImage from "../utils/getDefaultProfileImage";
 import MyButton from "../components/Global/MyButton";
-
 import styled from "styled-components";
-
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../fbase";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FirebaseError } from "firebase/app";

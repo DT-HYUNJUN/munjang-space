@@ -1,15 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import Modal from "../components/Create/Modal";
 import MyButton from "../components/Global/MyButton";
 import styled from "styled-components";
-
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
 import ReactStars from "react-stars";
-
 import { getAuth } from "firebase/auth";
 import { IBook, IReport, IUserInfo } from "../types";
 
@@ -21,7 +17,7 @@ interface Props {
   IsLogin: boolean;
 }
 
-const New = (props: Props) => {
+const Create = (props: Props) => {
   // 로그인 접근
 
   useEffect(() => {
@@ -157,7 +153,7 @@ const New = (props: Props) => {
   );
 };
 
-export default New;
+export default Create;
 
 const FormContainer = styled.form`
   display: flex;

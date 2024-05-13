@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import styled from "styled-components";
-
 import MyButton from "../components/Global/MyButton";
-
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 import { faBookOpen, faHeart as faHeartFill } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
-
 import DOMPurify from "dompurify";
 import { IReport, IUserInfo } from "../types";
 

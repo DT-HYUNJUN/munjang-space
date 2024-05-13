@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
 import getBooks from "../utils/getBooks";
-
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import styled from "styled-components";
-
 import { collection, onSnapshot, query, where, getDocs, orderBy, DocumentData } from "firebase/firestore";
 import { db } from "../fbase";
 import { IReport } from "../types";
+import Loading from "../components/Global/Loading";
 
 const ThisBookReport = () => {
   const [data, setData] = useState({});
@@ -96,9 +91,7 @@ const ThisBookReport = () => {
   return (
     <div>
       {loading ? (
-        <LoadingWrapper>
-          <FontAwesomeIcon icon={faSpinner} spin size="3x" />
-        </LoadingWrapper>
+        <Loading />
       ) : (
         <div>
           <div>
@@ -187,13 +180,6 @@ const ReportAuthorProfileImage = styled.img`
   width: 24px;
   height: 24px;
   border-radius: 75px;
-`;
-
-const LoadingWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const ReportLength = styled.h1`
