@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../fbase";
-
 import styled from "styled-components";
-
 import ChangePassword from "../components/Auth/ChangePassword";
 import MyProfile from "../components/Profile/MyProfile";
 import MyButton from "../components/Global/MyButton";
-
 import { User, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 

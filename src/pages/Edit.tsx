@@ -7,7 +7,7 @@ import Modal from "../components/Create/Modal";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import { User, getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { db } from "../fbase";
 

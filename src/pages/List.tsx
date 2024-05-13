@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import styled from "styled-components";
-
 import All from "../components/List/All";
 import Month from "../components/List/Month";
 import MyButton from "../components/Global/MyButton";

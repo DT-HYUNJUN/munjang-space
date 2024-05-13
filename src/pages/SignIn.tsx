@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-
 import styled from "styled-components";
-
 import MyButton from "../components/Global/MyButton";
-
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../fbase";
 import { FirebaseError } from "firebase/app";
 
-const Login = () => {
+const SignIn = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
@@ -171,7 +168,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;
 
 const Title = styled.h2`
   padding-left: 30px;

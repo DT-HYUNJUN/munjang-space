@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import styled from "styled-components";
-
 import getBooks from "../utils/getBooks";
 import MyButton from "../components/Global/MyButton";
-
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IBook } from "../types";
+import Loading from "../components/Global/Loading";
 
-type HandleClickCreate = {
+interface HandleClickCreate {
   (title: string, cover: string, author: string, description: string, isbn13: string): void;
-};
+}
 
 const BookSearch = () => {
   const { state } = useLocation();
@@ -60,9 +56,7 @@ const BookSearch = () => {
   };
 
   return loading ? (
-    <LoadingWrapper>
-      <FontAwesomeIcon icon={faSpinner} spin size="3x" />
-    </LoadingWrapper>
+    <Loading />
   ) : searchComplete && bookList.length > 0 ? (
     <Container>
       <SearchBoookName>검색한 '{state.bookName}' 입니다.</SearchBoookName>
@@ -187,13 +181,6 @@ const TitleAndAuthor = styled.div`
     width: 200px;
     text-align: center;
   }
-`;
-
-const LoadingWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `;
 
 const BookDetail = styled.div`
