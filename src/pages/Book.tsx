@@ -270,11 +270,9 @@ const WriteButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   background-color: #fffb85;
-  width: 120px;
-  height: 40px;
 
   font-family: "UhBeeJJIBBABBA";
-  font-size: 14px;
+  font-size: 18px;
 
   color: black;
 
